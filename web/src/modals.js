@@ -1,4 +1,4 @@
-import { setHasUserCommittedEdits, setShowSaveChanges, debugSaveChangesLog, validateRequiredFields, validateFieldFormats, canEditCurrentData, syncCurrentDataFromJson, loadUserGuideText, saveChangesToSource, getRequiredFields, render, refreshUnsavedChangesFromData, scheduleAutosave } from "./main.js";
+import { setHasUserCommittedEdits, setShowSaveChanges, debugSaveChangesLog, validateRequiredFields, validateFieldFormats, canEditCurrentData, syncCurrentDataFromJson, loadUserGuideText, saveChangesToSource, promptForDataFile, getRequiredFields, render, refreshUnsavedChangesFromData, scheduleAutosave } from "./main.js";
 import { t } from "./i18n.js";
 import { currentData, editState, deleteState, batchStatusState, batchRouteState, editFieldsByTable, addFieldsByTable, tableTitleKeys, tableTitleSingleKeys, fieldLabelKeyByTable } from "./state.js";
 import { statusEl, fileInput, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, userGuideModal, userGuideContent, closeGuardModal, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, openDataFolderBtn } from "./dom.js";
@@ -1461,9 +1461,7 @@ export function defaultRowForTable(tableName) {
   }
 
   export function openDataFolder() {
-    if (fileInput) {
-      fileInput.click();
-    }
+    promptForDataFile();
   }
 
 

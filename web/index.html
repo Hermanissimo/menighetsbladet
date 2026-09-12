@@ -40,13 +40,23 @@
         </div>
         <div class="title-row">
           <h1 id="title">Distribution Control Panel</h1>
-          <button id="save-changes" class="btn primary" type="button" hidden>Save Changes</button>
+          <div class="save-group" id="save-group" hidden>
+            <button id="save-changes" class="btn primary" type="button">Quick save</button>
+            <div class="dropdown">
+              <button id="save-dropdown-toggle" class="btn primary dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+                ▼
+              </button>
+              <div class="dropdown-menu" id="save-dropdown-menu">
+                <button id="save-as-copy" class="dropdown-item" type="button">Save as a copy</button>
+              </div>
+            </div>
+          </div>
         </div>
         <p id="subtitle" class="subtitle">Driver-, distributor- and address counts from source data.</p>
         <div id="settings-panel" class="settings-panel" hidden>
           <div class="loader-row">
-            <label id="choose-file-label" for="xml-file" class="btn secondary">Choose Data File</label>
-            <input id="xml-file" type="file" accept=".json,application/json,text/json" />
+            <button id="choose-file-label" class="btn secondary" type="button">Choose Data File</button>
+            <input id="xml-file" type="file" accept=".json,application/json,text/json" hidden />
             <button id="open-user-guide" class="btn tertiary" type="button">User guide</button>
           </div>
           <p id="data-source-line" class="status"><strong id="data-source-label">Data source:</strong> <span id="data-source-value">Not loaded</span></p>

@@ -1,6 +1,11 @@
 export let statusEl = document.getElementById("status");
 export let fileInput = document.getElementById("xml-file");
+export let chooseFileLabel = document.getElementById("choose-file-label");
+export let saveGroup = document.getElementById("save-group");
 export let saveChangesBtn = document.getElementById("save-changes");
+export let saveAsCopyBtn = document.getElementById("save-as-copy");
+export let saveDropdownToggle = document.getElementById("save-dropdown-toggle");
+export let saveDropdownMenu = document.getElementById("save-dropdown-menu");
 export let languageSelect = document.getElementById("language-select");
 export let settingsToggle = document.getElementById("settings-toggle");
 export let settingsPanel = document.getElementById("settings-panel");

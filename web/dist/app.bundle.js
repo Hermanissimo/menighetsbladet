@@ -21,6 +21,7 @@
     addDistributorBtn: () => addDistributorBtn,
     addDriverBtn: () => addDriverBtn,
     addRouteBtn: () => addRouteBtn,
+    chooseFileLabel: () => chooseFileLabel,
     closeGuardCloseBtn: () => closeGuardCloseBtn,
     closeGuardContinueBtn: () => closeGuardContinueBtn,
     closeGuardMessage: () => closeGuardMessage,
@@ -49,7 +50,11 @@
     routeReportModalClose: () => routeReportModalClose,
     routeReportModalContent: () => routeReportModalContent,
     routeReportModalPrint: () => routeReportModalPrint,
+    saveAsCopyBtn: () => saveAsCopyBtn,
     saveChangesBtn: () => saveChangesBtn,
+    saveDropdownMenu: () => saveDropdownMenu,
+    saveDropdownToggle: () => saveDropdownToggle,
+    saveGroup: () => saveGroup,
     settingsPanel: () => settingsPanel,
     settingsToggle: () => settingsToggle,
     sourceMissingMessage: () => sourceMissingMessage,
@@ -60,12 +65,17 @@
     userGuideModal: () => userGuideModal,
     userGuideTitle: () => userGuideTitle
   });
-  var statusEl, fileInput, saveChangesBtn, languageSelect, settingsToggle, settingsPanel, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, userGuideModal, userGuideTitle, userGuideContent, closeGuardModal, closeGuardTitle, closeGuardMessage, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, sourceMissingTitle, sourceMissingMessage, openDataFolderBtn, reportModal, reportModalClose, reportModalPrint, reportModalContent, routeReportModal, routeReportModalClose, routeReportModalPrint, routeReportModalContent;
+  var statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, userGuideModal, userGuideTitle, userGuideContent, closeGuardModal, closeGuardTitle, closeGuardMessage, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, sourceMissingTitle, sourceMissingMessage, openDataFolderBtn, reportModal, reportModalClose, reportModalPrint, reportModalContent, routeReportModal, routeReportModalClose, routeReportModalPrint, routeReportModalContent;
   var init_dom = __esm({
     "web/src/dom.js"() {
       statusEl = document.getElementById("status");
       fileInput = document.getElementById("xml-file");
+      chooseFileLabel = document.getElementById("choose-file-label");
+      saveGroup = document.getElementById("save-group");
       saveChangesBtn = document.getElementById("save-changes");
+      saveAsCopyBtn = document.getElementById("save-as-copy");
+      saveDropdownToggle = document.getElementById("save-dropdown-toggle");
+      saveDropdownMenu = document.getElementById("save-dropdown-menu");
       languageSelect = document.getElementById("language-select");
       settingsToggle = document.getElementById("settings-toggle");
       settingsPanel = document.getElementById("settings-panel");
@@ -5663,9 +5673,7 @@
     };
   }
   function openDataFolder() {
-    if (fileInput) {
-      fileInput.click();
-    }
+    promptForDataFile();
   }
   function initMergeRoutesModal() {
     var mergeBtn = document.getElementById("merge-routes-btn");
@@ -6220,6 +6228,7 @@
   var hasLoadedEditableSource = false;
   var hasUserCommittedEdits = false;
   var showSaveChanges = false;
+  var currentFileHandle = null;
   function setHasUserCommittedEdits(val) {
     hasUserCommittedEdits = val;
   }
@@ -6851,11 +6860,13 @@
     }
     if (hasLoadedEditableSource && currentDataFormat === "json" && showSaveChanges) {
       saveChangesBtn.removeAttribute("hidden");
-      saveChangesBtn.disabled = false;
+      saveChangesBtn.hidden = false;
+      if (saveGroup) saveGroup.hidden = false;
       debugSaveChangesLog("updateUnsavedChangesUi:show");
     } else {
       saveChangesBtn.setAttribute("hidden", "");
-      saveChangesBtn.disabled = true;
+      saveChangesBtn.hidden = true;
+      if (saveGroup) saveGroup.hidden = true;
       debugSaveChangesLog("updateUnsavedChangesUi:hide");
     }
   }
@@ -6878,7 +6889,7 @@
     debugSaveChangesLog("refreshUnsavedChangesFromData:set-from-flag");
     updateUnsavedChangesUi();
   }
-  function saveChangesToSource() {
+  async function saveChangesToSource() {
     if (currentDataFormat !== "json" || !hasLoadedEditableSource) {
       debugSaveChangesLog("saveChangesToSource:blocked-not-editable");
       return false;
@@ -6890,7 +6901,18 @@
     }
     var jsonText = JSON.stringify(serializeCurrentJsonData(), null, 2);
     saveJsonCache(jsonText, "source.json (edited)");
-    saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
+    if (currentFileHandle && currentFileHandle.createWritable) {
+      try {
+        const writable = await currentFileHandle.createWritable();
+        await writable.write(jsonText);
+        await writable.close();
+      } catch (e) {
+        console.error("Failed to quick save via file handle", e);
+        saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
+      }
+    } else {
+      saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
+    }
     lastCommittedDataText = getComparableDataText();
     hasUnsavedChanges = false;
     hasUserCommittedEdits = false;
@@ -6900,6 +6922,40 @@
     statusEl.dataset.loaded = "1";
     statusEl.textContent = t("statusSavedNow");
     return true;
+  }
+  async function saveChangesToSourceCopy() {
+    if (currentDataFormat !== "json" || !hasLoadedEditableSource) {
+      debugSaveChangesLog("saveChangesToSourceCopy:blocked-not-editable");
+      return false;
+    }
+    var jsonText = JSON.stringify(serializeCurrentJsonData(), null, 2);
+    try {
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: "source-copy.json",
+          types: [{
+            description: "JSON Files",
+            accept: { "application/json": [".json"] }
+          }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(jsonText);
+        await writable.close();
+        statusEl.dataset.loaded = "1";
+        statusEl.textContent = t("statusSavedCopyNow") || "Copy saved.";
+      } else {
+        saveTextDownload("source-copy.json", jsonText, "application/json;charset=utf-8");
+        statusEl.dataset.loaded = "1";
+        statusEl.textContent = t("statusSavedCopyNow") || "Copy downloaded.";
+      }
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.error("Failed to save copy via file handle", err);
+        saveTextDownload("source-copy.json", jsonText, "application/json;charset=utf-8");
+        statusEl.dataset.loaded = "1";
+        statusEl.textContent = t("statusSavedCopyNow") || "Copy downloaded.";
+      }
+    }
   }
   function scheduleAutosave() {
     if (!showSaveChanges) {
@@ -7824,9 +7880,64 @@
   });
   if (saveChangesBtn) {
     saveChangesBtn.addEventListener("click", function() {
-      debugSaveChangesLog("save-button:click");
+      debugSaveChangesLog("saveChangesBtn:click");
       saveChangesToSource();
     });
+  }
+  if (saveAsCopyBtn) {
+    saveAsCopyBtn.addEventListener("click", function() {
+      debugSaveChangesLog("save-as-copy:click");
+      saveChangesToSourceCopy();
+    });
+  }
+  if (saveDropdownToggle && saveDropdownMenu) {
+    saveDropdownToggle.addEventListener("click", function(e) {
+      e.stopPropagation();
+      const expanded = saveDropdownToggle.getAttribute("aria-expanded") === "true";
+      saveDropdownToggle.setAttribute("aria-expanded", !expanded);
+      if (!expanded) {
+        saveDropdownMenu.style.display = "block";
+      } else {
+        saveDropdownMenu.style.display = "none";
+      }
+    });
+    document.addEventListener("click", function() {
+      saveDropdownToggle.setAttribute("aria-expanded", "false");
+      saveDropdownMenu.style.display = "none";
+    });
+  }
+  if (chooseFileLabel) {
+    chooseFileLabel.addEventListener("click", function(e) {
+      promptForDataFile();
+    });
+  }
+  async function promptForDataFile() {
+    if (window.showOpenFilePicker) {
+      try {
+        const [handle] = await window.showOpenFilePicker({
+          types: [{
+            description: "JSON Files",
+            accept: { "application/json": [".json"] }
+          }],
+          multiple: false
+        });
+        currentFileHandle = handle;
+        const file = await handle.getFile();
+        const text = await file.text();
+        try {
+          loadFromJsonText(text, file.name);
+        } catch (error) {
+          statusEl.textContent = t("errParseSelected") + " " + error.message;
+        }
+      } catch (e) {
+        if (e.name !== "AbortError") {
+          console.error("showOpenFilePicker error", e);
+          if (fileInput) fileInput.click();
+        }
+      }
+    } else {
+      if (fileInput) fileInput.click();
+    }
   }
   fileInput.addEventListener("change", function(event) {
     var file = event.target.files && event.target.files[0];
@@ -7843,6 +7954,7 @@
     };
     reader.onload = function() {
       try {
+        currentFileHandle = null;
         loadFromJsonText(String(reader.result || ""), file.name);
       } catch (error) {
         statusEl.textContent = t("errParseSelected") + " " + error.message;
