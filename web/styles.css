@@ -1459,3 +1459,62 @@ a.mailto-link:hover {
   opacity: 1;
   transform: scale(1.1);
 }
+
+
+/* Split button group for saving */
+.save-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.save-group #save-changes {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.save-group .dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+.save-group .dropdown-toggle {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  min-width: unset;
+}
+
+.save-group .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.25rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  min-width: max-content;
+  padding: 0.4rem;
+}
+
+.save-group .dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.save-group .dropdown-item:hover {
+  background: var(--accent-soft);
+}
+
