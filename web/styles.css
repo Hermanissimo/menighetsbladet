@@ -350,9 +350,9 @@ h2 {
 
 .filters-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 0.45rem;
-  flex: 1 1 720px;
+  flex: 1 1 auto;
   align-items: start;
 }
 
