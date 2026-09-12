@@ -134,6 +134,12 @@ function startServer(port) {
     console.log(` - Filtered addresses table. Visible rows: ${rows}`);
     await page.screenshot({ path: 'tests/screenshots/3_filtering.png' });
 
+    // Clean up temporary screenshots after successful test completion
+    if (fs.existsSync('tests/screenshots')) {
+      fs.rmSync('tests/screenshots', { recursive: true, force: true });
+      console.log(' - Cleaned up tests/screenshots directory.');
+    }
+
     console.log('=============================================');
     console.log('ALL TESTS PASSED SUCCESSFULLY!');
     
