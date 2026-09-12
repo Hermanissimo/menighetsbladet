@@ -1,0 +1,20 @@
+{
+  "name": "menighetsbladet",
+  "version": "1.0.0",
+  "description": "Local data pipeline and dashboard for maintaining distribution data (drivers, distributors, routes, and addresses) for Menighetsbladet.",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap",
+    "watch": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Distribution Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
+    <link rel="stylesheet" href="styles.css?bust=2" />
+    
+    <!-- Leaflet & MarkerCluster (vendored locally) -->
+    <link rel="stylesheet" href="vendor/leaflet.css" />
+    <link rel="stylesheet" href="vendor/MarkerCluster.css" />
+    <link rel="stylesheet" href="vendor/MarkerCluster.Default.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-top-row">
+          <p class="kicker">Menighetsbladet</p>
+          <div class="top-controls">
+            <label class="lang-wrap" for="language-select">
+              <span id="lang-label">Language</span>
+              <select id="language-select" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="nb">Norsk (bokmal)</option>
+                <option value="nn">Norsk (nynorsk)</option>
+                <option value="sv">Svenska</option>
+              </select>
+            </label>
+            <button id="settings-toggle" class="btn tertiary" type="button" aria-expanded="false" aria-controls="settings-panel">
+              <span class="icon" aria-hidden="true">⚙</span>
+              <span id="settings-label">Settings</span>
+            </button>
+          </div>
+        </div>
+        <div class="title-row">
+          <h1 id="title">Distribution Control Panel</h1>
+          <button id="save-changes" class="btn primary" type="button" hidden>Save Changes</button>
+        </div>
+        <p id="subtitle" class="subtitle">Driver-, distributor- and address counts from source data.</p>
+        <div id="settings-panel" class="settings-panel" hidden>
+          <div class="loader-row">
+            <label id="choose-file-label" for="xml-file" class="btn secondary">Choose Data File</label>
+            <input id="xml-file" type="file" accept=".json,application/json,text/json" />
+            <button id="open-user-guide" class="btn tertiary" type="button">User guide</button>
+          </div>
+          <div class="autosave-row">
+            <label class="autosave-wrap" for="inactivity-seconds">
+              <span id="inactivity-label">Autosave after inactivity (seconds)</span>
+              <input id="inactivity-seconds" type="number" min="5" step="5" value="60" />
+            </label>
+          </div>
+          <p id="data-source-line" class="status"><strong id="data-source-label">Data source:</strong> <span id="data-source-value">Not loaded</span></p>
+          <p id="derived-note" class="status">Dashboard, paper and route count are calculated dynamically and are not stored in source.json.</p>
+          <p id="status" class="status">Ready. Load data to populate dashboard.</p>
+        </div>
+      </section>
+
+      <section class="card tabs-card">
+        <nav id="tabs-nav" class="tabs-nav" role="tablist" aria-label="Data views">
+          <button id="tab-dashboard" class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-dashboard" data-tab="dashboard" type="button">Dashboard</button>
+          <button id="tab-drivers" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-drivers" data-tab="drivers" type="button">Drivers</button>
+          <button id="tab-distributors" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-distributors" data-tab="distributors" type="button">Distributors</button>
+          <button id="tab-addresses" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-addresses" data-tab="addresses" type="button">Addresses</button>
+          <button id="tab-routes" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-routes" data-tab="routes" type="button">Routes</button>
+          <button id="tab-map" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-map" data-tab="map" type="button">Map</button>
+        </nav>
+
+        <section id="panel-dashboard" class="tab-panel" role="tabpanel" aria-labelledby="tab-dashboard">
+          <div class="panel-head">
+            <h2 id="dashboard-title">Dashboard</h2>
+            <div class="panel-actions">
+              <div class="export-dropdown">
+                <button id="export-dashboard" class="btn tertiary" type="button">Export ▾</button>
+                <div class="export-menu" hidden>
+                  <button class="export-action btn tertiary" data-format="csv" data-target="dashboard" type="button">CSV</button>
+                  <button class="export-action btn tertiary" data-format="xlsx" data-target="dashboard" type="button">XLSX</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-grid">
+            <div class="dash-card card-unassigned">
+              <h3 id="row-unassigned">Unassigned Routes</h3>
+              <div class="dash-value danger" id="routes-unassigned-main">-</div>
+              <div class="dash-subtitle">
+                <span id="addr-unassigned">-</span> <span id="dash-addr-affected-label">addresses affected</span><br>
+                <span id="hh-unassigned-main">-</span> <span id="dash-hh-affected-label">households affected</span>
+              </div>
+            </div>
+            
+            <div class="dash-card">
+              <h3 id="row-addresses">Addresses</h3>
+              <div class="dash-value" id="addr-total">-</div>
+              <div class="dash-stats column">
+                <div class="stat-row"><span id="dash-addr-inc-label">Included:</span> <strong id="addr-included">-</strong></div>
+                <div class="stat-row"><span id="dash-addr-exc-label">Excluded:</span> <strong id="addr-excluded">-</strong></div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <h3 id="row-households">Households</h3>
+              <div class="dash-value" id="hh-total">-</div>
+              <div class="dash-stats column">
+                <div class="stat-row"><span id="dash-hh-inc-label">Included:</span> <strong id="hh-included">-</strong></div>
+                <div class="stat-row"><span id="dash-hh-exc-label">Excluded:</span> <strong id="hh-excluded">-</strong></div>
+                <div class="stat-row"><span id="dash-hh-un-label">Unassigned:</span> <strong id="hh-unassigned" style="color:#d35400;">-</strong></div>
+              </div>
+            </div>
+            
+            <div class="dash-card">
+              <h3 id="row-routes">Routes</h3>
+              <div class="dash-value" id="routes-total">-</div>
+              <div class="dash-stats column">
+                <div class="stat-row"><span id="dash-routes-ass-label">Assigned:</span> <strong id="routes-assigned">-</strong></div>
+                <div class="stat-row"><span id="dash-routes-un-label">Unassigned:</span> <strong id="routes-unassigned" style="color:#d35400;">-</strong></div>
+                <div class="stat-row"><span id="dash-routes-act-label">Active:</span> <strong id="routes-active">-</strong></div>
+                <div class="stat-row"><span id="dash-routes-ina-label">Inactive:</span> <strong id="routes-inactive" style="color:#d35400;">-</strong></div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <h3 id="row-papers">Newspapers to order</h3>
+              <div class="dash-value highlight" id="papers-to-order">-</div>
+              <div class="dash-subtitle"><span id="row-extra-papers">Extra papers</span>: <span id="extra-papers">-</span></div>
+            </div>
+
+            <div class="dash-card">
+              <h3 id="row-personnel">Personnel</h3>
+              <div class="dash-stats column">
+                <div class="stat-row">
+                  <span id="row-drivers">Drivers</span>: <strong id="drv-total">-</strong> 
+                  <small>(<span id="drv-active">-</span> <span id="dash-drv-act-label">active</span>, <span id="drv-inactive">-</span> <span id="dash-drv-ina-label">inactive</span>)</small>
+                </div>
+                <div class="stat-row">
+                  <span id="row-distributors">Distributors</span>: <strong id="dist-total">-</strong>
+                  <small>(<span id="dist-active">-</span> <span id="dash-dist-act-label">active</span>, <span id="dist-inactive">-</span> <span id="dash-dist-ina-label">inactive</span>)</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-drivers" class="tab-panel" role="tabpanel" aria-labelledby="tab-drivers" hidden>
+          <div class="panel-head">
+            <h2 id="drivers-title">Drivers</h2>
+            <div class="panel-actions">
+              <div class="export-dropdown">
+                <button id="export-drivers" class="btn tertiary" type="button">Export ▾</button>
+                <div class="export-menu" hidden>
+                  <button class="export-action btn tertiary" data-format="csv" data-target="drivers" type="button">CSV</button>
+                  <button class="export-action btn tertiary" data-format="xlsx" data-target="drivers" type="button">XLSX</button>
+                  <button id="print-all-drivers" class="export-action btn tertiary" data-format="print" data-target="drivers" type="button">Kjørelister (Print All)</button>
+                </div>
+              </div>
+              <button id="add-driver" class="btn secondary" type="button">Add record</button>
+            </div>
+          </div>
+          <div class="table-tools">
+            <div class="filters-grid">
+              <label class="filter-wrap" for="filter-drivers-driverName"><span id="filter-driver-label-drivers">Driver name</span><input id="filter-drivers-driverName" type="search" placeholder="Driver name" /></label>
+              <label class="filter-wrap" for="filter-drivers-status"><span id="filter-status-label-drivers">Status</span><input id="filter-drivers-status" type="search" placeholder="Status" /></label>
+              <label class="filter-wrap" for="filter-drivers-postnr"><span id="filter-postnr-label-drivers">Postnr</span><input id="filter-drivers-postnr" type="search" placeholder="Postnr" /></label>
+              <label class="filter-wrap" for="filter-drivers-route"><span id="filter-route-label-drivers">Route</span><input id="filter-drivers-route" type="search" placeholder="Route" /></label>
+              
+            </div>
+            <button id="reset-filters-drivers" class="btn tertiary" type="button">Reset filters</button>
+          </div>
+          <table id="drivers-table" class="data-table" aria-label="Drivers table">
+            <thead>
+              <tr>
+                <th id="drivers-col-name" scope="col">Name</th>
+                <th id="drivers-col-status" scope="col">Status</th>
+                <th id="drivers-col-drivernr" scope="col">Driver no.</th>
+                <th id="drivers-col-phone" scope="col">Phone</th>
+                <th id="drivers-col-email" scope="col">Email</th>
+                <th id="drivers-col-address" scope="col">Address</th>
+                <th id="drivers-col-postnr" scope="col">Postnr</th>
+                <th id="drivers-col-routecount" scope="col">Route count</th>
+                <th id="drivers-col-papercount" scope="col">Paper count</th>
+                <th id="drivers-col-actions" scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="drivers-body"></tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <td id="drivers-totals" colspan="10">Totals</td>
+              </tr>
+            </tfoot>
+          </table>
+          <div class="table-pager" id="pager-drivers">
+            <label for="page-size-drivers"><span id="pager-per-page-label-drivers">Rows</span>
+              <select id="page-size-drivers">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+            <button id="page-prev-drivers" class="btn tertiary" type="button">Prev</button>
+            <span id="page-info-drivers">Page 1 / 1</span>
+            <button id="page-next-drivers" class="btn tertiary" type="button">Next</button>
+          </div>
+        </section>
+
+        <section id="panel-distributors" class="tab-panel" role="tabpanel" aria-labelledby="tab-distributors" hidden>
+          <div class="panel-head">
+            <h2 id="distributors-title">Distributors</h2>
+            <div class="panel-actions">
+              <div class="export-dropdown">
+                <button id="export-distributors" class="btn tertiary" type="button">Export ▾</button>
+                <div class="export-menu" hidden>
+                  <button class="export-action btn tertiary" data-format="csv" data-target="distributors" type="button">CSV</button>
+                  <button class="export-action btn tertiary" data-format="xlsx" data-target="distributors" type="button">XLSX</button>
+                </div>
+              </div>
+              <button id="add-distributor" class="btn secondary" type="button">Add record</button>
+            </div>
+          </div>
+          <div class="table-tools">
+            <div class="filters-grid">
+              <label class="filter-wrap" for="filter-distributors-distributorName"><span id="filter-distributor-label-distributors">Distributor name</span><input id="filter-distributors-distributorName" type="search" placeholder="Distributor name" /></label>
+              <label class="filter-wrap" for="filter-distributors-status"><span id="filter-status-label-distributors">Status</span><input id="filter-distributors-status" type="search" placeholder="Status" /></label>
+              <label class="filter-wrap" for="filter-distributors-route"><span id="filter-route-label-distributors">Route</span><input id="filter-distributors-route" type="search" placeholder="Route" /></label>
+              <label class="filter-wrap" for="filter-distributors-driverName"><span id="filter-driver-label-distributors">Driver name</span><input id="filter-distributors-driverName" type="search" placeholder="Driver name" /></label>
+              <label class="filter-wrap" for="filter-distributors-postnr"><span id="filter-postnr-label-distributors">Postnr</span><input id="filter-distributors-postnr" type="search" placeholder="Postnr" /></label>
+            </div>
+            <button id="reset-filters-distributors" class="btn tertiary" type="button">Reset filters</button>
+          </div>
+          <table id="distributors-table" class="data-table" aria-label="Distributors table">
+            <thead>
+              <tr>
+                <th id="dist-col-name" scope="col">Name</th>
+                <th id="dist-col-status" scope="col">Status</th>
+                <th id="dist-col-route" scope="col">Route</th>
+                <th id="dist-col-drivernr" scope="col">Driver no.</th>
+                <th id="dist-col-phone" scope="col">Phone</th>
+                <th id="dist-col-email" scope="col">Email</th>
+                <th id="dist-col-address" scope="col">Address</th>
+                <th id="dist-col-postnr" scope="col">Postnr</th>
+                <th id="dist-col-extrapapers" scope="col">Extra papers</th>
+                <th id="dist-col-papercount" scope="col">Papers total</th>
+                <th id="dist-col-actions" scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="distributors-body"></tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <td id="distributors-totals" colspan="11">Totals</td>
+              </tr>
+            </tfoot>
+          </table>
+          <div class="table-pager" id="pager-distributors">
+            <label for="page-size-distributors"><span id="pager-per-page-label-distributors">Rows</span>
+              <select id="page-size-distributors">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+            <button id="page-prev-distributors" class="btn tertiary" type="button">Prev</button>
+            <span id="page-info-distributors">Page 1 / 1</span>
+            <button id="page-next-distributors" class="btn tertiary" type="button">Next</button>
+          </div>
+        </section>
+
+        <section id="panel-addresses" class="tab-panel" role="tabpanel" aria-labelledby="tab-addresses" hidden>
+          <div class="panel-head">
+            <h2 id="addresses-title">Addresses</h2>
+            <div class="panel-actions">
+              <span id="selected-chip-addresses" class="selected-chip" hidden>Selected: 0</span>
+              <div class="export-dropdown">
+                <button id="export-addresses" class="btn tertiary" type="button">Export ▾</button>
+                <div class="export-menu" hidden>
+                  <button class="export-action btn tertiary" data-format="csv" data-target="addresses" type="button">CSV</button>
+                  <button class="export-action btn tertiary" data-format="xlsx" data-target="addresses" type="button">XLSX</button>
+                </div>
+              </div>
+              <button id="batch-route-addresses" class="btn secondary" type="button" disabled>Update route</button>
+              <button id="batch-delete-addresses" class="btn danger" type="button" disabled>Delete selected</button>
+              <button id="add-address" class="btn secondary" type="button">Add record</button>
+            </div>
+          </div>
+          <div class="table-tools">
+            <div class="filters-grid">
+              <label class="filter-wrap" for="filter-addresses-address"><span id="filter-address-label-addresses">Address</span><input id="filter-addresses-address" type="search" placeholder="Address" /></label>
+              <label class="filter-wrap" for="filter-addresses-route"><span id="filter-route-label-addresses">Route</span><input id="filter-addresses-route" type="search" placeholder="Route" /></label>
+              <label class="filter-wrap" for="filter-addresses-distributorName"><span id="filter-distributor-label-addresses">Distributor name</span><input id="filter-addresses-distributorName" type="search" placeholder="Distributor name" /></label>
+              <label class="filter-wrap" for="filter-addresses-postnr"><span id="filter-postnr-label-addresses">Postnr</span><input id="filter-addresses-postnr" type="search" placeholder="Postnr" /></label>
+            </div>
+            <button id="reset-filters-addresses" class="btn tertiary" type="button">Reset filters</button>
+          </div>
+          <table id="addresses-table" class="data-table" aria-label="Addresses table">
+            <thead>
+              <tr>
+                <th id="addr-col-select" class="select-col" scope="col"><input id="select-all-addresses" type="checkbox" aria-label="Select all addresses on page" /></th>
+                <th id="addr-col-address" scope="col">Address</th>
+                <th id="addr-col-route" scope="col">Route</th>
+                <th id="addr-col-distributor" scope="col">Distributor</th>
+                <th id="addr-col-households" scope="col">Households</th>
+                <th id="addr-col-excluded-households" scope="col">Excluded households</th>
+                <th id="addr-col-postnr" scope="col">Postnr</th>
+                <th id="addr-col-note" scope="col">Note</th>
+                <th id="addr-col-actions" scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="addresses-body"></tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <td id="addresses-totals" colspan="9">Totals</td>
+              </tr>
+            </tfoot>
+          </table>
+          <div class="table-pager" id="pager-addresses">
+            <label for="page-size-addresses"><span id="pager-per-page-label-addresses">Rows</span>
+              <select id="page-size-addresses">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+            <button id="page-prev-addresses" class="btn tertiary" type="button">Prev</button>
+            <span id="page-info-addresses">Page 1 / 1</span>
+            <button id="page-next-addresses" class="btn tertiary" type="button">Next</button>
+          </div>
+        </section>
+
+        <section id="panel-routes" class="tab-panel" role="tabpanel" aria-labelledby="tab-routes" hidden>
+          <div class="panel-head">
+            <h2 id="routes-title">Routes</h2>
+            <div class="panel-actions">
+              <span id="selected-chip-routes" class="selected-chip">Selected: 0</span>
+              <div class="export-dropdown">
+                <button id="export-routes" class="btn tertiary" type="button">Export ▾</button>
+                <div class="export-menu" hidden>
+                  <button class="export-action btn tertiary" data-format="csv" data-target="routes" type="button">CSV</button>
+                  <button class="export-action btn tertiary" data-format="xlsx" data-target="routes" type="button">XLSX</button>
+                </div>
+              </div>
+              <button id="batch-status-routes" class="btn secondary" type="button" disabled>Update status</button>
+
+            </div>
+          </div>
+          <div class="table-tools">
+            <div class="filters-grid">
+              <label class="filter-wrap" for="filter-routes-route"><span id="filter-route-label-routes">Route</span><input id="filter-routes-route" type="search" placeholder="Route" /></label>
+              <label class="filter-wrap" for="filter-routes-distributorName"><span id="filter-distributor-label-routes">Distributor name</span><input id="filter-routes-distributorName" type="search" placeholder="Distributor name" /></label>
+              <label class="filter-wrap" for="filter-routes-driverName"><span id="filter-driver-label-routes">Driver name</span><input id="filter-routes-driverName" type="search" placeholder="Driver name" /></label>
+              <label class="filter-wrap" for="filter-routes-postnr"><span id="filter-postnr-label-routes">Postnr</span><input id="filter-routes-postnr" type="search" placeholder="Postnr" /></label>
+              <label class="filter-wrap" for="filter-routes-status"><span id="filter-status-label-routes">Status</span><input id="filter-routes-status" type="search" placeholder="Status" /></label>
+            </div>
+            <button id="reset-filters-routes" class="btn tertiary" type="button">Reset filters</button>
+          </div>
+          <table id="routes-table" class="data-table" aria-label="Routes table">
+            <thead>
+              <tr>
+                <th id="routes-col-select" class="select-col" scope="col"><input id="select-all-routes" type="checkbox" aria-label="Select all routes on page" /></th>
+                <th id="routes-col-id" scope="col">Route ID</th>
+                <th id="routes-col-status" scope="col">Status</th>
+                <th id="routes-col-distributors" scope="col">Distributors</th>
+                <th id="routes-col-drivernr" scope="col">Driver</th>
+                <th id="routes-col-addresses" scope="col">Addresses</th>
+                <th id="routes-col-extrapapers" scope="col">Extra papers</th>
+                <th id="routes-col-papers" scope="col">Papers total</th>
+                <th id="routes-col-description" scope="col">Addresses summary</th>
+                <th id="routes-col-notes" scope="col">Notes</th>
+                <th id="routes-col-actions" scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="routes-body"></tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <td id="routes-totals" colspan="11">Totals</td>
+              </tr>
+            </tfoot>
+          </table>
+          <div class="table-pager" id="pager-routes">
+            <label for="page-size-routes"><span id="pager-per-page-label-routes">Rows</span>
+              <select id="page-size-routes">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+            <button id="page-prev-routes" class="btn tertiary" type="button">Prev</button>
+            <span id="page-info-routes">Page 1 / 1</span>
+            <button id="page-next-routes" class="btn tertiary" type="button">Next</button>
+          </div>
+        </section>
+
+        <section id="panel-map" class="tab-panel" role="tabpanel" aria-labelledby="tab-map" hidden>
+          <div class="panel-head">
+            <h2 id="map-title" style="display:inline-flex; align-items:center; gap:8px;">
+              <span id="map-title-text">Map</span>
+              <button id="map-info-btn" class="btn tertiary" style="padding:0; min-width:auto; border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #ccc; cursor:pointer;" aria-label="Map Info" title="Map Info">ℹ</button>
+            </h2>
+            <div class="panel-actions" style="display: flex; align-items: center; gap: 15px;">
+              <div>
+                <label id="map-route-filter-label" for="map-route-filter">Filter by Route:</label>
+                <select id="map-route-filter" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+                  <option value="">All Routes</option>
+                </select>
+              </div>
+              <span id="map-status" class="status">Loading geodata...</span>
+            </div>
+          </div>
+          <div id="map-container" style="height: 600px; width: 100%; border: 1px solid #ccc; border-radius: 4px;"></div>
+        </section>
+      </section>
+    </main>
+
+    <div id="edit-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-modal-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+        <header class="modal-header">
+          <h3 id="edit-modal-title">Edit row</h3>
+          <button id="edit-modal-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <form id="edit-modal-form" class="modal-form">
+          <p id="edit-modal-error" class="modal-error" hidden></p>
+          <div id="edit-modal-fields" class="modal-fields"></div>
+          <div class="modal-actions">
+            <button id="edit-modal-cancel" class="btn secondary" type="button">Cancel</button>
+            <button id="edit-modal-save" class="btn primary" type="submit">Save</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div id="batch-status-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-batch-status-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="batch-status-title">
+        <header class="modal-header">
+          <h3 id="batch-status-title">Update status</h3>
+          <button id="batch-status-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p id="batch-status-message"></p>
+          <div id="batch-status-summary" class="delete-summary"></div>
+          <div class="modal-field">
+            <label for="batch-status-select" id="batch-status-label">Status</label>
+            <select id="batch-status-select"></select>
+          </div>
+          <p id="batch-status-error" class="modal-error" hidden></p>
+        </div>
+        <div class="modal-actions">
+          <button id="batch-status-cancel" class="btn secondary" type="button">Cancel</button>
+          <button id="batch-status-apply" class="btn primary" type="button">Apply status</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="batch-route-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-batch-route-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="batch-route-title">
+        <header class="modal-header">
+          <h3 id="batch-route-title">Update route</h3>
+          <button id="batch-route-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p id="batch-route-message"></p>
+          <div class="modal-field">
+            <label for="batch-route-select" id="batch-route-label">Route</label>
+            <select id="batch-route-select"></select>
+          </div>
+          <p id="batch-route-error" class="modal-error" hidden></p>
+        </div>
+        <div class="modal-actions">
+          <button id="batch-route-cancel" class="btn secondary" type="button">Cancel</button>
+          <button id="batch-route-apply" class="btn primary" type="button">Apply route</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="delete-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-delete-modal-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+        <header class="modal-header">
+          <h3 id="delete-modal-title">Delete</h3>
+          <button id="delete-modal-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p id="delete-modal-message"></p>
+          <div id="delete-modal-summary" class="delete-summary"></div>
+          <div class="modal-field" id="delete-modal-transfer-wrap">
+            <label for="delete-modal-transfer" id="delete-modal-transfer-label">Transfer to:</label>
+            <select id="delete-modal-transfer"></select>
+          </div>
+          <p id="delete-modal-error" class="modal-error" hidden></p>
+        </div>
+        <div class="modal-actions">
+          <button id="delete-modal-cancel" class="btn secondary" type="button">Cancel</button>
+          <button id="delete-modal-confirm" class="btn danger" type="button">Confirm Delete</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="load-result-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-load-result-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="load-result-title">
+        <header class="modal-header">
+          <h3 id="load-result-title">Load Result</h3>
+          <button id="load-result-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p id="load-result-message"></p>
+        </div>
+        <div class="modal-actions">
+          <button id="load-result-ok" class="btn primary" type="button">OK</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="user-guide-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-user-guide-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="user-guide-title">
+        <header class="modal-header">
+          <h3 id="user-guide-title">User guide</h3>
+          <button id="user-guide-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <pre id="user-guide-content" class="guide-content">Loading...</pre>
+        </div>
+        <div class="modal-actions">
+          <button id="user-guide-ok" class="btn primary" type="button">OK</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="close-guard-modal" class="modal" hidden>
+      <div class="modal-backdrop"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="close-guard-title">
+        <header class="modal-header">
+          <h3 id="close-guard-title">Unsaved changes</h3>
+        </header>
+        <div class="delete-modal-body">
+          <p id="close-guard-message">You have unsaved changes in IndexedDB.</p>
+        </div>
+        <div class="modal-actions">
+          <button id="close-guard-save" class="btn primary" type="button">Save Changes</button>
+          <button id="close-guard-continue" class="btn secondary" type="button">Continue work</button>
+          <button id="close-guard-close" class="btn danger" type="button">Close page</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="source-missing-modal" class="modal" hidden>
+      <div class="modal-backdrop"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="source-missing-title">
+        <header class="modal-header">
+          <h3 id="source-missing-title">Source file not loaded</h3>
+        </header>
+        <div class="delete-modal-body">
+          <p id="source-missing-message">Start work with loading the data from source.json file in data folder</p>
+        </div>
+        <div class="modal-actions">
+          <button id="open-data-folder" class="btn primary" type="button">Open data folder</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="report-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-report-modal-close="1"></div>
+      <section class="modal-dialog report-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
+        <header class="modal-header">
+          <h3 id="report-modal-title">Kjørelister (Preview)</h3>
+          <div class="modal-actions-header">
+            <button id="report-modal-print" class="btn primary" type="button">Print</button>
+            <button id="report-modal-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+          </div>
+        </header>
+        <div id="report-modal-content" class="report-modal-body">
+        </div>
+      </section>
+    </div>
+
+    <div id="add-address-map-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-add-map-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="add-address-map-title">
+        <header class="modal-header">
+          <h3 id="add-address-map-title">Add address?</h3>
+            <button id="add-address-map-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p id="add-address-map-message">Fetching data...</p>
+          
+          <div id="add-address-kirken-validation" hidden>
+            <div id="add-address-kirken-links-container"></div>
+          </div>
+          <div id="add-address-route-container" hidden>
+            <div class="modal-field">
+              <label id="add-address-map-route-label" for="add-address-map-route">Select Route:</label>
+              <select id="add-address-map-route"></select>
+            </div>
+            <div id="add-address-minimap" style="height: 200px; width: 100%; border: 1px solid #ccc; border-radius: 4px; margin-top: 10px;"></div>
+          </div>
+        </div>
+        <div class="modal-actions" id="add-address-map-actions">
+          <button id="add-address-map-btn-close" class="btn secondary" type="button">Close</button>
+          <button id="add-address-map-btn-confirm" class="btn primary" type="button" hidden>Confirm</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="reassign-route-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-reassign-route-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="reassign-route-title">
+        <header class="modal-header">
+          <h3 id="reassign-route-title">Reassign Selected Addresses</h3>
+          <button id="reassign-route-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p id="reassign-route-message"></p>
+          <div class="modal-field">
+            <label id="reassign-route-label" for="reassign-route-select">Select New Route:</label>
+            <select id="reassign-route-select"></select>
+          </div>
+        </div>
+        <div class="modal-actions" id="reassign-route-actions">
+          <button id="reassign-route-btn-close" class="btn secondary" type="button">Close</button>
+          <button id="reassign-route-btn-confirm" class="btn primary" type="button">Reassign Selected Addresses</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="delete-address-map-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-delete-address-map-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-address-map-title">
+        <header class="modal-header">
+          <h3 id="delete-address-map-title">Delete Address</h3>
+          <button id="delete-address-map-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p><span id="delete-address-map-confirm-prompt">Are you sure you want to delete</span> <strong id="delete-address-map-address-name"></strong> <span id="delete-address-map-confirm-suffix">from the database?</span></p>
+        </div>
+        <div class="modal-actions">
+          <button id="delete-address-map-btn-cancel" class="btn secondary" type="button">Cancel</button>
+          <button id="delete-address-map-btn-confirm" class="btn danger" type="button">Delete</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="map-info-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-map-info-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="map-info-title">
+        <header class="modal-header">
+          <h3 id="map-info-title">Map Guide</h3>
+          <button id="map-info-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+        </header>
+        <div class="delete-modal-body">
+          <p style="margin-left: 10px; margin-bottom: 5px;"><strong id="map-info-single">Single Address Operations</strong></p>
+          <ul style="line-height: 1.6; margin-left: 20px; margin-bottom: 15px;">
+            <li><span id="map-info-add"><strong>Add an Address:</strong> Click anywhere on the map to search for a building. If an address is found, you will immediately be prompted to assign it to a route.</span></li>
+            <li><span id="map-info-reassign"><strong>Reassign an Address:</strong> Click on any existing colored address marker to view its details and instantly reassign its route using the popup menu.</span></li>
+          </ul>
+          
+          <p style="margin-left: 10px; margin-bottom: 5px;"><strong id="map-info-batch">Batch Operations (using Ctrl)</strong></p>
+          <ul style="line-height: 1.6; margin-left: 20px; margin-bottom: 15px;">
+            <li id="map-info-add-multiple"><strong>Add Multiple Addresses:</strong> Hold <strong>Ctrl</strong> and click on the map multiple times to queue up several new buildings. Release Ctrl when you are done to assign all of them to a route at once.</li>
+            <li id="map-info-reassign-multiple"><strong>Reassign Multiple Addresses:</strong> Hold <strong>Ctrl</strong> and click on existing colored address markers to select them. Selected markers will turn red. Release Ctrl when you are done to reassign all selected addresses to a new route.</li>
+          </ul>
+
+          <p style="margin-left: 10px; margin-bottom: 5px;"><strong id="map-info-other">Other Features</strong></p>
+          <ul style="line-height: 1.6; margin-left: 20px;">
+            <li id="map-info-filter"><strong>Filter:</strong> Use the "Filter by Route" dropdown above the map to only show addresses assigned to a specific route.</li>
+          </ul>
+        </div>
+        <div class="modal-actions">
+          <button id="map-info-ok" class="btn primary" type="button">Got it</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Vendored libraries (no internet required) -->
+    <script src="vendor/xlsx.full.min.js"></script>
+    <script src="vendor/leaflet.js"></script>
+    <script>
+      // Fix Leaflet default icon paths for vendored images
+      L.Icon.Default.imagePath = 'vendor/images/';
+    </script>
+    <script src="vendor/leaflet.markercluster.js"></script>
+    <script src="dist/app.bundle.js"></script>
+
+    <!-- Server-save integration: automatically saves to data/source.json via the local server -->
+    <script>
+    (function() {
+      var saveBtn = document.getElementById('save-changes');
+      if (!saveBtn) return;
+
+      var statusBar = document.getElementById('status');
+
+      saveBtn.addEventListener('click', function() {
+        // Wait for the app's save handler to finish (it updates localStorage synchronously)
+        setTimeout(function() {
+          var cached = localStorage.getItem('source-json-cache');
+          if (!cached) return;
+
+          fetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            body: cached
+          })
+          .then(function(res) {
+            if (res.ok) {
+              if (statusBar) {
+                statusBar.textContent = '\u2705 Lagret til data/source.json';
+              }
+              console.log('[server-save] data/source.json updated successfully');
+            } else {
+              console.warn('[server-save] Server returned', res.status);
+            }
+          })
+          .catch(function(err) {
+            // Server not available — file was still downloaded by the browser
+            console.warn('[server-save] Could not reach server:', err.message);
+          });
+        }, 300);
+      });
+    })();
+    </script>
+  </body>
+</html>

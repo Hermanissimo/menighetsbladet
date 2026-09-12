@@ -1,0 +1,10 @@
+/.playwright-mcp
+/.venv
+/.vscode
+/data
+/misc/*.json
+/standalonePS/data/*.json
+/web/source-data.js
+/web/source_geo.json
+/scratch/
+/node_modules/

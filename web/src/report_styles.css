@@ -1,0 +1,357 @@
+/* Report Modal Styles */
+.report-modal-dialog {
+  max-width: 90vw;
+  width: 900px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.report-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background: white;
+  color: black;
+}
+
+.modal-actions-header {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Report Styles (For Screen & Print) */
+.print-page {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 13.5pt;
+  line-height: 1.25;
+  margin-bottom: 2rem;
+  background: #fff;
+  color: #000;
+}
+
+.print-page + .print-page {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px dashed #ccc;
+}
+
+.print-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.print-header p {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.print-title {
+  font-size: 17pt;
+  font-weight: bold;
+  margin: 0 0 0.25rem 0;
+}
+
+.print-driver-nr {
+  font-size: 15pt;
+  font-weight: bold;
+  margin: 0 0 0.25rem 0;
+}
+
+.header-left, .header-right {
+  flex: 1;
+}
+
+.header-right {
+  text-align: right;
+}
+
+.solid-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.double-underline {
+  text-decoration: underline;
+  text-decoration-style: double;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.print-table th {
+  text-align: left;
+  font-weight: bold;
+  padding-bottom: 0.25rem;
+}
+
+.print-table th.col-antall,
+.print-table th.text-right {
+  text-align: right !important;
+}
+
+.print-table td {
+  padding: 0.15rem 0;
+  vertical-align: top;
+  line-height: 1.2;
+}
+
+.col-rute { width: 16%; }
+.col-bladbaerer { width: 70%; }
+.col-antall { width: 14%; text-align: right !important; white-space: nowrap; }
+
+.col-dist-name { width: 27%; padding-right: 0.5rem; }
+.col-dist-addr { width: 27%; padding-right: 0.5rem; }
+.col-dist-phone { width: 16%; white-space: nowrap; padding-right: 0.5rem; }
+
+.route-id-cell {
+  font-weight: normal;
+}
+
+.route-row td {
+  padding-top: 0.25rem;
+  padding-bottom: 0.05rem;
+}
+
+.notes-row td {
+  padding-top: 0;
+  padding-bottom: 0.35rem;
+}
+
+.notes-row.is-empty td {
+  padding-top: 0;
+  padding-bottom: 0.05rem;
+}
+
+.report-note-editable {
+  color: #c00;
+  font-weight: bold;
+  min-height: 1.2em;
+  padding: 0 2px;
+  display: inline-block;
+  line-height: 1.2;
+}
+
+.report-note-editable:empty:before {
+  content: attr(data-placeholder);
+  color: #aaa;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.print-link {
+  color: #0044cc;
+  text-decoration: underline;
+}
+
+/* Route Report Specific Styles */
+.route-report-page {
+  padding-bottom: 1.5rem;
+}
+
+.route-report-header {
+  margin-bottom: 1rem;
+}
+
+.route-report-meta {
+  line-height: 1.45;
+  margin-top: 0.5rem;
+}
+
+.route-report-meta p {
+  margin: 0.2rem 0;
+}
+
+.route-report-notes-field {
+  margin-top: 0.3rem;
+}
+
+.route-report-divider {
+  border: none;
+  border-top: 1.5px solid #222;
+  margin: 0.8rem 0 1.2rem 0;
+}
+
+.route-report-body {
+  margin-bottom: 1.5rem;
+}
+
+.route-street-block {
+  margin-bottom: 1.2rem;
+}
+
+.route-street-title {
+  font-size: 14pt;
+  font-weight: bold;
+  margin: 0 0 0.3rem 0;
+  color: #111;
+  border-bottom: 1px dotted #888;
+  padding-bottom: 2px;
+}
+
+.route-street-row {
+  margin: 0.2rem 0 0.2rem 1.2rem;
+  line-height: 1.4;
+}
+
+.route-num-label {
+  display: inline-block;
+  min-width: 75px;
+}
+
+.route-street-excluded-list {
+  margin: 0.4rem 0 0.2rem 1.2rem;
+}
+
+.route-excluded-row {
+  margin: 0.2rem 0;
+  color: #990000;
+  font-size: 12pt;
+  line-height: 1.35;
+}
+
+.excluded-badge {
+  font-size: 11pt;
+  margin-right: 4px;
+}
+
+.route-report-summary-box {
+  border: 1.5px solid #333;
+  padding: 0.8rem 1.2rem;
+  background: #fdfdfd;
+  margin-top: 1.5rem;
+  page-break-inside: avoid;
+}
+
+.route-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.route-summary-table td {
+  padding: 0.3rem 0.5rem;
+  font-size: 12.5pt;
+  width: 50%;
+}
+
+.print-empty {
+  font-style: italic;
+  color: #666;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+/* Print CSS */
+@page {
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  body > *:not(#report-modal):not(#route-report-modal) {
+    display: none !important;
+  }
+  
+  #report-modal:not([hidden]),
+  #route-report-modal:not([hidden]) {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    float: none !important;
+  }
+
+  #report-modal[hidden],
+  #route-report-modal[hidden] {
+    display: none !important;
+  }
+  
+  .modal-backdrop,
+  .modal-header,
+  .modal-actions,
+  .report-note-editable:empty,
+  tr.notes-row.is-empty,
+  tr.notes-row:has(.report-note-editable:empty) {
+    display: none !important;
+  }
+  
+  .report-modal-dialog {
+    display: block !important;
+    position: static !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    float: none !important;
+  }
+  
+  .report-modal-body {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    float: none !important;
+  }
+  
+  .print-page {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 12mm 15mm !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .print-page + .print-page {
+    margin-top: 0 !important;
+    padding-top: 12mm !important;
+    border-top: none !important;
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  .print-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  .route-report-summary-box {
+    background: transparent !important;
+  }
+}
