@@ -3,14 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Distribution Dashboard</title>
+    <title>Menighetsbladet</title>
     <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
-    <link rel="stylesheet" href="styles.css?bust=2" />
+    <link rel="stylesheet" href="styles.css?bust=12" />
+    <style>
+      @page {
+        margin: 0;
+      }
+    </style>
     
-    <!-- Leaflet & MarkerCluster (vendored locally) -->
-    <link rel="stylesheet" href="vendor/leaflet.css" />
-    <link rel="stylesheet" href="vendor/MarkerCluster.css" />
-    <link rel="stylesheet" href="vendor/MarkerCluster.Default.css" />
+    <!-- Leaflet & MarkerCluster -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="" />
   </head>
   <body>
     <main class="page">
@@ -19,11 +24,11 @@
           <p class="kicker">Menighetsbladet</p>
           <div class="top-controls">
             <label class="lang-wrap" for="language-select">
-              <span id="lang-label">Language</span>
-              <select id="language-select" aria-label="Language selector">
-                <option value="en">English</option>
-                <option value="nb">Norsk (bokmal)</option>
+              <span id="lang-label">Språk</span>
+              <select id="language-select" aria-label="Språkvelger">
+                <option value="nb" selected>Norsk (bokmål)</option>
                 <option value="nn">Norsk (nynorsk)</option>
+                <option value="en">English</option>
                 <option value="sv">Svenska</option>
               </select>
             </label>
@@ -35,23 +40,27 @@
         </div>
         <div class="title-row">
           <h1 id="title">Distribution Control Panel</h1>
-          <button id="save-changes" class="btn primary" type="button" hidden>Save Changes</button>
+          <div class="save-group" id="save-group" hidden>
+            <button id="save-changes" class="btn primary" type="button">Quick save</button>
+            <div class="dropdown">
+              <button id="save-dropdown-toggle" class="btn primary dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+                ▼
+              </button>
+              <div class="dropdown-menu" id="save-dropdown-menu">
+                <button id="save-as-copy" class="dropdown-item" type="button">Save as a copy</button>
+              </div>
+            </div>
+          </div>
         </div>
         <p id="subtitle" class="subtitle">Driver-, distributor- and address counts from source data.</p>
         <div id="settings-panel" class="settings-panel" hidden>
           <div class="loader-row">
-            <label id="choose-file-label" for="xml-file" class="btn secondary">Choose Data File</label>
-            <input id="xml-file" type="file" accept=".json,application/json,text/json" />
+            <button id="choose-file-label" class="btn secondary" type="button">Choose Data File</button>
+            <input id="xml-file" type="file" accept=".json,application/json,text/json" hidden />
             <button id="open-user-guide" class="btn tertiary" type="button">User guide</button>
           </div>
-          <div class="autosave-row">
-            <label class="autosave-wrap" for="inactivity-seconds">
-              <span id="inactivity-label">Autosave after inactivity (seconds)</span>
-              <input id="inactivity-seconds" type="number" min="5" step="5" value="60" />
-            </label>
-          </div>
           <p id="data-source-line" class="status"><strong id="data-source-label">Data source:</strong> <span id="data-source-value">Not loaded</span></p>
-          <p id="derived-note" class="status">Dashboard, paper and route count are calculated dynamically and are not stored in source.json.</p>
+          <p id="derived-note" class="status">Dashboard, magazine and route count are calculated dynamically and are not stored in source.json.</p>
           <p id="status" class="status">Ready. Load data to populate dashboard.</p>
         </div>
       </section>
@@ -120,9 +129,9 @@
             </div>
 
             <div class="dash-card">
-              <h3 id="row-papers">Newspapers to order</h3>
+              <h3 id="row-papers">Magazines to order</h3>
               <div class="dash-value highlight" id="papers-to-order">-</div>
-              <div class="dash-subtitle"><span id="row-extra-papers">Extra papers</span>: <span id="extra-papers">-</span></div>
+              <div class="dash-subtitle"><span id="row-extra-papers">Extra magazines</span>: <span id="extra-papers">-</span></div>
             </div>
 
             <div class="dash-card">
@@ -135,6 +144,9 @@
                 <div class="stat-row">
                   <span id="row-distributors">Distributors</span>: <strong id="dist-total">-</strong>
                   <small>(<span id="dist-active">-</span> <span id="dash-dist-act-label">active</span>, <span id="dist-inactive">-</span> <span id="dash-dist-ina-label">inactive</span>)</small>
+                </div>
+                <div class="stat-row" id="dash-dist-no-driver-row" style="color: #c0392b; font-weight: 600;" hidden>
+                  <span>⚠️ <span id="dash-dist-no-driver-label">Active without driver:</span></span> <strong id="dist-no-driver">-</strong>
                 </div>
               </div>
             </div>
@@ -177,7 +189,7 @@
                 <th id="drivers-col-address" scope="col">Address</th>
                 <th id="drivers-col-postnr" scope="col">Postnr</th>
                 <th id="drivers-col-routecount" scope="col">Route count</th>
-                <th id="drivers-col-papercount" scope="col">Paper count</th>
+                <th id="drivers-col-papercount" scope="col">Magazine count</th>
                 <th id="drivers-col-actions" scope="col">Actions</th>
               </tr>
             </thead>
@@ -238,8 +250,8 @@
                 <th id="dist-col-email" scope="col">Email</th>
                 <th id="dist-col-address" scope="col">Address</th>
                 <th id="dist-col-postnr" scope="col">Postnr</th>
-                <th id="dist-col-extrapapers" scope="col">Extra papers</th>
-                <th id="dist-col-papercount" scope="col">Papers total</th>
+                <th id="dist-col-extrapapers" scope="col">Extra magazines</th>
+                <th id="dist-col-papercount" scope="col">Magazines total</th>
                 <th id="dist-col-actions" scope="col">Actions</th>
               </tr>
             </thead>
@@ -290,6 +302,16 @@
               <label class="filter-wrap" for="filter-addresses-postnr"><span id="filter-postnr-label-addresses">Postnr</span><input id="filter-addresses-postnr" type="search" placeholder="Postnr" /></label>
             </div>
             <button id="reset-filters-addresses" class="btn tertiary" type="button">Reset filters</button>
+            <div class="checkbox-filters-wrap">
+              <label class="checkbox-filter-label" for="filter-addresses-only-excluded">
+                <input id="filter-addresses-only-excluded" type="checkbox" />
+                <span id="filter-addresses-only-excluded-label">Show only excluded addresses</span>
+              </label>
+              <label class="checkbox-filter-label" for="filter-addresses-with-excluded">
+                <input id="filter-addresses-with-excluded" type="checkbox" />
+                <span id="filter-addresses-with-excluded-label">Show only addresses with excluded households</span>
+              </label>
+            </div>
           </div>
           <table id="addresses-table" class="data-table" aria-label="Addresses table">
             <thead>
@@ -337,10 +359,12 @@
                 <div class="export-menu" hidden>
                   <button class="export-action btn tertiary" data-format="csv" data-target="routes" type="button">CSV</button>
                   <button class="export-action btn tertiary" data-format="xlsx" data-target="routes" type="button">XLSX</button>
+                  <button id="print-all-routes" class="export-action btn tertiary" data-format="print" data-target="routes" type="button">Route Reports (Print All)</button>
                 </div>
               </div>
+              <button id="add-route" class="btn secondary" type="button">Add record</button>
               <button id="batch-status-routes" class="btn secondary" type="button" disabled>Update status</button>
-
+              <button id="merge-routes-btn" class="btn secondary" type="button" disabled>Merge routes</button>
             </div>
           </div>
           <div class="table-tools">
@@ -362,8 +386,8 @@
                 <th id="routes-col-distributors" scope="col">Distributors</th>
                 <th id="routes-col-drivernr" scope="col">Driver</th>
                 <th id="routes-col-addresses" scope="col">Addresses</th>
-                <th id="routes-col-extrapapers" scope="col">Extra papers</th>
-                <th id="routes-col-papers" scope="col">Papers total</th>
+                <th id="routes-col-extrapapers" scope="col">Extra magazines</th>
+                <th id="routes-col-papers" scope="col">Magazines total</th>
                 <th id="routes-col-description" scope="col">Addresses summary</th>
                 <th id="routes-col-notes" scope="col">Notes</th>
                 <th id="routes-col-actions" scope="col">Actions</th>
@@ -393,9 +417,29 @@
 
         <section id="panel-map" class="tab-panel" role="tabpanel" aria-labelledby="tab-map" hidden>
           <div class="panel-head">
-            <h2 id="map-title" style="display:inline-flex; align-items:center; gap:8px;">
+            <h2 id="map-title" style="display:inline-flex; align-items:center;">
               <span id="map-title-text">Map</span>
-              <button id="map-info-btn" class="btn tertiary" style="padding:0; min-width:auto; border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #ccc; cursor:pointer;" aria-label="Map Info" title="Map Info">ℹ</button>
+              <div class="modal-info-wrap" style="margin-left: 8px;">
+                <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+                <div id="map-info-popup" class="modal-info-popup" style="width: 380px;">
+                  <p style="margin-bottom: 5px;"><strong id="map-info-single">Single Address Operations</strong></p>
+                  <ul style="line-height: 1.4; padding-left: 20px; margin-bottom: 10px;">
+                    <li><span id="map-info-add"><strong>Add an Address:</strong> Click anywhere on the map to search for a building. If an address is found, you will immediately be prompted to assign it to a route.</span></li>
+                    <li><span id="map-info-reassign"><strong>Reassign an Address:</strong> Click on any existing colored address marker to view its details and instantly reassign its route using the popup menu.</span></li>
+                  </ul>
+                  
+                  <p style="margin-bottom: 5px;"><strong id="map-info-batch">Batch Operations (using Ctrl)</strong></p>
+                  <ul style="line-height: 1.4; padding-left: 20px; margin-bottom: 10px;">
+                    <li id="map-info-add-multiple"><strong>Add Multiple Addresses:</strong> Hold <strong>Ctrl</strong> and click on the map multiple times to queue up several new buildings. Release Ctrl when you are done to assign all of them to a route at once.</li>
+                    <li id="map-info-reassign-multiple"><strong>Reassign Multiple Addresses:</strong> Hold <strong>Ctrl</strong> and click on existing colored address markers to select them. Selected markers will turn red. Release Ctrl when you are done to reassign all selected addresses to a new route.</li>
+                  </ul>
+
+                  <p style="margin-bottom: 5px;"><strong id="map-info-other">Other Features</strong></p>
+                  <ul style="line-height: 1.4; padding-left: 20px; margin-bottom: 0;">
+                    <li id="map-info-filter"><strong>Filter:</strong> Use the "Filter by Route" dropdown above the map to only show addresses assigned to a specific route.</li>
+                  </ul>
+                </div>
+              </div>
             </h2>
             <div class="panel-actions" style="display: flex; align-items: center; gap: 15px;">
               <div>
@@ -416,10 +460,16 @@
       <div class="modal-backdrop" data-modal-close="1"></div>
       <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
         <header class="modal-header">
-          <h3 id="edit-modal-title">Edit row</h3>
+          <div style="display:flex; align-items:center;">
+            <h3 id="edit-modal-title">Edit row</h3>
+            <div class="modal-info-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+              <div id="edit-modal-info" class="modal-info-popup"></div>
+            </div>
+          </div>
           <button id="edit-modal-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
         </header>
-        <form id="edit-modal-form" class="modal-form">
+        <form id="edit-modal-form" class="modal-form" novalidate>
           <p id="edit-modal-error" class="modal-error" hidden></p>
           <div id="edit-modal-fields" class="modal-fields"></div>
           <div class="modal-actions">
@@ -434,7 +484,13 @@
       <div class="modal-backdrop" data-batch-status-close="1"></div>
       <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="batch-status-title">
         <header class="modal-header">
-          <h3 id="batch-status-title">Update status</h3>
+          <div style="display:flex; align-items:center;">
+            <h3 id="batch-status-title">Update status</h3>
+            <div class="modal-info-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+              <div id="batch-status-info" class="modal-info-popup"></div>
+            </div>
+          </div>
           <button id="batch-status-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
         </header>
         <div class="delete-modal-body">
@@ -457,7 +513,13 @@
       <div class="modal-backdrop" data-batch-route-close="1"></div>
       <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="batch-route-title">
         <header class="modal-header">
-          <h3 id="batch-route-title">Update route</h3>
+          <div style="display:flex; align-items:center;">
+            <h3 id="batch-route-title">Update route</h3>
+            <div class="modal-info-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+              <div id="batch-route-info" class="modal-info-popup"></div>
+            </div>
+          </div>
           <button id="batch-route-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
         </header>
         <div class="delete-modal-body">
@@ -554,10 +616,10 @@
           <h3 id="source-missing-title">Source file not loaded</h3>
         </header>
         <div class="delete-modal-body">
-          <p id="source-missing-message">Start work with loading the data from source.json file in data folder</p>
+          <p id="source-missing-message">Start work by loading your source.json data file</p>
         </div>
         <div class="modal-actions">
-          <button id="open-data-folder" class="btn primary" type="button">Open data folder</button>
+          <button id="open-data-folder" class="btn primary" type="button">Choose Data File</button>
         </div>
       </section>
     </div>
@@ -566,7 +628,13 @@
       <div class="modal-backdrop" data-report-modal-close="1"></div>
       <section class="modal-dialog report-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
         <header class="modal-header">
-          <h3 id="report-modal-title">Kjørelister (Preview)</h3>
+          <div style="display:flex; align-items:center;">
+            <h3 id="report-modal-title">Kjørelister (Preview)</h3>
+            <div class="modal-info-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+              <div id="report-modal-info" class="modal-info-popup"></div>
+            </div>
+          </div>
           <div class="modal-actions-header">
             <button id="report-modal-print" class="btn primary" type="button">Print</button>
             <button id="report-modal-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
@@ -577,12 +645,39 @@
       </section>
     </div>
 
+    <div id="route-report-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-route-report-modal-close="1"></div>
+      <section class="modal-dialog report-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="route-report-modal-title">
+        <header class="modal-header">
+          <div style="display:flex; align-items:center;">
+            <h3 id="route-report-modal-title">Route Report (Preview)</h3>
+            <div class="modal-info-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+              <div id="route-report-modal-info" class="modal-info-popup"></div>
+            </div>
+          </div>
+          <div class="modal-actions-header">
+            <button id="route-report-modal-print" class="btn primary" type="button">Print</button>
+            <button id="route-report-modal-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+          </div>
+        </header>
+        <div id="route-report-modal-content" class="report-modal-body">
+        </div>
+      </section>
+    </div>
+
     <div id="add-address-map-modal" class="modal" hidden>
       <div class="modal-backdrop" data-add-map-close="1"></div>
       <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="add-address-map-title">
         <header class="modal-header">
-          <h3 id="add-address-map-title">Add address?</h3>
-            <button id="add-address-map-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+          <div style="display:flex; align-items:center;">
+            <h3 id="add-address-map-title">Add address?</h3>
+            <div class="modal-info-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+              <div id="add-address-map-info" class="modal-info-popup"></div>
+            </div>
+          </div>
+          <button id="add-address-map-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
         </header>
         <div class="delete-modal-body">
           <p id="add-address-map-message">Fetching data...</p>
@@ -609,7 +704,13 @@
       <div class="modal-backdrop" data-reassign-route-close="1"></div>
       <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="reassign-route-title">
         <header class="modal-header">
-          <h3 id="reassign-route-title">Reassign Selected Addresses</h3>
+          <div style="display:flex; align-items:center;">
+            <h3 id="reassign-route-title">Reassign Selected Addresses</h3>
+            <div class="modal-info-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+              <div id="reassign-route-info" class="modal-info-popup"></div>
+            </div>
+          </div>
           <button id="reassign-route-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
         </header>
         <div class="delete-modal-body">
@@ -643,83 +744,31 @@
       </section>
     </div>
 
-    <div id="map-info-modal" class="modal" hidden>
-      <div class="modal-backdrop" data-map-info-close="1"></div>
-      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="map-info-title">
+    
+    <div id="merge-routes-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-merge-routes-close="1"></div>
+      <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="merge-routes-title">
         <header class="modal-header">
-          <h3 id="map-info-title">Map Guide</h3>
-          <button id="map-info-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
+          <div style="display:flex; align-items:center;">
+            <h3 id="merge-routes-title">Merge Routes</h3>
+          </div>
+          <button id="merge-routes-close" class="btn tertiary modal-close" type="button" aria-label="Close">X</button>
         </header>
-        <div class="delete-modal-body">
-          <p style="margin-left: 10px; margin-bottom: 5px;"><strong id="map-info-single">Single Address Operations</strong></p>
-          <ul style="line-height: 1.6; margin-left: 20px; margin-bottom: 15px;">
-            <li><span id="map-info-add"><strong>Add an Address:</strong> Click anywhere on the map to search for a building. If an address is found, you will immediately be prompted to assign it to a route.</span></li>
-            <li><span id="map-info-reassign"><strong>Reassign an Address:</strong> Click on any existing colored address marker to view its details and instantly reassign its route using the popup menu.</span></li>
-          </ul>
-          
-          <p style="margin-left: 10px; margin-bottom: 5px;"><strong id="map-info-batch">Batch Operations (using Ctrl)</strong></p>
-          <ul style="line-height: 1.6; margin-left: 20px; margin-bottom: 15px;">
-            <li id="map-info-add-multiple"><strong>Add Multiple Addresses:</strong> Hold <strong>Ctrl</strong> and click on the map multiple times to queue up several new buildings. Release Ctrl when you are done to assign all of them to a route at once.</li>
-            <li id="map-info-reassign-multiple"><strong>Reassign Multiple Addresses:</strong> Hold <strong>Ctrl</strong> and click on existing colored address markers to select them. Selected markers will turn red. Release Ctrl when you are done to reassign all selected addresses to a new route.</li>
-          </ul>
-
-          <p style="margin-left: 10px; margin-bottom: 5px;"><strong id="map-info-other">Other Features</strong></p>
-          <ul style="line-height: 1.6; margin-left: 20px;">
-            <li id="map-info-filter"><strong>Filter:</strong> Use the "Filter by Route" dropdown above the map to only show addresses assigned to a specific route.</li>
-          </ul>
-        </div>
-        <div class="modal-actions">
-          <button id="map-info-ok" class="btn primary" type="button">Got it</button>
-        </div>
+        <form id="merge-routes-form" class="modal-form">
+          <p id="merge-routes-message" style="margin-bottom:1rem; font-size:14px; color:#5f6368;"></p>
+          <p id="merge-routes-error" class="modal-error" hidden></p>
+          <div id="merge-routes-fields" class="modal-fields"></div>
+          <div class="modal-actions">
+            <button id="merge-routes-cancel" class="btn secondary" type="button">Cancel</button>
+            <button id="merge-routes-apply" class="btn primary" type="submit">Merge</button>
+          </div>
+        </form>
       </section>
     </div>
 
-    <!-- Vendored libraries (no internet required) -->
-    <script src="vendor/xlsx.full.min.js"></script>
-    <script src="vendor/leaflet.js"></script>
-    <script>
-      // Fix Leaflet default icon paths for vendored images
-      L.Icon.Default.imagePath = 'vendor/images/';
-    </script>
-    <script src="vendor/leaflet.markercluster.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
     <script src="dist/app.bundle.js"></script>
-
-    <!-- Server-save integration: automatically saves to data/source.json via the local server -->
-    <script>
-    (function() {
-      var saveBtn = document.getElementById('save-changes');
-      if (!saveBtn) return;
-
-      var statusBar = document.getElementById('status');
-
-      saveBtn.addEventListener('click', function() {
-        // Wait for the app's save handler to finish (it updates localStorage synchronously)
-        setTimeout(function() {
-          var cached = localStorage.getItem('source-json-cache');
-          if (!cached) return;
-
-          fetch('/api/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json; charset=utf-8' },
-            body: cached
-          })
-          .then(function(res) {
-            if (res.ok) {
-              if (statusBar) {
-                statusBar.textContent = '\u2705 Lagret til data/source.json';
-              }
-              console.log('[server-save] data/source.json updated successfully');
-            } else {
-              console.warn('[server-save] Server returned', res.status);
-            }
-          })
-          .catch(function(err) {
-            // Server not available — file was still downloaded by the browser
-            console.warn('[server-save] Could not reach server:', err.message);
-          });
-        }, 300);
-      });
-    })();
-    </script>
   </body>
 </html>

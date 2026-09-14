@@ -3,7 +3,7 @@
 This repository is a static, browser-based route and distribution management app. The core objective is to maintain a canonical, human-editable source dataset in JSON while providing a friendly UI for route assignment, distributor/driver management, dashboard summaries, and export workflows.
 
 The app is designed around a single source of truth:
-- `data/source.json` for editable operational data
+- `source.json` for editable operational data
 - `web/app.js` for rendering, normalization, filters, derived calculations, and exports
 - `web/index.html` / `web/styles.css` for the UI shell
 
@@ -38,7 +38,7 @@ The main operational expectation is that route, distributor, and driver metadata
 
 ## Current Data Model
 
-The canonical data lives under the top-level collections in `data/source.json`:
+The canonical data lives under the top-level collections in `source.json`:
 - `addresses`
 - `distributors`
 - `drivers`
@@ -189,9 +189,9 @@ When editing the live data or logic, always verify in this order:
 2. Validate JS parse:
    - `node -e "const fs=require('fs'); new Function(fs.readFileSync('web/app.js','utf8')); console.log('ok');"`
 3. Validate JSON parse:
-   - `python -c "import json; json.load(open('data/source.json',encoding='utf-8')); print('ok')"`
+   - `python -c "import json; json.load(open('source.json',encoding='utf-8')); print('ok')"`
 4. If changing address schema, verify no legacy keys remain in addresses:
-   - `python -c "import json; d=json.load(open('data/source.json',encoding='utf-8')); a=d['addresses']; print(sum(1 for r in a if 'status' in r or 'street' in r or 'houseNo' in r))"`
+   - `python -c "import json; d=json.load(open('source.json',encoding='utf-8')); a=d['addresses']; print(sum(1 for r in a if 'status' in r or 'street' in r or 'houseNo' in r))"`
 5. If changing the routes model, verify route references are coherent:
    - route IDs in address records resolve to known route entries
    - distributor `routes` arrays resolve to known route entries
@@ -220,7 +220,7 @@ When running live API checks, prefer cached lookups to avoid unnecessary repeate
 
 ## Working Notes for Future Agents
 
-- Treat `data/source.json` as the source of truth for edits.
+- Treat `source.json` as the source of truth for edits.
 - Keep the app’s normalization helper behavior consistent with the Python migration scripts.
 - Do not reintroduce legacy or redundant address fields (like `distributor` or `driverName`) into base rows.
 - Keep route ownership, distributor assignment, and driver assignment in sync.

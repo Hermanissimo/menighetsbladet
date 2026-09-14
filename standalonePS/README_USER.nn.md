@@ -1,6 +1,12 @@
 # Brukarrettleiing - Menighetsbladet Distribusjonskontrollpanel
 
-Velkomen til distribusjonssystemet for Menighetsbladet. Denne rettleiinga gjev ei fullstendig oversikt over alle funksjonar, skjermbilete, utrekningar og arbeidsprosessar.
+Velkomen til distribusjonssystemet for Menighetsbladet. Løysinga er drifta på nett via **GitHub Pages** ([https://hermanissimo.github.io/menighetsbladet/](https://hermanissimo.github.io/menighetsbladet/)), og er tilgjengeleg direkte i alle moderne nettlesarar på PC, nettbrett og mobil utan behov for lokal installasjon eller oppsett av tenarar.
+
+### Personvern og «Ta med eigne data»-arkitektur
+- **Berre rammeverk på GitHub**: Det offentlege GitHub-repositoriet og nettsida på GitHub Pages inneheld **berre sjølve rammeverket og programkoden** — det er fullstendig reinsa for personopplysningar, adresser, lister over frivillige og kontaktinfo.
+- **100 % lokalt og konfidensielt**: Ingen menighetsdata eller personopplysningar blir sende til eller lagra på GitHub eller eksterne tenarar. All databehandling skjer berre lokalt i nettlesaren på di eiga maskin.
+- **Laste inn data**: Når du opnar nettsida, lastar du inn den lokale datafila til soknet (`source.json`) ved å trykkje på **Vel datafil** (eller via **Innstillingar ⚙**).
+- **Lagre arbeidet**: Ved å trykkje på **Lagre endringar** blir ei oppdatert `source.json`-fil (eller ein kopi med tidsstempel `source_YYYYMMDD_HHmm.json`) lasta ned til maskina di for det lokale soknearkivet.
 
 ---
 
@@ -8,8 +14,8 @@ Velkomen til distribusjonssystemet for Menighetsbladet. Denne rettleiinga gjev e
 
 ### Hovudmeny og toppkontrollar
 - **Språkveljar**: Byt mellom norsk bokmål (`nb`), norsk nynorsk (`nn`), engelsk (`en`) og svensk (`sv`). Alle tekstar, tabellar og feilmeldingar blir oppdaterte straks.
-- **Innstillingar (⚙)**: Opnar innstillingspanelet for å sjå kva for datafil som er aktiv, laste inn ei anna fil via **Vel datafil**, eller opne denne rettleiinga.
-- **Lagre endringar**: Viser seg oppe til høgre så snart du har gjort endringar i dataa. I frittståande modus blir endringane lagra direkte til `data/source.json` på maskina, og det blir automatisk oppretta ein tryggingskopi med tidsstempel. I vanleg nettlesarmodus blir ei oppdatert `source.json`-fil lasta ned.
+- **Innstillingar (⚙)**: Opnar innstillingspanelet for å sjå kva for datafil som er aktiv, laste inn eit eige datasett via **Vel datafil**, eller opne denne rettleiinga.
+- **Lagre endringar**: Viser seg oppe til høgre så snart du har gjort endringar i dataa (lagra mellombels i nettlesaren sin IndexedDB). Ved å klikke her blir ei oppdatert `source.json`-fil eksportert og lasta ned til maskina di. Du kan også lagre tryggingskopiar med tidsstempel (t.d. `source_YYYYMMDD_HHmm.json`) via «Lagre som kopi» for arkivering av distribusjonsrundar. I nettlesarar med støtte for File System Access API der du opna ei lokal fil via fillasteren, kan endringane også lagrast direkte til fila på disken.
 - **Sikring mot tap av endringar (Close Guard)**: Dersom du freistar å lukke eller laste inn nettlesarfanen på nytt medan det finst ulagra endringar, kjem det opp eit varsel der du kan velje å lagre, halde fram eller forkaste endringane.
 
 ### Faner
@@ -202,7 +208,10 @@ Interaktivt kartverktøy basert på Leaflet og Kartverkets/Geonorges adressedata
 5. Klikk **Slå saman**. Rutene blir oppdaterte og adressene flytta automatisk.
 
 ### Arbeidsprosess 6: Lagring og tryggingskopiering
-1. Når du har gjort endringar, kjem **Lagre endringar**-knappen til syne oppe til høgre.
-2. Klikk på **Lagre endringar**.
-3. I frittståande modus blir fila lagra direkte til `data/source.json`, og ein tryggingskopi blir oppretta i `data/`-mappa.
-4. I nettlesarmodus blir ei oppdatert `source.json`-fil lasta ned som du legg i prosjektets `data/`-mappe.
+Sidan applikasjonen køyrer lokalt i nettlesaren din via GitHub Pages og det ikkje blir lagra data på vevtenaren, er alle endringar fullt ut lokale:
+1. Når du gjer endringar i adresser, ruter, bladberarar eller sjåførar, blir endringane haldne i minnet og lagra i det lokale snøgglageret til nettlesaren (IndexedDB). Knappen **Lagre endringar** oppe til høgre kjem til syne med ein indikator for ulagra endringar.
+2. Klikk på **Lagre endringar**:
+   - **Last ned oppdatert datasett**: Applikasjonen eksporterer og lastar ned datasettet som `source.json`. Ta vare på fila på maskina di eller soknet sitt fellesområde.
+   - **Lagre arkivkopi med tidsstempel**: Bruk valet «Lagre som kopi» for å laste ned ein kopi med dato og klokkeslett (t.d. `source_YYYYMMDD_HHmm.json`) for historisk oversikt over tidlegare utdelingsrundar.
+   - **Direkte fillagring**: I nettlesarar med støtte for File System Access API der du opna ei lokal fil via fillasteren, kan du lagre oppdateringane direkte attende til fila på disken.
+3. **Datasikkerheit**: Hugs at nettsida på GitHub Pages ikkje lagrar dataa dine på nettet. Last difor alltid ned ei oppdatert `source.json`-fil når du er ferdig med ei arbeidsøkt.

@@ -35,7 +35,7 @@ Modern data management system and interactive web dashboard hosted online via **
 
 ---
 
-## Core Data Model (`data/source.json`)
+## Core Data Model (`source.json`)
 
 The system enforces a relational model centered on `routes`:
 
@@ -123,7 +123,7 @@ For fully offline use on Windows machines without internet access or Node.js:
 3. The PowerShell HTTP server starts automatically and launches `http://localhost:8080/web/` in your default browser.
 4. When editing in this mode:
    - Clicking **Save Changes** sends a `POST` request to `/api/save`.
-   - The server creates a timestamped backup (`data/source.backup-YYYYMMDD-HHmmss.json`) and updates `data/source.json` directly.
+   - The server creates a timestamped backup (`source.backup-YYYYMMDD-HHmmss.json`) and updates `source.json` directly.
 5. To stop the server, double-click `STOPP.bat` or press `Ctrl+C` in the console window.
 
 ### 3. Local Development Mode

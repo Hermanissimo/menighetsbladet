@@ -1,6 +1,12 @@
 # Användarguide (User Guide) - Menighetsbladet Distributionspanel
 
-Välkommen till distributionssystemet för Menighetsbladet. Denna guide ger en fullständig genomgång av alla funktioner, vyer, beräkningar och arbetsflöden.
+Välkommen till distributionssystemet för Menighetsbladet. Webbplatsen driftas online via **GitHub Pages** ([https://hermanissimo.github.io/menighetsbladet/](https://hermanissimo.github.io/menighetsbladet/)) och är tillgänglig direkt i alla moderna webbläsare på dator, surfplatta och mobil utan krav på lokal installation eller serverkonfiguration.
+
+### Integritet och "Ta med eget dataset"-arkitektur
+- **Enbart ramverk på GitHub**: Det offentliga GitHub-arkivet och webbplatsen på GitHub Pages innehåller **enbart själva applikationsramverket och koden** — de är helt rensade från personuppgifter, adressregister, volontärlistor och kontaktuppgifter.
+- **100 % lokalt och konfidentiellt**: Inga församlingsdata eller personuppgifter skickas till eller lagras på GitHub eller externa servrar. All databehandling sker helt lokalt i webbläsaren på din egen enhet.
+- **Ladda in data**: När du öppnar webbplatsen laddar du in församlingens lokala datafil (`source.json`) genom att klicka på **Välj datafil** (eller via **Inställningar ⚙**).
+- **Spara arbetet**: Genom att klicka på **Spara ändringar** laddas en uppdaterad `source.json`-fil (eller tidsstämplad kopia `source_YYYYMMDD_HHmm.json`) ned till din dator för församlingens lokala arkiv.
 
 ---
 
@@ -8,8 +14,8 @@ Välkommen till distributionssystemet för Menighetsbladet. Denna guide ger en f
 
 ### Huvudmeny och toppkontroller
 - **Språkväljare**: Växla mellan norska bokmål (`nb`), norska nynorsk (`nn`), engelska (`en`) och svenska (`sv`). Alla texter och tabeller uppdateras direkt.
-- **Inställningar (⚙)**: Öppnar inställningspanelen för att se vilken datafil som är aktiv, ladda in en annan fil via **Välj datafil**, eller öppna denna användarguide.
-- **Spara ändringar**: Visas uppe till höger så fort du gjort ändringar. I fristående läge sparas ändringarna direkt till `data/source.json` på datorn och en tidsstämplad säkerhetskopia skapas automatiskt. I vanligt webbläsarläge laddas en uppdaterad `source.json`-fil ned.
+- **Inställningar (⚙)**: Öppnar inställningspanelen för att se vilken datafil som är aktiv, ladda in ett lokalt dataset via **Välj datafil**, eller öppna denna användarguide.
+- **Spara ändringar**: Visas uppe till höger så fort du gjort ändringar i data (sparas tills vidare i webbläsarens IndexedDB). Genom att klicka här exporteras och laddas en uppdaterad `source.json`-fil ned till din dator. Du kan även spara tidsstämplade säkerhetskopior (t.ex. `source_YYYYMMDD_HHmm.json`) via "Spara som kopia" för historisk arkivering av utdelningsrundor. I webbläsare med stöd för File System Access API där du öppnat en lokal fil via filladdaren kan uppdateringarna även sparas direkt till filen på disken.
 - **Skydd mot förlorade ändringar (Close Guard)**: Om du försöker stänga eller ladda om webbläsarfliken med osparade ändringar visas en varning där du kan välja att spara, fortsätta arbeta eller förkasta ändringarna.
 
 ### Flikar
@@ -202,7 +208,10 @@ Interaktivt kartverktyg baserat på Leaflet och Kartverkets/Geonorges adressdata
 5. Klicka på **Slå ihop**. Rutterna uppdateras och adresserna flyttas automatiskt.
 
 ### Arbetsflöde 6: Spara och säkerhetskopiera
-1. När du gjort ändringar tänds knappen **Spara ändringar** uppe till höger.
-2. Klicka på **Spara ändringar**.
-3. I fristående läge sparas filen direkt till `data/source.json`, och en säkerhetskopia skapas automatiskt i mappen `data/`.
-4. I webbläsarläge laddas en uppdaterad `source.json` ned som du placerar i projektets `data/`-mapp.
+Eftersom applikationen körs lokalt i webbläsaren via GitHub Pages och inga data sparas på webbservern förblir alla ändringar helt lokala:
+1. När du gör ändringar i adresser, rutter, utdelare eller förare hålls ändringarna i minnet och sparas i webbläsarens lokala snabbminne (IndexedDB). Knappen **Spara ändringar** uppe till höger tänds med en indikator för osparade ändringar.
+2. Klicka på **Spara ändringar**:
+   - **Ladda ned uppdaterat dataset**: Applikationen exporterar och laddar ned datasetet som `source.json`. Spara filen på din lokala dator eller församlingens delade lagring.
+   - **Spara tidsstämplad arkivkopia**: Använd valet "Spara som kopia" för att ladda ned en kopia med datum och klockslag (t.ex. `source_YYYYMMDD_HHmm.json`), vilket ger en tydlig historik över tidigare utdelningsrundor.
+   - **Direkt filsparning**: I webbläsare med stöd för File System Access API där du öppnat en lokal fil via filladdaren kan uppdateringarna sparas direkt tillbaka till filen på disken.
+3. **Datasäkerhet**: Kom ihåg att webbplatsen på GitHub Pages inte sparar dina data på nätet. Ladda därför alltid ned en uppdaterad `source.json` när du är klar med en session.

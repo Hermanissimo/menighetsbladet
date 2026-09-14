@@ -172,7 +172,7 @@
       mapReassigningCountAddresses: "Reassigning <b>{count}</b> addresses",
       mapDeleteConfirmPrompt: "Are you sure you want to delete",
       mapDeleteConfirmSuffix: "from the database?",
-      openDataFolder: "Open data folder",
+      openDataFolder: "Choose Data File",
       mapInfoTitle: "Map Guide",
       mapInfoSingle: "Single Address Operations",
       mapInfoAdd: "<strong>Add an Address:</strong> Click anywhere on the map to search for a building. If an address is found, you will immediately be prompted to assign it to a route.",
@@ -296,14 +296,14 @@
       langLabel: "Language",
       title: "Distribution Control Panel",
       subtitle: "Driver-, distributor- and address counts from source data.",
-      loadDefault: "Load data/source.json",
+      loadDefault: "Load source.json",
       sourceMissingTitle: "Source file not loaded",
-      sourceMissingMessage: "Start by loading source.json from the data folder. Path is data/source.json from project root. Click 'Open data folder' and select source.json. If needed, use 'Choose Data File' and browse manually to data/source.json.",
-      openDataFolderAction: "Open data folder",
+      sourceMissingMessage: "Start by loading your source.json file. Click 'Choose Data File' to select your source.json dataset.",
+      openDataFolderAction: "Choose Data File",
       userGuideAction: "User guide",
       userGuideTitle: "User guide",
       userGuideLoading: "Loading...",
-      userGuideFallback: "User Guide - Menighetsbladet\n\n1. Navigation & Tabs:\n- Dashboard: Key totals, magazine order requirement, and delivery overview.\n- Drivers: Manage drivers, view assigned routes/papers, preview and print run sheets (kj\xF8relister).\n- Distributors (Bladb\xE6rere): Manage distributors and assigned routes. Highlights active distributors missing a driver.\n- Addresses: Address registry with household counts and exclusions.\n- Routes: Route definitions with assigned distributor, driver, and paper counts.\n- Map: Interactive map to inspect address pins, add addresses, and reassign routes.\n\n2. Editing & Saving:\n- Search, filter, or sort directly in any table or on the map.\n- Edit, add, or delete rows as needed.\n- Click 'Save Changes' (top-right) to export updates to data/source.json.\n\n3. Magazine Calculation Logic:\n- Included Households = Households - Excluded Households\n- Magazines to Order = Included Households + Extra Papers\n\n4. Export & Run Sheets:\n- CSV & Excel (XLSX): Export tables or summaries with the export buttons.\n- Run Sheets: Select 'Preview & Print Kj\xF8reliste' in driver actions for a printer-friendly sheet.",
+      userGuideFallback: "User Guide - Menighetsbladet\n\n1. Navigation & Tabs:\n- Dashboard: Key totals, magazine order requirement, and delivery overview.\n- Drivers: Manage drivers, view assigned routes/papers, preview and print run sheets (kj\xF8relister).\n- Distributors (Bladb\xE6rere): Manage distributors and assigned routes. Highlights active distributors missing a driver.\n- Addresses: Address registry with household counts and exclusions.\n- Routes: Route definitions with assigned distributor, driver, and paper counts.\n- Map: Interactive map to inspect address pins, add addresses, and reassign routes.\n\n2. Editing & Saving:\n- Search, filter, or sort directly in any table or on the map.\n- Edit, add, or delete rows as needed.\n- Click 'Save Changes' (top-right) to export updates to source.json.\n\n3. Magazine Calculation Logic:\n- Included Households = Households - Excluded Households\n- Magazines to Order = Included Households + Extra Papers\n\n4. Export & Run Sheets:\n- CSV & Excel (XLSX): Export tables or summaries with the export buttons.\n- Run Sheets: Select 'Preview & Print Kj\xF8reliste' in driver actions for a printer-friendly sheet.",
       chooseFile: "Choose Data File",
       settings: "Settings",
       tabDashboard: "Dashboard",
@@ -545,7 +545,7 @@
       mapReassigningCountAddresses: "Tildeler <b>{count}</b> adresser p\xE5 nytt",
       mapDeleteConfirmPrompt: "Er du sikker p\xE5 at du vil slette",
       mapDeleteConfirmSuffix: "fra databasen?",
-      openDataFolder: "\xC5pne datamappe",
+      openDataFolder: "Velg datafil",
       mapInfoTitle: "Kartveileder",
       mapInfoSingle: "Operasjoner for enkel adresser",
       mapInfoAdd: "<strong>Legg til adresse:</strong> Klikk hvor som helst p\xE5 kartet for \xE5 s\xF8ke etter en bygning. Hvis en adresse blir funnet, vil du umiddelbart bli bedt om \xE5 tildele den til en rute.",
@@ -649,15 +649,15 @@
       langLabel: "Spr\xE5k",
       title: "Distribusjonskontroll",
       subtitle: "Summer av kj\xF8rere, bladb\xE6rere og adresser fra kildedata.",
-      loadDefault: "Last data/source.json",
+      loadDefault: "Last source.json",
       sourceMissingTitle: "Kildefil ikke lastet",
-      sourceMissingMessage: "Start med \xE5 laste source.json fra data-mappen. Filbanen er data/source.json fra prosjektroten. Klikk '\xC5pne datamappe' og velg source.json. Ved behov kan du bruke 'Velg datafil' og bla manuelt til data/source.json.",
-      openDataFolderAction: "\xC5pne datamappe",
+      sourceMissingMessage: "Start med \xE5 laste inn din source.json-fil. Klikk 'Velg datafil' for \xE5 velge ditt source.json-datasett.",
+      openDataFolderAction: "Velg datafil",
       userGuideAction: "Brukerveiledning",
       userGuideTitle: "Brukerveiledning",
       userGuideLoading: "Laster...",
       userGuideLoadError: "Kunne ikke laste README_USER.md. \xC5pne den fra prosjektroten.",
-      userGuideFallback: "Brukerveiledning - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltall, bladbestilling og distribusjonsoversikt.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rer og ruter, og forh\xE5ndsvis/skriv ut kj\xF8relister.\n- Bladb\xE6rer: Administrer bladb\xE6rere og ruter. Varsler dersom en aktiv bladb\xE6rer mangler sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med antall husstander og ekskluderinger.\n- Ruter: Ruteoversikt med bladb\xE6rer, sj\xE5f\xF8r og antall blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, legge til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellene eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringer' (oppe til h\xF8yre) for \xE5 eksportere oppdateringer til data/source.json.\n\n3. Bladberegning:\n- Inkluderte husstander = Husstander - Ekskluderte husstander\n- Blad som skal bestilles = Inkluderte husstander + Ekstra blad\n\n4. Eksport og kj\xF8relister:\n- CSV og Excel (XLSX): Eksporter tabeller eller sammendrag ved hjelp av eksportknappene.\n- Kj\xF8reliste: Velg 'Forh\xE5ndsvis og skriv ut kj\xF8reliste' i Kj\xF8rer-tabellens handlingsmeny.",
+      userGuideFallback: "Brukerveiledning - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltall, bladbestilling og distribusjonsoversikt.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rer og ruter, og forh\xE5ndsvis/skriv ut kj\xF8relister.\n- Bladb\xE6rer: Administrer bladb\xE6rere og ruter. Varsler dersom en aktiv bladb\xE6rer mangler sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med antall husstander og ekskluderinger.\n- Ruter: Ruteoversikt med bladb\xE6rer, sj\xE5f\xF8r og antall blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, legge til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellene eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringer' (oppe til h\xF8yre) for \xE5 eksportere oppdateringer til source.json.\n\n3. Bladberegning:\n- Inkluderte husstander = Husstander - Ekskluderte husstander\n- Blad som skal bestilles = Inkluderte husstander + Ekstra blad\n\n4. Eksport og kj\xF8relister:\n- CSV og Excel (XLSX): Eksporter tabeller eller sammendrag ved hjelp av eksportknappene.\n- Kj\xF8reliste: Velg 'Forh\xE5ndsvis og skriv ut kj\xF8reliste' i Kj\xF8rer-tabellens handlingsmeny.",
       chooseFile: "Velg datafil",
       settings: "Innstillinger",
       tabDashboard: "Dashbord",
@@ -892,7 +892,7 @@
       mapReassigningCountAddresses: "Tildeler <b>{count}</b> adresser p\xE5 nytt",
       mapDeleteConfirmPrompt: "Er du sikker p\xE5 at du vil slette",
       mapDeleteConfirmSuffix: "fr\xE5 databasen?",
-      openDataFolder: "Opne datamappe",
+      openDataFolder: "Vel datafil",
       mapInfoTitle: "Kartrettleiing",
       mapInfoSingle: "Operasjonar for enkel adresser",
       mapInfoAdd: "<strong>Legg til adresse:</strong> Klikk kvar som helst p\xE5 kartet for \xE5 s\xF8kje etter ein bygning. Viss ei adresse blir funnen, vil du umiddelbart bli beden om \xE5 tildele henne til ei rute.",
@@ -996,15 +996,15 @@
       langLabel: "Spr\xE5k",
       title: "Distribusjonskontroll",
       subtitle: "Oppsummering av kj\xF8rere, bladb\xE6rere og adresser fra kjelda.",
-      loadDefault: "Last data/source.json",
+      loadDefault: "Last source.json",
       sourceMissingTitle: "Kjeldefil ikkje lasta",
-      sourceMissingMessage: "Start med \xE5 laste source.json fr\xE5 data-mappa. Filbana er data/source.json fr\xE5 prosjektrota. Klikk 'Opne datamappe' og vel source.json. Ved behov kan du bruke 'Vel datafil' og bla manuelt til data/source.json.",
-      openDataFolderAction: "Opne datamappe",
+      sourceMissingMessage: "Start med \xE5 laste inn di source.json-fil. Klikk 'Vel datafil' for \xE5 velje ditt source.json-datasett.",
+      openDataFolderAction: "Vel datafil",
       userGuideAction: "Brukarrettleiing",
       userGuideTitle: "Brukarrettleiing",
       userGuideLoading: "Lastar...",
       userGuideLoadError: "Klarte ikkje \xE5 laste README_USER.md. Opne fila fr\xE5 prosjektrota.",
-      userGuideFallback: "Brukarrettleiing - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltal, bladbestilling og distribusjonsoversyn.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rar og ruter, og f\xF8rehandsvis/skriv ut k\xF8yrelister.\n- Bladberar: Administrer bladberarar og ruter. Varslar dersom ein aktiv bladberar manglar sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med tal p\xE5 husstandar og ekskluderingar.\n- Ruter: Ruteoversikt med bladberar, sj\xE5f\xF8r og tal p\xE5 blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, leggje til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellane eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringar' (oppe til h\xF8gre) for \xE5 eksportere oppdateringar til data/source.json.\n\n3. Bladrekning:\n- Inkluderte husstandar = Husstandar - Ekskluderte husstandar\n- Blad som skal bestillast = Inkluderte husstandar + Ekstra blad\n\n4. Eksport og k\xF8yrelister:\n- CSV og Excel (XLSX): Eksporter tabellar eller samandrag ved hjelp av eksportknappane.\n- K\xF8yreliste: Vel 'F\xF8rehandsvis og skriv ut k\xF8yreliste' i Kj\xF8rer-tabellen.",
+      userGuideFallback: "Brukarrettleiing - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltal, bladbestilling og distribusjonsoversyn.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rar og ruter, og f\xF8rehandsvis/skriv ut k\xF8yrelister.\n- Bladberar: Administrer bladberarar og ruter. Varslar dersom ein aktiv bladberar manglar sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med tal p\xE5 husstandar og ekskluderingar.\n- Ruter: Ruteoversikt med bladberar, sj\xE5f\xF8r og tal p\xE5 blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, leggje til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellane eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringar' (oppe til h\xF8gre) for \xE5 eksportere oppdateringar til source.json.\n\n3. Bladrekning:\n- Inkluderte husstandar = Husstandar - Ekskluderte husstandar\n- Blad som skal bestillast = Inkluderte husstandar + Ekstra blad\n\n4. Eksport og k\xF8yrelister:\n- CSV og Excel (XLSX): Eksporter tabellar eller samandrag ved hjelp av eksportknappane.\n- K\xF8yreliste: Vel 'F\xF8rehandsvis og skriv ut k\xF8yreliste' i Kj\xF8rer-tabellen.",
       chooseFile: "Vel datafil",
       settings: "Innstillingar",
       tabDashboard: "Oversyn",
@@ -1239,7 +1239,11 @@
       mapReassigningCountAddresses: "Tilldelar <b>{count}</b> adresser p\xE5 nytt",
       mapDeleteConfirmPrompt: "\xC4r du s\xE4ker p\xE5 att du vill ta bort",
       mapDeleteConfirmSuffix: "fr\xE5n databasen?",
-      openDataFolder: "\xD6ppna datamapp",
+      openDataFolder: "V\xE4lj datafil",
+      openDataFolderAction: "V\xE4lj datafil",
+      loadDefault: "Ladda source.json",
+      sourceMissingTitle: "K\xE4llfil ej laddad",
+      sourceMissingMessage: "B\xF6rja med att ladda din source.json-fil. Klicka p\xE5 'V\xE4lj datafil' f\xF6r att v\xE4lja ditt source.json-dataset.",
       mapInfoTitle: "Kartguide",
       mapInfoSingle: "Enskilda adressoperationer",
       mapInfoAdd: "<strong>L\xE4gg till adress:</strong> Klicka var som helst p\xE5 kartan f\xF6r att s\xF6ka efter en byggnad. Om en adress hittas kommer du omedelbart att uppmanas att tilldela den till en rutt.",
@@ -1390,7 +1394,7 @@
       userGuideAction: "Anv\xE4ndarguide",
       userGuideTitle: "Anv\xE4ndarguide",
       userGuideLoading: "Laddar...",
-      userGuideFallback: "Anv\xE4ndarguide - Menighetsbladet\n\n1. Navigering och flikar:\n- Dashboard: Totaler, tidningsbest\xE4llning och distributions\xF6versikt.\n- Kj\xF6rere (F\xF6rare): Hantera f\xF6rare och rutter, f\xF6rhandsgranska och skriv ut k\xF6rlistor.\n- Bladb\xE6rere (Utdelare): Hantera utdelare och rutter. Varnar om en aktiv utdelare saknar f\xF6rare.\n- Adresser: Adress\xF6versikt med antal hush\xE5ll och undantag.\n- Rutter: Rutt\xF6versikt med utdelare, f\xF6rare och tidningsantal.\n- Karta: Interaktiv karta f\xF6r att inspektera adresser, l\xE4gga till adresser och flytta adresser mellan rutter.\n\n2. Redigering och sparande:\n- S\xF6k, filtrera eller sortera i tabellerna eller via kartan.\n- Redigera, l\xE4gg till eller ta bort rader vid behov.\n- Klicka p\xE5 'Spara \xE4ndringar' (uppe till h\xF6ger) f\xF6r att exportera uppdateringar till data/source.json.\n\n3. Tidningsber\xE4kning:\n- Inkluderade hush\xE5ll = Hush\xE5ll - Exkluderade hush\xE5ll\n- Tidningar att best\xE4lla = Inkluderade hush\xE5ll + Extra tidningar\n\n4. Export och k\xF6rlistor:\n- CSV och Excel (XLSX): Exportera tabeller eller sammanfattningar via exportknapparna.\n- K\xF6rlista: V\xE4lj 'F\xF6rhandsgranska och skriv ut k\xF6rlista' i f\xF6rartabellens \xE5tg\xE4rdsmeny.",
+      userGuideFallback: "Anv\xE4ndarguide - Menighetsbladet\n\n1. Navigering och flikar:\n- Dashboard: Totaler, tidningsbest\xE4llning och distributions\xF6versikt.\n- Kj\xF6rere (F\xF6rare): Hantera f\xF6rare och rutter, f\xF6rhandsgranska och skriv ut k\xF6rlistor.\n- Bladb\xE6rere (Utdelare): Hantera utdelare och rutter. Varnar om en aktiv utdelare saknar f\xF6rare.\n- Adresser: Adress\xF6versikt med antal hush\xE5ll och undantag.\n- Rutter: Rutt\xF6versikt med utdelare, f\xF6rare och tidningsantal.\n- Karta: Interaktiv karta f\xF6r att inspektera adresser, l\xE4gga till adresser och flytta adresser mellan rutter.\n\n2. Redigering och sparande:\n- S\xF6k, filtrera eller sortera i tabellerna eller via kartan.\n- Redigera, l\xE4gg till eller ta bort rader vid behov.\n- Klicka p\xE5 'Spara \xE4ndringar' (uppe till h\xF6ger) f\xF6r att exportera uppdateringar till source.json.\n\n3. Tidningsber\xE4kning:\n- Inkluderade hush\xE5ll = Hush\xE5ll - Exkluderade hush\xE5ll\n- Tidningar att best\xE4lla = Inkluderade hush\xE5ll + Extra tidningar\n\n4. Export och k\xF6rlistor:\n- CSV och Excel (XLSX): Exportera tabeller eller sammanfattningar via exportknapparna.\n- K\xF6rlista: V\xE4lj 'F\xF6rhandsgranska och skriv ut k\xF6rlista' i f\xF6rartabellens \xE5tg\xE4rdsmeny.",
       actionsCol: "Atgarder",
       editAction: "Redigera",
       addAction: "Lagg till rad",
@@ -6238,7 +6242,7 @@
   var DEBUG_SAVE_CHANGES = true;
   function getDataSourceText(source, label) {
     if (source === "default") {
-      return t("dataSourceDefault", { label: label || "data/source.json" });
+      return t("dataSourceDefault", { label: label || "source.json" });
     }
     if (source === "file") {
       return t("dataSourceFile", { label: label || "file" });
@@ -7736,6 +7740,7 @@
       return Promise.reject(new Error(t("errFileProtocolBlocked")));
     }
     var defaultCandidates = [
+      { path: "source.json", type: "json" },
       { path: "data/source.json", type: "json" },
       { path: "../data/source.json", type: "json" },
       { path: "/data/source.json", type: "json" }
@@ -7768,7 +7773,7 @@
       return {
         ok: true,
         source: "default",
-        label: result.path || "data/source.json"
+        label: result.path || "source.json"
       };
     }).catch(function(err) {
       if (!allowFallback) {

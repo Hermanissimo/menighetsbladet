@@ -20,7 +20,7 @@ export const I18N = {
       mapReassigningCountAddresses: "Reassigning <b>{count}</b> addresses",
       mapDeleteConfirmPrompt: "Are you sure you want to delete",
       mapDeleteConfirmSuffix: "from the database?",
-      openDataFolder: "Open data folder",
+      openDataFolder: "Choose Data File",
 
       mapInfoTitle: "Map Guide",
       mapInfoSingle: "Single Address Operations",
@@ -151,10 +151,10 @@ export const I18N = {
       langLabel: "Language",
       title: "Distribution Control Panel",
       subtitle: "Driver-, distributor- and address counts from source data.",
-      loadDefault: "Load data/source.json",
+      loadDefault: "Load source.json",
       sourceMissingTitle: "Source file not loaded",
-      sourceMissingMessage: "Start by loading source.json from the data folder. Path is data/source.json from project root. Click 'Open data folder' and select source.json. If needed, use 'Choose Data File' and browse manually to data/source.json.",
-      openDataFolderAction: "Open data folder",
+      sourceMissingMessage: "Start by loading your source.json file. Click 'Choose Data File' to select your source.json dataset.",
+      openDataFolderAction: "Choose Data File",
       userGuideAction: "User guide",
       userGuideTitle: "User guide",
       userGuideLoading: "Loading...",
@@ -169,7 +169,7 @@ export const I18N = {
         "2. Editing & Saving:\n" +
         "- Search, filter, or sort directly in any table or on the map.\n" +
         "- Edit, add, or delete rows as needed.\n" +
-        "- Click 'Save Changes' (top-right) to export updates to data/source.json.\n\n" +
+        "- Click 'Save Changes' (top-right) to export updates to source.json.\n\n" +
         "3. Magazine Calculation Logic:\n" +
         "- Included Households = Households - Excluded Households\n" +
         "- Magazines to Order = Included Households + Extra Papers\n\n" +
@@ -419,7 +419,7 @@ export const I18N = {
       mapReassigningCountAddresses: "Tildeler <b>{count}</b> adresser på nytt",
       mapDeleteConfirmPrompt: "Er du sikker på at du vil slette",
       mapDeleteConfirmSuffix: "fra databasen?",
-      openDataFolder: "Åpne datamappe",
+      openDataFolder: "Velg datafil",
 
       mapInfoTitle: "Kartveileder",
       mapInfoSingle: "Operasjoner for enkel adresser",
@@ -530,10 +530,10 @@ export const I18N = {
       langLabel: "Språk",
       title: "Distribusjonskontroll",
       subtitle: "Summer av kjørere, bladbærere og adresser fra kildedata.",
-      loadDefault: "Last data/source.json",
+      loadDefault: "Last source.json",
       sourceMissingTitle: "Kildefil ikke lastet",
-      sourceMissingMessage: "Start med å laste source.json fra data-mappen. Filbanen er data/source.json fra prosjektroten. Klikk 'Åpne datamappe' og velg source.json. Ved behov kan du bruke 'Velg datafil' og bla manuelt til data/source.json.",
-      openDataFolderAction: "Åpne datamappe",
+      sourceMissingMessage: "Start med å laste inn din source.json-fil. Klikk 'Velg datafil' for å velge ditt source.json-datasett.",
+      openDataFolderAction: "Velg datafil",
       userGuideAction: "Brukerveiledning",
       userGuideTitle: "Brukerveiledning",
       userGuideLoading: "Laster...",
@@ -549,7 +549,7 @@ export const I18N = {
         "2. Redigering og lagring:\n" +
         "- Søk, filtrer eller sorter i tabellene eller via kartet.\n" +
         "- Rediger, legg til eller slett rader ved behov.\n" +
-        "- Klikk 'Lagre endringer' (oppe til høyre) for å eksportere oppdateringer til data/source.json.\n\n" +
+        "- Klikk 'Lagre endringer' (oppe til høyre) for å eksportere oppdateringer til source.json.\n\n" +
         "3. Bladberegning:\n" +
         "- Inkluderte husstander = Husstander - Ekskluderte husstander\n" +
         "- Blad som skal bestilles = Inkluderte husstander + Ekstra blad\n\n" +
@@ -792,7 +792,7 @@ export const I18N = {
       mapReassigningCountAddresses: "Tildeler <b>{count}</b> adresser på nytt",
       mapDeleteConfirmPrompt: "Er du sikker på at du vil slette",
       mapDeleteConfirmSuffix: "frå databasen?",
-      openDataFolder: "Opne datamappe",
+      openDataFolder: "Vel datafil",
 
       mapInfoTitle: "Kartrettleiing",
       mapInfoSingle: "Operasjonar for enkel adresser",
@@ -903,10 +903,10 @@ export const I18N = {
       langLabel: "Språk",
       title: "Distribusjonskontroll",
       subtitle: "Oppsummering av kjørere, bladbærere og adresser fra kjelda.",
-      loadDefault: "Last data/source.json",
+      loadDefault: "Last source.json",
       sourceMissingTitle: "Kjeldefil ikkje lasta",
-      sourceMissingMessage: "Start med å laste source.json frå data-mappa. Filbana er data/source.json frå prosjektrota. Klikk 'Opne datamappe' og vel source.json. Ved behov kan du bruke 'Vel datafil' og bla manuelt til data/source.json.",
-      openDataFolderAction: "Opne datamappe",
+      sourceMissingMessage: "Start med å laste inn di source.json-fil. Klikk 'Vel datafil' for å velje ditt source.json-datasett.",
+      openDataFolderAction: "Vel datafil",
       userGuideAction: "Brukarrettleiing",
       userGuideTitle: "Brukarrettleiing",
       userGuideLoading: "Lastar...",
@@ -922,7 +922,7 @@ export const I18N = {
         "2. Redigering og lagring:\n" +
         "- Søk, filtrer eller sorter i tabellane eller via kartet.\n" +
         "- Rediger, legg til eller slett rader ved behov.\n" +
-        "- Klikk 'Lagre endringar' (oppe til høgre) for å eksportere oppdateringar til data/source.json.\n\n" +
+        "- Klikk 'Lagre endringar' (oppe til høgre) for å eksportere oppdateringar til source.json.\n\n" +
         "3. Bladrekning:\n" +
         "- Inkluderte husstandar = Husstandar - Ekskluderte husstandar\n" +
         "- Blad som skal bestillast = Inkluderte husstandar + Ekstra blad\n\n" +
@@ -1165,7 +1165,11 @@ export const I18N = {
       mapReassigningCountAddresses: "Tilldelar <b>{count}</b> adresser på nytt",
       mapDeleteConfirmPrompt: "Är du säker på att du vill ta bort",
       mapDeleteConfirmSuffix: "från databasen?",
-      openDataFolder: "Öppna datamapp",
+      openDataFolder: "Välj datafil",
+      openDataFolderAction: "Välj datafil",
+      loadDefault: "Ladda source.json",
+      sourceMissingTitle: "Källfil ej laddad",
+      sourceMissingMessage: "Börja med att ladda din source.json-fil. Klicka på 'Välj datafil' för att välja ditt source.json-dataset.",
 
       mapInfoTitle: "Kartguide",
       mapInfoSingle: "Enskilda adressoperationer",
@@ -1334,7 +1338,7 @@ export const I18N = {
         "2. Redigering och sparande:\n" +
         "- Sök, filtrera eller sortera i tabellerna eller via kartan.\n" +
         "- Redigera, lägg till eller ta bort rader vid behov.\n" +
-        "- Klicka på 'Spara ändringar' (uppe till höger) för att exportera uppdateringar till data/source.json.\n\n" +
+        "- Klicka på 'Spara ändringar' (uppe till höger) för att exportera uppdateringar till source.json.\n\n" +
         "3. Tidningsberäkning:\n" +
         "- Inkluderade hushåll = Hushåll - Exkluderade hushåll\n" +
         "- Tidningar att beställa = Inkluderade hushåll + Extra tidningar\n\n" +

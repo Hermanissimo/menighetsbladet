@@ -39,7 +39,7 @@ var DEBUG_SAVE_CHANGES = true;
 
 function getDataSourceText(source, label) {
   if (source === "default") {
-    return t("dataSourceDefault", { label: label || "data/source.json" });
+    return t("dataSourceDefault", { label: label || "source.json" });
   }
   if (source === "file") {
     return t("dataSourceFile", { label: label || "file" });
@@ -1724,6 +1724,7 @@ function tryLoadDefaultSource() {
     return Promise.reject(new Error(t("errFileProtocolBlocked")));
   }
   var defaultCandidates = [
+    { path: "source.json", type: "json" },
     { path: "data/source.json", type: "json" },
     { path: "../data/source.json", type: "json" },
     { path: "/data/source.json", type: "json" }
@@ -1763,7 +1764,7 @@ function loadDefaultJson(options) {
       return {
         ok: true,
         source: "default",
-        label: result.path || "data/source.json"
+        label: result.path || "source.json"
       };
     })
     .catch(function (err) {
