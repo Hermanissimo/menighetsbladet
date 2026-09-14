@@ -1,12 +1,14 @@
 # Menighetsbladet Distribution Control Panel
 
-Local data management system and interactive web dashboard for planning, maintaining, and executing distribution of parish magazines (*menighetsblad*). It synchronizes addresses, distributors (*bladbærere*), drivers (*kjørere*), and route assignments while calculating exact magazine order totals and generating print-ready delivery sheets.
+Modern data management system and interactive web dashboard hosted online via **GitHub Pages** ([https://hermanissimo.github.io/menighetsbladet/](https://hermanissimo.github.io/menighetsbladet/)) for planning, maintaining, and executing distribution of parish magazines (*menighetsblad*).
+
+> **Privacy & Framework-Only Architecture**: The GitHub repository and hosted website are **completely stripped of confidential data** (volunteer names, phone numbers, addresses, and route details). All operational data files in `data/` are gitignored. The site functions as a pure client-side web application where each parish brings its own local data (`source.json`).
 
 ---
 
 ## Repository Layout
 
-- `data/`: Canonical source data and operational files:
+- `data/` *(local only, gitignored)*: Canonical source data and operational files:
   - `source.json`: The active, canonical single source of truth for addresses, distributors, drivers, and routes.
   - `source.backup-*.json`: Automatic timestamped backups generated on save.
   - `source.xml`: Snapshot and legacy XML export.
@@ -103,8 +105,19 @@ All route references are canonicalized using `normalizeRouteIdentifier`:
 
 ## Execution & Hosting Modes
 
-### 1. Portable Standalone Mode (Recommended for Windows Users)
-Requires no prerequisites, installations, Node.js, or admin privileges:
+### 1. GitHub Pages (Hosted Online - Primary Access)
+The application is deployed and hosted live on GitHub Pages:
+**Live URL**: [https://hermanissimo.github.io/menighetsbladet/](https://hermanissimo.github.io/menighetsbladet/)
+
+- **Framework-Only Deployment**: The hosted web application contains zero parish data. Users bring their own dataset by loading their local `source.json` file using **Choose Data File**.
+- **Immediate Access**: Runs directly in any modern desktop, tablet, or mobile browser without installation or local server setup.
+- **Client-Side Privacy & Speed**: All calculations, filtering, map rendering, and data edits run 100% locally in the browser session. No personal data is sent to GitHub or external servers.
+- **Automatic Persistence**: Edits are stored automatically in the browser's persistent IndexedDB database.
+- **Save & Archival Options**: Clicking **Save Changes** downloads an updated `source.json` or allows saving timestamped copies (`source_YYYYMMDD_HHmm.json`) to the user's computer. For browsers supporting the File System Access API where a local file was opened, changes can also save directly to disk.
+- **Automated CI/CD**: Pushing application code or styling updates to `main`, `master`, or `github_pages` triggers `.github/workflows/deploy.yml` to build and deploy the web framework immediately.
+
+### 2. Portable Standalone Mode (Offline Windows Package)
+For fully offline use on Windows machines without internet access or Node.js:
 1. Navigate to the `standalonePS/` directory.
 2. Double-click `START.bat`.
 3. The PowerShell HTTP server starts automatically and launches `http://localhost:8080/web/` in your default browser.
@@ -113,7 +126,7 @@ Requires no prerequisites, installations, Node.js, or admin privileges:
    - The server creates a timestamped backup (`data/source.backup-YYYYMMDD-HHmmss.json`) and updates `data/source.json` directly.
 5. To stop the server, double-click `STOPP.bat` or press `Ctrl+C` in the console window.
 
-### 2. Development Mode
+### 3. Local Development Mode
 For developers editing client-side code in `web/src/`:
 ```bash
 # Install dependencies
@@ -132,12 +145,6 @@ npx serve .
 # or
 python -m http.server 8000
 ```
-
-### 3. Pure Offline Browser Mode
-You can open `web/index.html` directly or host it on any static web host:
-- The dashboard automatically loads `data/source.json` via relative fetch, or prompts you via the **Choose Data File** loader.
-- Edits are saved locally in the browser's IndexedDB.
-- Clicking **Save Changes** exports the updated `source.json` file as a download, which you place in your `data/` folder.
 
 ---
 

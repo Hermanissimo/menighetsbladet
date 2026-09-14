@@ -825,10 +825,18 @@ export async function saveChangesToSourceCopy() {
   }
   var jsonText = JSON.stringify(serializeCurrentJsonData(), null, 2);
   
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const suggestedName = `source_${yyyy}${mm}${dd}_${hh}${min}.json`;
+  
   try {
     if (window.showSaveFilePicker) {
       const handle = await window.showSaveFilePicker({
-        suggestedName: 'source-copy.json',
+        suggestedName: suggestedName,
         types: [{
           description: 'JSON Files',
           accept: { 'application/json': ['.json'] }
@@ -840,14 +848,14 @@ export async function saveChangesToSourceCopy() {
       statusEl.dataset.loaded = "1";
       statusEl.textContent = t("statusSavedCopyNow") || "Copy saved.";
     } else {
-      saveTextDownload("source-copy.json", jsonText, "application/json;charset=utf-8");
+      saveTextDownload(suggestedName, jsonText, "application/json;charset=utf-8");
       statusEl.dataset.loaded = "1";
       statusEl.textContent = t("statusSavedCopyNow") || "Copy downloaded.";
     }
   } catch (err) {
     if (err.name !== 'AbortError') {
       console.error("Failed to save copy via file handle", err);
-      saveTextDownload("source-copy.json", jsonText, "application/json;charset=utf-8");
+      saveTextDownload(suggestedName, jsonText, "application/json;charset=utf-8");
       statusEl.dataset.loaded = "1";
       statusEl.textContent = t("statusSavedCopyNow") || "Copy downloaded.";
     }

@@ -1,6 +1,12 @@
 # User Guide - Menighetsbladet Distribution Control Panel
 
-Welcome to the distribution management application for Menighetsbladet. This guide provides comprehensive documentation of each feature, screen, calculation formula, and operational workflow.
+Welcome to the distribution management application for Menighetsbladet. The application is hosted online via **GitHub Pages** ([https://hermanissimo.github.io/menighetsbladet/](https://hermanissimo.github.io/menighetsbladet/)), accessible directly in any modern web browser on desktop, tablet, or mobile without requiring local installation or server setup.
+
+### Data Privacy & "Bring Your Own Data" Architecture
+- **Framework-Only Web App**: The public GitHub repository and GitHub Pages site contain **only the application framework** — they are completely stripped of parish data, address registries, volunteer rosters, and contact details.
+- **100% Local & Confidential**: No personal or operational data is ever transmitted to or stored on GitHub or external servers. All data processing occurs entirely within your browser session on your local device.
+- **Loading Your Data**: When you open the website, load your parish's local `source.json` file using **Choose Data File** (or through **Settings ⚙**).
+- **Saving Your Work**: Clicking **Save Changes** downloads an updated `source.json` file (or timestamped copy `source_YYYYMMDD_HHmm.json`) directly to your computer for your parish archives.
 
 ---
 
@@ -8,8 +14,8 @@ Welcome to the distribution management application for Menighetsbladet. This gui
 
 ### Top Header & Controls
 - **Language Selector**: Switch between Norwegian Bokmål (`nb`), Norwegian Nynorsk (`nn`), English (`en`), and Swedish (`sv`). All labels, error messages, and table column names update immediately.
-- **Settings (⚙)**: Opens the configuration panel to inspect the active data source file, load a different JSON dataset via **Choose Data File**, or open this user guide.
-- **Save Changes Button**: Visible whenever you have unsaved modifications in the local database. In standalone mode, clicking this updates `data/source.json` on disk and automatically generates a timestamped backup. In standard browser mode, it downloads an updated `source.json` file for your `data/` folder.
+- **Settings (⚙)**: Opens the configuration panel to inspect the active data source file, load your local parish data via **Choose Data File**, or open this user guide.
+- **Save Changes Button**: Visible whenever you have unsaved modifications in the local browser database (IndexedDB). Clicking this exports and downloads an updated `source.json` file to your computer. You can also save a timestamped copy (e.g. `source_YYYYMMDD_HHmm.json`) using "Save as copy" to archive distribution rounds. In browsers supporting the File System Access API where a local file was opened directly, changes can also be saved directly back to disk.
 - **Close Guard Protection**: If you attempt to close or refresh your browser tab while unsaved edits exist, an alert modal prompts you to save your changes, continue working, or safely discard them.
 
 ### Navigation Tabs
@@ -214,10 +220,10 @@ Interactive visual map powered by Leaflet and Kartverket/Geonorge address servic
 5. Click **Merge**. The old routes are removed, addresses are reassigned, and distributor lists are updated seamlessly.
 
 ### Workflow 6: Saving and Backing Up Your Work
-1. When you make additions or changes, the **Save Changes** button appears in the top-right header with an indicator of unsaved changes.
-2. Click **Save Changes**.
-3. In standalone mode:
-   - The app saves directly to `data/source.json`.
-   - An automatic backup file (e.g. `data/source.backup-20260912-203000.json`) is created in the `data/` directory.
-4. In standard browser mode:
-   - A download of the updated `source.json` file begins. Replace the existing file in your `data/` folder with this download.
+Because the application runs client-side in your browser via GitHub Pages with no data stored on the web server, your changes remain strictly local:
+1. When you make additions or changes to addresses, routes, distributors, or drivers, edits are tracked in memory and saved to your browser's local cache (IndexedDB). The **Save Changes** button appears in the top-right header with an indicator of unsaved changes.
+2. Click **Save Changes**:
+   - **Download Updated Dataset**: The app exports and downloads the latest dataset as `source.json`. Store this file safely on your local computer or parish storage.
+   - **Save Timestamped Archive**: Use the "Save as copy" option to download a snapshot named with a timestamp (e.g. `source_YYYYMMDD_HHmm.json`), providing a reliable historical backup of each distribution round.
+   - **Direct File System Save**: If your browser supports the File System Access API and you loaded a local file using the file picker, you can save updates directly back to that file on disk.
+3. **Data Security**: Remember that the online GitHub Pages site does not store your records. Always download your updated `source.json` after completing your work to ensure your local records are up to date.
