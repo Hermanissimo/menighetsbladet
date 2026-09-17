@@ -53,9 +53,9 @@ export function parseMarkdown(text) {
     .replace(/>/g, "&gt;");
 
   // Headers (e.g. ### Header)
-  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+  html = html.replace(/^### ([^\n\r]+)/gim, '<h3>$1</h3>');
+  html = html.replace(/^## ([^\n\r]+)/gim, '<h2>$1</h2>');
+  html = html.replace(/^# ([^\n\r]+)/gim, '<h1>$1</h1>');
 
   // Bold
   html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
@@ -73,7 +73,7 @@ export function parseMarkdown(text) {
   html = html.replace(/^---$/gim, '<hr>');
   
   // Lists (Bulleted)
-  html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+  html = html.replace(/^- ([^\n\r]+)/gim, '<li>$1</li>');
   
   // Newlines: split by double newline to form paragraphs
   let paragraphs = html.split(/\n\n+/);

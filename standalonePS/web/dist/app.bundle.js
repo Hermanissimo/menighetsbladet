@@ -36,6 +36,7 @@
     editModalForm: () => editModalForm,
     editModalTitle: () => editModalTitle,
     fileInput: () => fileInput,
+    floatingGuideBtn: () => floatingGuideBtn,
     languageSelect: () => languageSelect,
     loadResultMessage: () => loadResultMessage,
     loadResultModal: () => loadResultModal,
@@ -65,7 +66,7 @@
     userGuideModal: () => userGuideModal,
     userGuideTitle: () => userGuideTitle
   });
-  var statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, userGuideModal, userGuideTitle, userGuideContent, closeGuardModal, closeGuardTitle, closeGuardMessage, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, sourceMissingTitle, sourceMissingMessage, openDataFolderBtn, reportModal, reportModalClose, reportModalPrint, reportModalContent, routeReportModal, routeReportModalClose, routeReportModalPrint, routeReportModalContent;
+  var statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, floatingGuideBtn, userGuideModal, userGuideTitle, userGuideContent, closeGuardModal, closeGuardTitle, closeGuardMessage, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, sourceMissingTitle, sourceMissingMessage, openDataFolderBtn, reportModal, reportModalClose, reportModalPrint, reportModalContent, routeReportModal, routeReportModalClose, routeReportModalPrint, routeReportModalContent;
   var init_dom = __esm({
     "web/src/dom.js"() {
       statusEl = document.getElementById("status");
@@ -94,6 +95,7 @@
       loadResultTitle = document.getElementById("load-result-title");
       loadResultMessage = document.getElementById("load-result-message");
       openUserGuideBtn = document.getElementById("open-user-guide");
+      floatingGuideBtn = document.getElementById("floating-guide-btn");
       userGuideModal = document.getElementById("user-guide-modal");
       userGuideTitle = document.getElementById("user-guide-title");
       userGuideContent = document.getElementById("user-guide-content");
@@ -149,6 +151,29 @@
         func.apply(context, args);
       }, wait);
     };
+  }
+  function parseMarkdown(text) {
+    if (!text) return "";
+    let html = text;
+    html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    html = html.replace(/^### ([^\n\r]+)/gim, "<h3>$1</h3>");
+    html = html.replace(/^## ([^\n\r]+)/gim, "<h2>$1</h2>");
+    html = html.replace(/^# ([^\n\r]+)/gim, "<h1>$1</h1>");
+    html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
+    html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
+    html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(/`(.*?)`/gim, "<code>$1</code>");
+    html = html.replace(/^---$/gim, "<hr>");
+    html = html.replace(/^- ([^\n\r]+)/gim, "<li>$1</li>");
+    let paragraphs = html.split(/\n\n+/);
+    html = paragraphs.map((p) => {
+      if (p.startsWith("<h") || p.startsWith("<hr>")) return p;
+      if (p.includes("<li>")) {
+        return `<ul>${p}</ul>`;
+      }
+      return `<p>${p.replace(/\n/g, "<br>")}</p>`;
+    }).join("\n");
+    return html;
   }
 
   // web/src/i18n.js
@@ -303,7 +328,7 @@
       userGuideAction: "User guide",
       userGuideTitle: "User guide",
       userGuideLoading: "Loading...",
-      userGuideFallback: "User Guide - Menighetsbladet\n\n1. Navigation & Tabs:\n- Dashboard: Key totals, magazine order requirement, and delivery overview.\n- Drivers: Manage drivers, view assigned routes/papers, preview and print run sheets (kj\xF8relister).\n- Distributors (Bladb\xE6rere): Manage distributors and assigned routes. Highlights active distributors missing a driver.\n- Addresses: Address registry with household counts and exclusions.\n- Routes: Route definitions with assigned distributor, driver, and paper counts.\n- Map: Interactive map to inspect address pins, add addresses, and reassign routes.\n\n2. Editing & Saving:\n- Search, filter, or sort directly in any table or on the map.\n- Edit, add, or delete rows as needed.\n- Click 'Save Changes' (top-right) to export updates to source.json.\n\n3. Magazine Calculation Logic:\n- Included Households = Households - Excluded Households\n- Magazines to Order = Included Households + Extra Papers\n\n4. Export & Run Sheets:\n- CSV & Excel (XLSX): Export tables or summaries with the export buttons.\n- Run Sheets: Select 'Preview & Print Kj\xF8reliste' in driver actions for a printer-friendly sheet.",
+      userGuideFallback: "User Guide - Menighetsbladet\n\n1. Navigation & Tabs:\n- Dashboard: Key totals, magazine order requirement, and delivery overview.\n- Drivers: Manage drivers, view assigned routes/papers, preview and print run sheets (kj\xF8relister).\n- Distributors (Bladb\xE6rere): Manage distributors and assigned routes. Highlights active distributors missing a driver.\n- Addresses: Address registry with household counts and exclusions.\n- Routes: Route definitions with assigned distributor, driver, and paper counts.\n- Map: Interactive map to inspect address pins, add addresses, and reassign routes.\n\n2. Editing & Saving:\n- Search, filter, or sort directly in any table or on the map.\n- Edit, add, or delete rows as needed.\n- Click 'Save Changes' (top-right) to export updates to source.json.\n\n3. Magazine Calculation Logic:\n- Included Households = Households - Excluded Households\n- Magazines to Order = Included Households + Extra Papers\n\n4. Export & Run Sheets:\n- CSV & Excel (XLSX): Export tables or summaries with the export buttons.\n- Run Sheets: Select 'Preview & Print Kj\xF8reliste' in driver actions for a printer-friendly sheet.\n\n5. Glossary / Terms Used:\n- Route (Rute): Geographical sector for distribution.\n- Distributor (Bladb\xE6rer): Volunteer delivering magazines to mailboxes.\n- Driver (Kj\xF8rer): Volunteer transporting bundles to distributors.\n- Households: Total living units at an address.\n- Excluded Households: Households opted out of unaddressed mail.\n- Included Households: Net households to receive a magazine.\n- Extra Magazines: Buffer copies for a route, distributor, or driver.\n- Unassigned Route: A route lacking a distributor or driver.",
       chooseFile: "Choose Data File",
       settings: "Settings",
       tabDashboard: "Dashboard",
@@ -661,7 +686,7 @@
       userGuideTitle: "Brukerveiledning",
       userGuideLoading: "Laster...",
       userGuideLoadError: "Kunne ikke laste README_USER.md. \xC5pne den fra prosjektroten.",
-      userGuideFallback: "Brukerveiledning - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltall, bladbestilling og distribusjonsoversikt.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rer og ruter, og forh\xE5ndsvis/skriv ut kj\xF8relister.\n- Bladb\xE6rer: Administrer bladb\xE6rere og ruter. Varsler dersom en aktiv bladb\xE6rer mangler sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med antall husstander og ekskluderinger.\n- Ruter: Ruteoversikt med bladb\xE6rer, sj\xE5f\xF8r og antall blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, legge til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellene eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringer' (oppe til h\xF8yre) for \xE5 eksportere oppdateringer til source.json.\n\n3. Bladberegning:\n- Inkluderte husstander = Husstander - Ekskluderte husstander\n- Blad som skal bestilles = Inkluderte husstander + Ekstra blad\n\n4. Eksport og kj\xF8relister:\n- CSV og Excel (XLSX): Eksporter tabeller eller sammendrag ved hjelp av eksportknappene.\n- Kj\xF8reliste: Velg 'Forh\xE5ndsvis og skriv ut kj\xF8reliste' i Kj\xF8rer-tabellens handlingsmeny.",
+      userGuideFallback: "Brukerveiledning - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltall, bladbestilling og distribusjonsoversikt.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rer og ruter, og forh\xE5ndsvis/skriv ut kj\xF8relister.\n- Bladb\xE6rer: Administrer bladb\xE6rere og ruter. Varsler dersom en aktiv bladb\xE6rer mangler sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med antall husstander og ekskluderinger.\n- Ruter: Ruteoversikt med bladb\xE6rer, sj\xE5f\xF8r og antall blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, legge til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellene eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringer' (oppe til h\xF8yre) for \xE5 eksportere oppdateringer til source.json.\n\n3. Bladberegning:\n- Inkluderte husstander = Husstander - Ekskluderte husstander\n- Blad som skal bestilles = Inkluderte husstander + Ekstra blad\n\n4. Eksport og kj\xF8relister:\n- CSV og Excel (XLSX): Eksporter tabeller eller sammendrag ved hjelp av eksportknappene.\n- Kj\xF8reliste: Velg 'Forh\xE5ndsvis og skriv ut kj\xF8reliste' i Kj\xF8rer-tabellens handlingsmeny.\n\n5. Ordliste / Begreper:\n- Rute: Geografisk omr\xE5de for distribusjon.\n- Bladb\xE6rer (Distribut\xF8r): Frivillig som leverer i postkasser.\n- Kj\xF8rer (Sj\xE5f\xF8r): Frivillig som transporterer bunter til bladb\xE6rere.\n- Husstander: Totalt antall boenheter.\n- Ekskluderte husstander: Husstander reservert mot uadressert post.\n- Inkluderte husstander: Netto husstander som skal motta blad.\n- Ekstra blader: Bufferkopier for rute, bladb\xE6rer eller kj\xF8rer.\n- Ufordelt rute: Rute uten tildelt bladb\xE6rer eller kj\xF8rer.",
       chooseFile: "Velg datafil",
       settings: "Innstillinger",
       tabDashboard: "Dashbord",
@@ -1037,7 +1062,7 @@
       userGuideTitle: "Brukarrettleiing",
       userGuideLoading: "Lastar...",
       userGuideLoadError: "Klarte ikkje \xE5 laste README_USER.md. Opne fila fr\xE5 prosjektrota.",
-      userGuideFallback: "Brukarrettleiing - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltal, bladbestilling og distribusjonsoversyn.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rar og ruter, og f\xF8rehandsvis/skriv ut k\xF8yrelister.\n- Bladberar: Administrer bladberarar og ruter. Varslar dersom ein aktiv bladberar manglar sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med tal p\xE5 husstandar og ekskluderingar.\n- Ruter: Ruteoversikt med bladberar, sj\xE5f\xF8r og tal p\xE5 blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, leggje til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellane eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringar' (oppe til h\xF8gre) for \xE5 eksportere oppdateringar til source.json.\n\n3. Bladrekning:\n- Inkluderte husstandar = Husstandar - Ekskluderte husstandar\n- Blad som skal bestillast = Inkluderte husstandar + Ekstra blad\n\n4. Eksport og k\xF8yrelister:\n- CSV og Excel (XLSX): Eksporter tabellar eller samandrag ved hjelp av eksportknappane.\n- K\xF8yreliste: Vel 'F\xF8rehandsvis og skriv ut k\xF8yreliste' i Kj\xF8rer-tabellen.",
+      userGuideFallback: "Brukarrettleiing - Menighetsbladet\n\n1. Navigasjon og faner:\n- Dashbord: N\xF8kkeltal, bladbestilling og distribusjonsoversyn.\n- Kj\xF8rer: Administrer sj\xE5f\xF8rar og ruter, og f\xF8rehandsvis/skriv ut k\xF8yrelister.\n- Bladberar: Administrer bladberarar og ruter. Varslar dersom ein aktiv bladberar manglar sj\xE5f\xF8r.\n- Adresser: Adresseoversikt med tal p\xE5 husstandar og ekskluderingar.\n- Ruter: Ruteoversikt med bladberar, sj\xE5f\xF8r og tal p\xE5 blad.\n- Kart: Interaktivt kart for \xE5 inspisere adresser, leggje til adresser og flytte adresser mellom ruter.\n\n2. Redigering og lagring:\n- S\xF8k, filtrer eller sorter i tabellane eller via kartet.\n- Rediger, legg til eller slett rader ved behov.\n- Klikk 'Lagre endringar' (oppe til h\xF8gre) for \xE5 eksportere oppdateringar til source.json.\n\n3. Bladrekning:\n- Inkluderte husstandar = Husstandar - Ekskluderte husstandar\n- Blad som skal bestillast = Inkluderte husstandar + Ekstra blad\n\n4. Eksport og k\xF8yrelister:\n- CSV og Excel (XLSX): Eksporter tabellar eller samandrag ved hjelp av eksportknappane.\n- K\xF8yreliste: Vel 'F\xF8rehandsvis og skriv ut k\xF8yreliste' i Kj\xF8rer-tabellen.\n\n5. Ordliste / Omgrep:\n- Rute: Geografisk omr\xE5de for distribusjon.\n- Bladberar (Distribut\xF8r): Frivillig som leverer i postkassar.\n- Kj\xF8rer (Sj\xE5f\xF8r): Frivillig som transporterer buntar til bladberarar.\n- Husstandar: Totalt tal p\xE5 bueiningar.\n- Ekskluderte husstandar: Husstandar reservert mot uadressert post.\n- Inkluderte husstandar: Netto husstandar som skal f\xE5 blad.\n- Ekstra blad: Bufferkopiar for rute, bladberar eller kj\xF8rer.\n- Ufordelt rute: Rute utan tildelt bladberar eller kj\xF8rer.",
       chooseFile: "Vel datafil",
       settings: "Innstillingar",
       tabDashboard: "Oversyn",
@@ -1456,7 +1481,7 @@
       userGuideAction: "Anv\xE4ndarguide",
       userGuideTitle: "Anv\xE4ndarguide",
       userGuideLoading: "Laddar...",
-      userGuideFallback: "Anv\xE4ndarguide - Menighetsbladet\n\n1. Navigering och flikar:\n- Dashboard: Totaler, tidningsbest\xE4llning och distributions\xF6versikt.\n- Kj\xF6rere (F\xF6rare): Hantera f\xF6rare och rutter, f\xF6rhandsgranska och skriv ut k\xF6rlistor.\n- Bladb\xE6rere (Utdelare): Hantera utdelare och rutter. Varnar om en aktiv utdelare saknar f\xF6rare.\n- Adresser: Adress\xF6versikt med antal hush\xE5ll och undantag.\n- Rutter: Rutt\xF6versikt med utdelare, f\xF6rare och tidningsantal.\n- Karta: Interaktiv karta f\xF6r att inspektera adresser, l\xE4gga till adresser och flytta adresser mellan rutter.\n\n2. Redigering och sparande:\n- S\xF6k, filtrera eller sortera i tabellerna eller via kartan.\n- Redigera, l\xE4gg till eller ta bort rader vid behov.\n- Klicka p\xE5 'Spara \xE4ndringar' (uppe till h\xF6ger) f\xF6r att exportera uppdateringar till source.json.\n\n3. Tidningsber\xE4kning:\n- Inkluderade hush\xE5ll = Hush\xE5ll - Exkluderade hush\xE5ll\n- Tidningar att best\xE4lla = Inkluderade hush\xE5ll + Extra tidningar\n\n4. Export och k\xF6rlistor:\n- CSV och Excel (XLSX): Exportera tabeller eller sammanfattningar via exportknapparna.\n- K\xF6rlista: V\xE4lj 'F\xF6rhandsgranska och skriv ut k\xF6rlista' i f\xF6rartabellens \xE5tg\xE4rdsmeny.",
+      userGuideFallback: "Anv\xE4ndarguide - Menighetsbladet\n\n1. Navigering och flikar:\n- Dashboard: Totaler, tidningsbest\xE4llning och distributions\xF6versikt.\n- Kj\xF6rere (F\xF6rare): Hantera f\xF6rare och rutter, f\xF6rhandsgranska och skriv ut k\xF6rlistor.\n- Bladb\xE6rere (Utdelare): Hantera utdelare och rutter. Varnar om en aktiv utdelare saknar f\xF6rare.\n- Adresser: Adress\xF6versikt med antal hush\xE5ll och undantag.\n- Rutter: Rutt\xF6versikt med utdelare, f\xF6rare och tidningsantal.\n- Karta: Interaktiv karta f\xF6r att inspektera adresser, l\xE4gga till adresser och flytta adresser mellan rutter.\n\n2. Redigering och sparande:\n- S\xF6k, filtrera eller sortera i tabellerna eller via kartan.\n- Redigera, l\xE4gg till eller ta bort rader vid behov.\n- Klicka p\xE5 'Spara \xE4ndringar' (uppe till h\xF6ger) f\xF6r att exportera uppdateringar till source.json.\n\n3. Tidningsber\xE4kning:\n- Inkluderade hush\xE5ll = Hush\xE5ll - Exkluderade hush\xE5ll\n- Tidningar att best\xE4lla = Inkluderade hush\xE5ll + Extra tidningar\n\n4. Export och k\xF6rlistor:\n- CSV och Excel (XLSX): Exportera tabeller eller sammanfattningar via exportknapparna.\n- K\xF6rlista: V\xE4lj 'F\xF6rhandsgranska och skriv ut k\xF6rlista' i f\xF6rartabellens \xE5tg\xE4rdsmeny.\n\n5. Ordlista / Begrepp:\n- Rutt (Rute): Geografiskt omr\xE5de f\xF6r utdelning.\n- Utdelare (Bladb\xE6rer): Frivillig som delar ut tidningar i brevl\xE5dor.\n- F\xF6rare (Kj\xF8rer): Frivillig som transporterer buntar till utdelare.\n- Hush\xE5ll: Totalt antal boendeenheter.\n- Exkluderade hush\xE5ll: Hush\xE5ll som avb\xF6jt reklam/oadresserad post.\n- Inkluderade hush\xE5ll: Nettoantal hush\xE5ll som ska f\xE5 tidning.\n- Extra tidningar: Buffertkopior f\xF6r rutt, utdelare eller f\xF6rare.\n- Otilldelad rutt: Rutt utan utdelare eller f\xF6rare.",
       actionsCol: "Atgarder",
       editAction: "Redigera",
       addAction: "Lagg till rad",
@@ -2763,9 +2788,17 @@
   function initMap(containerId) {
     if (mapInstance) return;
     mapInstance = L.map(containerId).setView([59.8624, 10.796], 14);
-    const osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    const cartoUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+    const osmLayer = L.tileLayer(osmUrl, {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
+    });
+    osmLayer.on("tileerror", function(e) {
+      if (this._url !== cartoUrl) {
+        console.warn("OSM tile load failed, falling back to CartoDB Voyager");
+        this.setUrl(cartoUrl);
+      }
     });
     const satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
       attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
@@ -2969,10 +3002,18 @@
     const containerId = "add-address-minimap";
     if (!miniMapInstance) {
       miniMapInstance = L.map(containerId).setView([lat, lon], 16);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "OSM",
+      const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+      const cartoUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+      const miniLayer = L.tileLayer(osmUrl, {
+        attribution: "&copy; OSM",
         maxZoom: 19
-      }).addTo(miniMapInstance);
+      });
+      miniLayer.on("tileerror", function(e) {
+        if (this._url !== cartoUrl) {
+          this.setUrl(cartoUrl);
+        }
+      });
+      miniLayer.addTo(miniMapInstance);
     } else {
       miniMapInstance.setView([lat, lon], 16);
     }
@@ -5659,9 +5700,9 @@
     userGuideModal.removeAttribute("hidden");
     loadUserGuideText().then(function(text) {
       var loaded = stripSetupInfo(String(text || "").trim());
-      userGuideContent.textContent = loaded || t("userGuideFallback");
+      userGuideContent.innerHTML = parseMarkdown(loaded || t("userGuideFallback"));
     }).catch(function() {
-      userGuideContent.textContent = t("userGuideFallback");
+      userGuideContent.innerHTML = parseMarkdown(t("userGuideFallback"));
     });
   }
   function closeUserGuideModal() {
@@ -5678,6 +5719,9 @@
     var okBtn = document.getElementById("user-guide-ok");
     if (openUserGuideBtn) {
       openUserGuideBtn.addEventListener("click", openUserGuideModal);
+    }
+    if (floatingGuideBtn) {
+      floatingGuideBtn.addEventListener("click", openUserGuideModal);
     }
     if (closeBtn) {
       closeBtn.addEventListener("click", closeUserGuideModal);
@@ -6413,6 +6457,8 @@
     setAttr("save-dropdown-toggle", "aria-label", t("saveMoreOptions"));
     setText("open-user-guide", t("userGuideAction"));
     setText("choose-file-label", t("chooseFile"));
+    setAttr("floating-guide-btn", "title", t("userGuideAction"));
+    setAttr("floating-guide-btn", "aria-label", t("userGuideAction"));
     setText("derived-note", t("derivedValuesNote"));
     setText("settings-label", t("settings"));
     setAttr("language-select", "aria-label", t("ariaLanguageSelect"));
