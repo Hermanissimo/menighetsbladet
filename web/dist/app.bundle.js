@@ -6433,7 +6433,7 @@
     setText("save-as-copy", t("saveAsCopyAction"));
     setAttr("save-dropdown-toggle", "aria-label", t("saveMoreOptions"));
     setText("open-user-guide", t("userGuideAction"));
-    setText("choose-file-label", t("chooseDataFile"));
+    setText("choose-file-label", t("chooseFile"));
     setAttr("floating-guide-btn", "title", t("userGuideAction"));
     setAttr("floating-guide-btn", "aria-label", t("userGuideAction"));
     setText("derived-note", t("derivedValuesNote"));
