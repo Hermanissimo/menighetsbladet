@@ -7121,12 +7121,11 @@
     }
     var jsonText = JSON.stringify(serializeCurrentJsonData(), null, 2);
     const now = /* @__PURE__ */ new Date();
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const mmm = monthNames[now.getMonth()];
     const dd = String(now.getDate()).padStart(2, "0");
-    const hh = String(now.getHours()).padStart(2, "0");
-    const min = String(now.getMinutes()).padStart(2, "0");
-    const suggestedName = `source_${yyyy}${mm}${dd}_${hh}${min}.json`;
+    const suggestedName = `source_${dd}_${mmm}_${yyyy}.json`;
     let saved = false;
     try {
       if (window.showSaveFilePicker) {
