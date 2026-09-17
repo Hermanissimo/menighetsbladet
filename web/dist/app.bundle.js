@@ -219,6 +219,8 @@
       mapGuideFilterHelp: "Filter: Use the 'Filter by Route' dropdown above the map to only show addresses assigned to a specific route.",
       mapGuideGotIt: "Got it",
       mapStatusLoaded: "Loaded {routes} routes and {addresses} addresses.",
+      mapTilesBlocked: "Map tiles are blocked or unavailable (check adblocker or connection).",
+      mapTilesBlockedShort: "Map tiles blocked",
       rowPersonnel: "Personnel",
       routesColDescription: "Addresses summary",
       routesColNotes: "Notes",
@@ -600,6 +602,8 @@
       mapGuideFilterHelp: "Filtrer: Bruk 'Filtrer etter rute'-nedtrekksmenyen over kartet for \xE5 bare vise adresser tildelt en bestemt rute.",
       mapGuideGotIt: "Skj\xF8nner",
       mapStatusLoaded: "Lastet {routes} ruter og {addresses} adresser.",
+      mapTilesBlocked: "Kartfliser er blokkert eller utilgjengelige (sjekk annonseblokkering eller nettverk).",
+      mapTilesBlockedShort: "Kartfliser blokkert",
       batchRouteTitle: "Oppdater rute",
       batchRouteAction: "Oppdater rute",
       rowUnassignedRoutes: "Ikke-tildelte ruter",
@@ -980,6 +984,8 @@
       mapGuideFilterHelp: "Filtrer: Bruk 'Filtrer etter rute'-nedtrekksmenyen over kartet for \xE5 berre vise adresser tildelt ei bestemt rute.",
       mapGuideGotIt: "Skj\xF8nar",
       mapStatusLoaded: "Lastet {routes} ruter og {addresses} adresser.",
+      mapTilesBlocked: "Kartfliser er blokkerte eller utilgjengelege (sjekk annonseblokkering eller nettverk).",
+      mapTilesBlockedShort: "Kartfliser blokkerte",
       batchRouteTitle: "Oppdater rute",
       batchRouteAction: "Oppdater rute",
       rowUnassignedRoutes: "Ikkje-tildelte ruter",
@@ -1364,6 +1370,8 @@
       mapGuideFilterHelp: "Filtrera: Anv\xE4nd rullgardinsmenyn 'Filtrera efter rutt' ovanf\xF6r kartan f\xF6r att endast visa adresser tilldelade en specifik rutt.",
       mapGuideGotIt: "F\xF6rst\xE5tt",
       mapStatusLoaded: "Laddade {routes} rutter och {addresses} adresser.",
+      mapTilesBlocked: "Kartbrickor \xE4r blockerade eller otillg\xE4ngliga (kontrollera annonsblockerare eller n\xE4tverk).",
+      mapTilesBlockedShort: "Kartbrickor blockerade",
       batchRouteTitle: "Uppdatera rutt",
       batchRouteAction: "Uppdatera rutt",
       rowUnassignedRoutes: "Otilldelade rutter",
@@ -2805,20 +2813,145 @@
       border: `hsl(${borderHue}, 100%, 40%)`
     };
   }
+  var TILE_PROVIDERS = [
+    {
+      name: "OpenStreetMap",
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      probeUrl: "https://a.tile.openstreetmap.org/0/0/0.png",
+      options: {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }
+    },
+    {
+      name: "CartoDB Voyager",
+      url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+      probeUrl: "https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png",
+      options: {
+        attribution: "&copy; CartoDB &copy; OpenStreetMap",
+        maxZoom: 19
+      }
+    },
+    {
+      name: "ESRI Topo",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+      probeUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0",
+      options: {
+        attribution: "Tiles &copy; Esri",
+        maxZoom: 19
+      }
+    }
+  ];
+  function probeTileAccess(url) {
+    return new Promise((resolve) => {
+      if (typeof Image === "undefined") {
+        return resolve(true);
+      }
+      const img = new Image();
+      const timer = setTimeout(() => {
+        resolve(false);
+      }, 3500);
+      img.onload = () => {
+        clearTimeout(timer);
+        resolve(true);
+      };
+      img.onerror = () => {
+        clearTimeout(timer);
+        resolve(false);
+      };
+      img.src = url;
+    });
+  }
+  async function checkBlockedTiles(testUrl) {
+    const probeUrl = testUrl || TILE_PROVIDERS[0].probeUrl;
+    const accessible = await probeTileAccess(probeUrl);
+    return !accessible;
+  }
+  function setupResilientTileLayer(map, containerEl, options = {}) {
+    let currentProviderIdx = 0;
+    let errorCount = 0;
+    let bannerEl = null;
+    function showBlockedBanner() {
+      if (containerEl && !bannerEl) {
+        bannerEl = document.createElement("div");
+        bannerEl.className = "map-tiles-blocked-banner";
+        bannerEl.innerHTML = "<span>\u26A0\uFE0F " + escapeHtml(t("mapTilesBlocked") || "Kartfliser er blokkert eller utilgjengelig (sjekk annonseblokkering/nettverk).") + "</span>";
+        containerEl.style.position = "relative";
+        containerEl.appendChild(bannerEl);
+      }
+      if (options.statusElId) {
+        const statusEl2 = document.getElementById(options.statusElId);
+        if (statusEl2) {
+          statusEl2.textContent = "\u26A0\uFE0F " + (t("mapTilesBlockedShort") || "Kartfliser blokkert");
+          statusEl2.style.color = "#d93025";
+        }
+      }
+      if (typeof options.onBlocked === "function") {
+        options.onBlocked();
+      }
+    }
+    function hideBlockedBanner() {
+      if (bannerEl && bannerEl.parentNode) {
+        bannerEl.parentNode.removeChild(bannerEl);
+        bannerEl = null;
+      }
+    }
+    const initialProvider = TILE_PROVIDERS[0];
+    const tileLayer = L.tileLayer(initialProvider.url, Object.assign({}, initialProvider.options, options.tileOptions || {}, {
+      maxZoom: 19
+    }));
+    function switchToNextProvider() {
+      currentProviderIdx++;
+      if (currentProviderIdx < TILE_PROVIDERS.length) {
+        const nextProvider = TILE_PROVIDERS[currentProviderIdx];
+        console.warn(`Tile load failed, switching to fallback: ${nextProvider.name}`);
+        tileLayer.setUrl(nextProvider.url);
+        errorCount = 0;
+      } else {
+        console.warn("All tile providers failed or were blocked.");
+        showBlockedBanner();
+      }
+    }
+    tileLayer.on("tileerror", function() {
+      errorCount++;
+      if (errorCount >= 2) {
+        switchToNextProvider();
+      }
+    });
+    tileLayer.on("tileload", function() {
+      hideBlockedBanner();
+    });
+    tileLayer.addTo(map);
+    probeTileAccess(initialProvider.probeUrl).then((ok) => {
+      if (!ok && currentProviderIdx === 0) {
+        console.warn(`Proactive check: ${initialProvider.name} is blocked, testing fallback...`);
+        probeTileAccess(TILE_PROVIDERS[1].probeUrl).then((cartoOk) => {
+          if (cartoOk) {
+            console.warn(`Fallback ${TILE_PROVIDERS[1].name} is accessible, switching immediately.`);
+            currentProviderIdx = 1;
+            tileLayer.setUrl(TILE_PROVIDERS[1].url);
+          } else {
+            console.warn(`Fallback ${TILE_PROVIDERS[1].name} also blocked, checking ESRI.`);
+            probeTileAccess(TILE_PROVIDERS[2].probeUrl).then((esriOk) => {
+              if (esriOk) {
+                currentProviderIdx = 2;
+                tileLayer.setUrl(TILE_PROVIDERS[2].url);
+              } else {
+                showBlockedBanner();
+              }
+            });
+          }
+        });
+      }
+    });
+    return tileLayer;
+  }
   function initMap(containerId) {
     if (mapInstance) return;
     mapInstance = L.map(containerId).setView([59.8624, 10.796], 14);
-    const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-    const cartoUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-    const osmLayer = L.tileLayer(osmUrl, {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19
-    });
-    osmLayer.on("tileerror", function(e) {
-      if (this._url !== cartoUrl) {
-        console.warn("OSM tile load failed, falling back to CartoDB Voyager");
-        this.setUrl(cartoUrl);
-      }
+    const containerEl = document.getElementById(containerId);
+    const osmLayer = setupResilientTileLayer(mapInstance, containerEl, {
+      statusElId: "map-status"
     });
     const satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
       attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
@@ -3020,20 +3153,12 @@
   var miniMapInstance = null;
   function initMiniMap(lat, lon, routes) {
     const containerId = "add-address-minimap";
+    const containerEl = document.getElementById(containerId);
     if (!miniMapInstance) {
       miniMapInstance = L.map(containerId).setView([lat, lon], 16);
-      const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-      const cartoUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-      const miniLayer = L.tileLayer(osmUrl, {
-        attribution: "&copy; OSM",
-        maxZoom: 19
+      setupResilientTileLayer(miniMapInstance, containerEl, {
+        tileOptions: { attribution: "&copy; OSM" }
       });
-      miniLayer.on("tileerror", function(e) {
-        if (this._url !== cartoUrl) {
-          this.setUrl(cartoUrl);
-        }
-      });
-      miniLayer.addTo(miniMapInstance);
     } else {
       miniMapInstance.setView([lat, lon], 16);
     }
@@ -6495,15 +6620,7 @@
           attributionControl: false,
           scrollWheelZoom: false
         });
-        var tileLayer = L.tileLayer(osmUrl, {
-          maxZoom: 19
-        });
-        tileLayer.on("tileerror", function() {
-          if (this._url !== cartoUrl) {
-            this.setUrl(cartoUrl);
-          }
-        });
-        tileLayer.addTo(map);
+        setupResilientTileLayer(map, el);
         var bounds = L.latLngBounds();
         coordsAddrs.forEach(function(a) {
           var hh = Math.max(1, toInt2(a.numberOfHouseholds));
@@ -8444,6 +8561,7 @@
   initCellLinks();
   window.createAddressesResetBackup = createAddressesResetBackup;
   window.resetAddressesDatabase = resetAddressesDatabase;
+  window.checkBlockedTiles = checkBlockedTiles;
   setActiveTab("dashboard");
   loadInitialData();
 })();

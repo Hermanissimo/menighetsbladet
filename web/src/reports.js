@@ -2,6 +2,7 @@ import { currentData } from "./state.js";
 import { escapeHtml, toInt } from "./utils.js";
 import { t } from "./i18n.js";
 import { normalizeRouteIdentifier } from "./calculations.js";
+import { setupResilientTileLayer } from "./map.js";
 
 // Helper to find a route's data
 function getRouteData(routeId) {
@@ -497,15 +498,7 @@ export function initRouteReportMaps(containerEl) {
         scrollWheelZoom: false
       });
 
-      var tileLayer = L.tileLayer(osmUrl, {
-        maxZoom: 19
-      });
-      tileLayer.on("tileerror", function () {
-        if (this._url !== cartoUrl) {
-          this.setUrl(cartoUrl);
-        }
-      });
-      tileLayer.addTo(map);
+      setupResilientTileLayer(map, el);
 
       var bounds = L.latLngBounds();
 

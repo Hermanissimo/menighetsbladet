@@ -7,7 +7,7 @@ import { getIndexedDb, idbGetValue, idbSetValue, idbGetAll, withoutStoreId, clea
 import { initEditModal, initAddButtons, initDeleteModal, initBatchStatusModal, initMergeRoutesModal, initBatchRouteModal, initLoadResultModal, openSourceMissingModal, closeSourceMissingModal, initSourceMissingModal, initUserGuideModal, openCloseGuardModal, initCloseGuardModal } from "./modals.js";
 import { renderDrivingListsHtml, renderRouteReportsHtml, initRouteReportMaps, cleanupRouteReportMaps, invalidateRouteReportMaps } from "./reports.js";
 import { renderRoutesTable, renderAllTables, updateSortHeaderIndicators, initSortableColumns, initResizableColumns, getFilteredSortedRows, flushPendingFilters, clearAllBatchSelections, updateBatchControls, initTableFilters, initPaginationControls, initCellLinks, initRowActionMenus, initBatchSelectionControls, refreshFilterComponents } from "./tables.js";
-import { initMap, invalidateMapSize, initMapAddressModal, initReassignRouteModal, initDeleteAddressMapModal } from "./map.js";
+import { initMap, invalidateMapSize, initMapAddressModal, initReassignRouteModal, initDeleteAddressMapModal, checkBlockedTiles } from "./map.js";
 
 
 
@@ -2147,5 +2147,6 @@ import("./dom.js").then(dom => {
 initCellLinks();
 window.createAddressesResetBackup = createAddressesResetBackup;
 window.resetAddressesDatabase = resetAddressesDatabase;
+window.checkBlockedTiles = checkBlockedTiles;
 setActiveTab("dashboard");
 loadInitialData();

@@ -53,24 +53,161 @@ function getRouteColor(routeId) {
   };
 }
 
+export const TILE_PROVIDERS = [
+  {
+    name: 'OpenStreetMap',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    probeUrl: 'https://a.tile.openstreetmap.org/0/0/0.png',
+    options: {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19
+    }
+  },
+  {
+    name: 'CartoDB Voyager',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    probeUrl: 'https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png',
+    options: {
+      attribution: '&copy; CartoDB &copy; OpenStreetMap',
+      maxZoom: 19
+    }
+  },
+  {
+    name: 'ESRI Topo',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    probeUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0',
+    options: {
+      attribution: 'Tiles &copy; Esri',
+      maxZoom: 19
+    }
+  }
+];
+
+export function probeTileAccess(url) {
+  return new Promise(resolve => {
+    if (typeof Image === 'undefined') {
+      return resolve(true);
+    }
+    const img = new Image();
+    const timer = setTimeout(() => {
+      resolve(false);
+    }, 3500);
+    img.onload = () => {
+      clearTimeout(timer);
+      resolve(true);
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      resolve(false);
+    };
+    img.src = url;
+  });
+}
+
+export async function checkBlockedTiles(testUrl) {
+  const probeUrl = testUrl || TILE_PROVIDERS[0].probeUrl;
+  const accessible = await probeTileAccess(probeUrl);
+  return !accessible;
+}
+
+export function setupResilientTileLayer(map, containerEl, options = {}) {
+  let currentProviderIdx = 0;
+  let errorCount = 0;
+  let bannerEl = null;
+
+  function showBlockedBanner() {
+    if (containerEl && !bannerEl) {
+      bannerEl = document.createElement('div');
+      bannerEl.className = 'map-tiles-blocked-banner';
+      bannerEl.innerHTML = '<span>⚠️ ' + escapeHtml(t('mapTilesBlocked') || 'Kartfliser er blokkert eller utilgjengelig (sjekk annonseblokkering/nettverk).') + '</span>';
+      containerEl.style.position = 'relative';
+      containerEl.appendChild(bannerEl);
+    }
+    if (options.statusElId) {
+      const statusEl = document.getElementById(options.statusElId);
+      if (statusEl) {
+        statusEl.textContent = '⚠️ ' + (t('mapTilesBlockedShort') || 'Kartfliser blokkert');
+        statusEl.style.color = '#d93025';
+      }
+    }
+    if (typeof options.onBlocked === 'function') {
+      options.onBlocked();
+    }
+  }
+
+  function hideBlockedBanner() {
+    if (bannerEl && bannerEl.parentNode) {
+      bannerEl.parentNode.removeChild(bannerEl);
+      bannerEl = null;
+    }
+  }
+
+  const initialProvider = TILE_PROVIDERS[0];
+  const tileLayer = L.tileLayer(initialProvider.url, Object.assign({}, initialProvider.options, options.tileOptions || {}, {
+    maxZoom: 19
+  }));
+
+  function switchToNextProvider() {
+    currentProviderIdx++;
+    if (currentProviderIdx < TILE_PROVIDERS.length) {
+      const nextProvider = TILE_PROVIDERS[currentProviderIdx];
+      console.warn(`Tile load failed, switching to fallback: ${nextProvider.name}`);
+      tileLayer.setUrl(nextProvider.url);
+      errorCount = 0;
+    } else {
+      console.warn('All tile providers failed or were blocked.');
+      showBlockedBanner();
+    }
+  }
+
+  tileLayer.on('tileerror', function () {
+    errorCount++;
+    if (errorCount >= 2) {
+      switchToNextProvider();
+    }
+  });
+
+  tileLayer.on('tileload', function () {
+    hideBlockedBanner();
+  });
+
+  tileLayer.addTo(map);
+
+  // Proactive probe: check if primary tile provider is blocked
+  probeTileAccess(initialProvider.probeUrl).then(ok => {
+    if (!ok && currentProviderIdx === 0) {
+      console.warn(`Proactive check: ${initialProvider.name} is blocked, testing fallback...`);
+      probeTileAccess(TILE_PROVIDERS[1].probeUrl).then(cartoOk => {
+        if (cartoOk) {
+          console.warn(`Fallback ${TILE_PROVIDERS[1].name} is accessible, switching immediately.`);
+          currentProviderIdx = 1;
+          tileLayer.setUrl(TILE_PROVIDERS[1].url);
+        } else {
+          console.warn(`Fallback ${TILE_PROVIDERS[1].name} also blocked, checking ESRI.`);
+          probeTileAccess(TILE_PROVIDERS[2].probeUrl).then(esriOk => {
+            if (esriOk) {
+              currentProviderIdx = 2;
+              tileLayer.setUrl(TILE_PROVIDERS[2].url);
+            } else {
+              showBlockedBanner();
+            }
+          });
+        }
+      });
+    }
+  });
+
+  return tileLayer;
+}
+
 export function initMap(containerId) {
   if (mapInstance) return;
   // Nordstrand Kirke
   mapInstance = L.map(containerId).setView([59.8624, 10.7960], 14);
 
-  const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  const cartoUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-  
-  const osmLayer = L.tileLayer(osmUrl, {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 19
-  });
-
-  osmLayer.on('tileerror', function(e) {
-    if (this._url !== cartoUrl) {
-      console.warn("OSM tile load failed, falling back to CartoDB Voyager");
-      this.setUrl(cartoUrl);
-    }
+  const containerEl = document.getElementById(containerId);
+  const osmLayer = setupResilientTileLayer(mapInstance, containerEl, {
+    statusElId: 'map-status'
   });
 
   const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -316,22 +453,12 @@ let miniMapInstance = null;
 
 function initMiniMap(lat, lon, routes) {
   const containerId = 'add-address-minimap';
+  const containerEl = document.getElementById(containerId);
   if (!miniMapInstance) {
     miniMapInstance = L.map(containerId).setView([lat, lon], 16);
-    const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    const cartoUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-    const miniLayer = L.tileLayer(osmUrl, {
-      attribution: '&copy; OSM',
-      maxZoom: 19
+    setupResilientTileLayer(miniMapInstance, containerEl, {
+      tileOptions: { attribution: '&copy; OSM' }
     });
-    
-    miniLayer.on('tileerror', function(e) {
-      if (this._url !== cartoUrl) {
-        this.setUrl(cartoUrl);
-      }
-    });
-    
-    miniLayer.addTo(miniMapInstance);
   } else {
     miniMapInstance.setView([lat, lon], 16);
   }
