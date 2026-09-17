@@ -175,7 +175,16 @@ export const I18N = {
         "- Magazines to Order = Included Households + Extra Papers\n\n" +
         "4. Export & Run Sheets:\n" +
         "- CSV & Excel (XLSX): Export tables or summaries with the export buttons.\n" +
-        "- Run Sheets: Select 'Preview & Print Kjøreliste' in driver actions for a printer-friendly sheet.",
+        "- Run Sheets: Select 'Preview & Print Kjøreliste' in driver actions for a printer-friendly sheet.\n\n" +
+        "5. Glossary / Terms Used:\n" +
+        "- Route (Rute): Geographical sector for distribution.\n" +
+        "- Distributor (Bladbærer): Volunteer delivering magazines to mailboxes.\n" +
+        "- Driver (Kjører): Volunteer transporting bundles to distributors.\n" +
+        "- Households: Total living units at an address.\n" +
+        "- Excluded Households: Households opted out of unaddressed mail.\n" +
+        "- Included Households: Net households to receive a magazine.\n" +
+        "- Extra Magazines: Buffer copies for a route, distributor, or driver.\n" +
+        "- Unassigned Route: A route lacking a distributor or driver.",
       chooseFile: "Choose Data File",
       settings: "Settings",
       tabDashboard: "Dashboard",
@@ -559,7 +568,16 @@ export const I18N = {
         "- Blad som skal bestilles = Inkluderte husstander + Ekstra blad\n\n" +
         "4. Eksport og kjørelister:\n" +
         "- CSV og Excel (XLSX): Eksporter tabeller eller sammendrag ved hjelp av eksportknappene.\n" +
-        "- Kjøreliste: Velg 'Forhåndsvis og skriv ut kjøreliste' i Kjører-tabellens handlingsmeny.",
+        "- Kjøreliste: Velg 'Forhåndsvis og skriv ut kjøreliste' i Kjører-tabellens handlingsmeny.\n\n" +
+        "5. Ordliste / Begreper:\n" +
+        "- Rute: Geografisk område for distribusjon.\n" +
+        "- Bladbærer (Distributør): Frivillig som leverer i postkasser.\n" +
+        "- Kjører (Sjåfør): Frivillig som transporterer bunter til bladbærere.\n" +
+        "- Husstander: Totalt antall boenheter.\n" +
+        "- Ekskluderte husstander: Husstander reservert mot uadressert post.\n" +
+        "- Inkluderte husstander: Netto husstander som skal motta blad.\n" +
+        "- Ekstra blader: Bufferkopier for rute, bladbærer eller kjører.\n" +
+        "- Ufordelt rute: Rute uten tildelt bladbærer eller kjører.",
       chooseFile: "Velg datafil",
       settings: "Innstillinger",
       tabDashboard: "Dashbord",
@@ -961,7 +979,16 @@ export const I18N = {
         "- Blad som skal bestillast = Inkluderte husstandar + Ekstra blad\n\n" +
         "4. Eksport og køyrelister:\n" +
         "- CSV og Excel (XLSX): Eksporter tabellar eller samandrag ved hjelp av eksportknappane.\n" +
-        "- Køyreliste: Vel 'Førehandsvis og skriv ut køyreliste' i Kjører-tabellen.",
+        "- Køyreliste: Vel 'Førehandsvis og skriv ut køyreliste' i Kjører-tabellen.\n\n" +
+        "5. Ordliste / Omgrep:\n" +
+        "- Rute: Geografisk område for distribusjon.\n" +
+        "- Bladberar (Distributør): Frivillig som leverer i postkassar.\n" +
+        "- Kjører (Sjåfør): Frivillig som transporterer buntar til bladberarar.\n" +
+        "- Husstandar: Totalt tal på bueiningar.\n" +
+        "- Ekskluderte husstandar: Husstandar reservert mot uadressert post.\n" +
+        "- Inkluderte husstandar: Netto husstandar som skal få blad.\n" +
+        "- Ekstra blad: Bufferkopiar for rute, bladberar eller kjører.\n" +
+        "- Ufordelt rute: Rute utan tildelt bladberar eller kjører.",
       chooseFile: "Vel datafil",
       settings: "Innstillingar",
       tabDashboard: "Oversyn",
@@ -1406,7 +1433,16 @@ export const I18N = {
         "- Tidningar att beställa = Inkluderade hushåll + Extra tidningar\n\n" +
         "4. Export och körlistor:\n" +
         "- CSV och Excel (XLSX): Exportera tabeller eller sammanfattningar via exportknapparna.\n" +
-        "- Körlista: Välj 'Förhandsgranska och skriv ut körlista' i förartabellens åtgärdsmeny.",
+        "- Körlista: Välj 'Förhandsgranska och skriv ut körlista' i förartabellens åtgärdsmeny.\n\n" +
+        "5. Ordlista / Begrepp:\n" +
+        "- Rutt (Rute): Geografiskt område för utdelning.\n" +
+        "- Utdelare (Bladbærer): Frivillig som delar ut tidningar i brevlådor.\n" +
+        "- Förare (Kjører): Frivillig som transporterer buntar till utdelare.\n" +
+        "- Hushåll: Totalt antal boendeenheter.\n" +
+        "- Exkluderade hushåll: Hushåll som avböjt reklam/oadresserad post.\n" +
+        "- Inkluderade hushåll: Nettoantal hushåll som ska få tidning.\n" +
+        "- Extra tidningar: Buffertkopior för rutt, utdelare eller förare.\n" +
+        "- Otilldelad rutt: Rutt utan utdelare eller förare.",
       actionsCol: "Atgarder",
       editAction: "Redigera",
       addAction: "Lagg till rad",
