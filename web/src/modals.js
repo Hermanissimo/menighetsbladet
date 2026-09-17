@@ -1,4 +1,5 @@
 import { setHasUserCommittedEdits, setShowSaveChanges, debugSaveChangesLog, validateRequiredFields, validateFieldFormats, canEditCurrentData, syncCurrentDataFromJson, loadUserGuideText, saveChangesToSource, promptForDataFile, getRequiredFields, render, refreshUnsavedChangesFromData, scheduleAutosave } from "./main.js";
+import { escapeHtml, parseMarkdown } from "./utils.js";
 import { t } from "./i18n.js";
 import { currentData, editState, deleteState, batchStatusState, batchRouteState, editFieldsByTable, addFieldsByTable, tableTitleKeys, tableTitleSingleKeys, fieldLabelKeyByTable } from "./state.js";
 import { statusEl, fileInput, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, floatingGuideBtn, userGuideModal, userGuideContent, closeGuardModal, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, openDataFolderBtn } from "./dom.js";
@@ -1300,10 +1301,10 @@ export function openUserGuideModal() {
     loadUserGuideText()
       .then(function (text) {
         var loaded = stripSetupInfo(String(text || "").trim());
-        userGuideContent.textContent = loaded || t("userGuideFallback");
+        userGuideContent.innerHTML = parseMarkdown(loaded || t("userGuideFallback"));
       })
       .catch(function () {
-        userGuideContent.textContent = t("userGuideFallback");
+        userGuideContent.innerHTML = parseMarkdown(t("userGuideFallback"));
       });
   }
 

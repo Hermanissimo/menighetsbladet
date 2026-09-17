@@ -152,6 +152,29 @@
       }, wait);
     };
   }
+  function parseMarkdown(text) {
+    if (!text) return "";
+    let html = text;
+    html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+    html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+    html = html.replace(/^# (.*$)/gim, "<h1>$1</h1>");
+    html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
+    html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
+    html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(/`(.*?)`/gim, "<code>$1</code>");
+    html = html.replace(/^---$/gim, "<hr>");
+    html = html.replace(/^- (.*$)/gim, "<li>$1</li>");
+    let paragraphs = html.split(/\n\n+/);
+    html = paragraphs.map((p) => {
+      if (p.startsWith("<h") || p.startsWith("<hr>")) return p;
+      if (p.includes("<li>")) {
+        return `<ul>${p}</ul>`;
+      }
+      return `<p>${p.replace(/\n/g, "<br>")}</p>`;
+    }).join("\n");
+    return html;
+  }
 
   // web/src/i18n.js
   var I18N = {
@@ -5677,9 +5700,9 @@
     userGuideModal.removeAttribute("hidden");
     loadUserGuideText().then(function(text) {
       var loaded = stripSetupInfo(String(text || "").trim());
-      userGuideContent.textContent = loaded || t("userGuideFallback");
+      userGuideContent.innerHTML = parseMarkdown(loaded || t("userGuideFallback"));
     }).catch(function() {
-      userGuideContent.textContent = t("userGuideFallback");
+      userGuideContent.innerHTML = parseMarkdown(t("userGuideFallback"));
     });
   }
   function closeUserGuideModal() {
