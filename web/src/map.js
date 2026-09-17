@@ -53,38 +53,44 @@ function getRouteColor(routeId) {
   };
 }
 
-export const TILE_PROVIDERS = [
-  {
-    name: 'ESRI Topo',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-    probeUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0',
-    options: {
-      attribution: 'Tiles &copy; Esri',
-      maxZoom: 19,
-      crossOrigin: true
-    }
-  },
-  {
-    name: 'Kartverket Topo',
-    url: 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png',
-    probeUrl: 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/0/0/0.png',
-    options: {
-      attribution: '&copy; <a href="https://www.kartverket.no/">Kartverket</a>',
-      maxZoom: 18,
-      crossOrigin: true
-    }
-  },
-  {
-    name: 'OpenStreetMap',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    probeUrl: 'https://a.tile.openstreetmap.org/0/0/0.png',
-    options: {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-      crossOrigin: true
-    }
+const ESRI_TOPO = {
+  name: 'ESRI Topo',
+  url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+  probeUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0',
+  options: {
+    attribution: 'Tiles &copy; Esri',
+    maxZoom: 19,
+    crossOrigin: true
   }
-];
+};
+
+const KARTVERKET_TOPO = {
+  name: 'Kartverket Topo',
+  url: 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png',
+  probeUrl: 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/0/0/0.png',
+  options: {
+    attribution: '&copy; <a href="https://www.kartverket.no/">Kartverket</a>',
+    maxZoom: 18,
+    crossOrigin: true
+  }
+};
+
+const OPENSTREETMAP = {
+  name: 'OpenStreetMap',
+  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  probeUrl: 'https://a.tile.openstreetmap.org/0/0/0.png',
+  options: {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19,
+    crossOrigin: true
+  }
+};
+
+const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+export const TILE_PROVIDERS = isLocalhost ? 
+  [ESRI_TOPO, KARTVERKET_TOPO, OPENSTREETMAP] : 
+  [OPENSTREETMAP, ESRI_TOPO, KARTVERKET_TOPO];
 
 export async function probeTileAccess(url) {
   try {

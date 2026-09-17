@@ -2813,38 +2813,38 @@
       border: `hsl(${borderHue}, 100%, 40%)`
     };
   }
-  var TILE_PROVIDERS = [
-    {
-      name: "ESRI Topo",
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-      probeUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0",
-      options: {
-        attribution: "Tiles &copy; Esri",
-        maxZoom: 19,
-        crossOrigin: true
-      }
-    },
-    {
-      name: "Kartverket Topo",
-      url: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png",
-      probeUrl: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/0/0/0.png",
-      options: {
-        attribution: '&copy; <a href="https://www.kartverket.no/">Kartverket</a>',
-        maxZoom: 18,
-        crossOrigin: true
-      }
-    },
-    {
-      name: "OpenStreetMap",
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      probeUrl: "https://a.tile.openstreetmap.org/0/0/0.png",
-      options: {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-        crossOrigin: true
-      }
+  var ESRI_TOPO = {
+    name: "ESRI Topo",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+    probeUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0",
+    options: {
+      attribution: "Tiles &copy; Esri",
+      maxZoom: 19,
+      crossOrigin: true
     }
-  ];
+  };
+  var KARTVERKET_TOPO = {
+    name: "Kartverket Topo",
+    url: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png",
+    probeUrl: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/0/0/0.png",
+    options: {
+      attribution: '&copy; <a href="https://www.kartverket.no/">Kartverket</a>',
+      maxZoom: 18,
+      crossOrigin: true
+    }
+  };
+  var OPENSTREETMAP = {
+    name: "OpenStreetMap",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    probeUrl: "https://a.tile.openstreetmap.org/0/0/0.png",
+    options: {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+      crossOrigin: true
+    }
+  };
+  var isLocalhost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+  var TILE_PROVIDERS = isLocalhost ? [ESRI_TOPO, KARTVERKET_TOPO, OPENSTREETMAP] : [OPENSTREETMAP, ESRI_TOPO, KARTVERKET_TOPO];
   async function probeTileAccess(url) {
     try {
       const res = await fetch(url, {
@@ -6674,7 +6674,8 @@
             iconSize: [26, 20],
             iconAnchor: [13, 10]
           });
-          var marker = L.marker([a.lat, a.lon], { icon });
+          var zOffset = isPartial ? 1e3 : isExcluded ? 500 : 0;
+          var marker = L.marker([a.lat, a.lon], { icon, zIndexOffset: zOffset });
           var tooltip = "<strong>" + escapeHtml(a.address) + "</strong><br>" + escapeHtml(t("addrColHouseholds") || "Husstander") + ": " + hh;
           if (ex > 0) {
             tooltip += '<br><span style="color:#d32f2f">\u26D4 ' + escapeHtml(t("routeReportExcluded") || "Ekskludert") + ": " + ex + "</span>";

@@ -522,7 +522,8 @@ export function initRouteReportMaps(containerEl) {
           iconAnchor: [13, 10]
         });
 
-        var marker = L.marker([a.lat, a.lon], { icon: icon });
+        var zOffset = isPartial ? 1000 : (isExcluded ? 500 : 0);
+        var marker = L.marker([a.lat, a.lon], { icon: icon, zIndexOffset: zOffset });
 
         var tooltip = "<strong>" + escapeHtml(a.address) + "</strong><br>" + escapeHtml(t("addrColHouseholds") || "Husstander") + ": " + hh;
         if (ex > 0) {
