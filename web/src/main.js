@@ -750,12 +750,24 @@ function updateUnsavedChangesUi() {
   if (hasLoadedEditableSource && currentDataFormat === "json" && showSaveChanges) {
     saveChangesBtn.removeAttribute("hidden");
     saveChangesBtn.hidden = false;
-    if (saveGroup) saveGroup.hidden = false;
+    if (saveGroup) {
+      saveGroup.removeAttribute("hidden");
+      saveGroup.hidden = false;
+    }
     debugSaveChangesLog("updateUnsavedChangesUi:show");
   } else {
     saveChangesBtn.setAttribute("hidden", "");
     saveChangesBtn.hidden = true;
-    if (saveGroup) saveGroup.hidden = true;
+    if (saveGroup) {
+      saveGroup.setAttribute("hidden", "");
+      saveGroup.hidden = true;
+    }
+    if (saveDropdownMenu) {
+      saveDropdownMenu.style.display = "none";
+    }
+    if (saveDropdownToggle) {
+      saveDropdownToggle.setAttribute("aria-expanded", "false");
+    }
     debugSaveChangesLog("updateUnsavedChangesUi:hide");
   }
 }
@@ -833,6 +845,7 @@ export async function saveChangesToSourceCopy() {
   const min = String(now.getMinutes()).padStart(2, '0');
   const suggestedName = `source_${yyyy}${mm}${dd}_${hh}${min}.json`;
   
+  let saved = false;
   try {
     if (window.showSaveFilePicker) {
       const handle = await window.showSaveFilePicker({
@@ -845,10 +858,12 @@ export async function saveChangesToSourceCopy() {
       const writable = await handle.createWritable();
       await writable.write(jsonText);
       await writable.close();
+      saved = true;
       statusEl.dataset.loaded = "1";
       statusEl.textContent = t("statusSavedCopyNow") || "Copy saved.";
     } else {
       saveTextDownload(suggestedName, jsonText, "application/json;charset=utf-8");
+      saved = true;
       statusEl.dataset.loaded = "1";
       statusEl.textContent = t("statusSavedCopyNow") || "Copy downloaded.";
     }
@@ -856,10 +871,23 @@ export async function saveChangesToSourceCopy() {
     if (err.name !== 'AbortError') {
       console.error("Failed to save copy via file handle", err);
       saveTextDownload(suggestedName, jsonText, "application/json;charset=utf-8");
+      saved = true;
       statusEl.dataset.loaded = "1";
       statusEl.textContent = t("statusSavedCopyNow") || "Copy downloaded.";
     }
   }
+
+  if (saved) {
+    saveJsonCache(jsonText, suggestedName);
+    lastCommittedDataText = getComparableDataText();
+    hasUnsavedChanges = false;
+    hasUserCommittedEdits = false;
+    showSaveChanges = false;
+    debugSaveChangesLog("saveChangesToSourceCopy:saved-and-reset");
+    updateUnsavedChangesUi();
+    return true;
+  }
+  return false;
 }
 
 function persistEditedXmlNow(reason) {
@@ -1922,6 +1950,12 @@ if (saveChangesBtn) {
 if (saveAsCopyBtn) {
   saveAsCopyBtn.addEventListener("click", function () {
     debugSaveChangesLog("save-as-copy:click");
+    if (saveDropdownMenu) {
+      saveDropdownMenu.style.display = "none";
+    }
+    if (saveDropdownToggle) {
+      saveDropdownToggle.setAttribute("aria-expanded", "false");
+    }
     saveChangesToSourceCopy();
   });
 }
