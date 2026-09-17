@@ -250,7 +250,6 @@ export function normalizeAddressRow(row) {
       row.distributor = dist.name || "";
       row.driverName = dist.driverName || "";
     } else {
-      row.distributor = "";
       var rt = null;
       if (currentData.routes && currentData.routes.length) {
         for (var k = 0; k < currentData.routes.length; k += 1) {
@@ -260,7 +259,8 @@ export function normalizeAddressRow(row) {
           }
         }
       }
-      row.driverName = rt ? (rt.driverName || "") : "";
+      row.distributor = rt ? (rt.distributor || "") : "";
+      row.driverName = rt ? (rt.driver || rt.driverName || "") : "";
     }
     return row;
   }

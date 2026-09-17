@@ -6,7 +6,7 @@ import { normalizeRouteIdentifier, recomputeMetricsFromCurrentData, normalizeRec
 import { getIndexedDb, idbGetValue, idbSetValue, idbGetAll, withoutStoreId, cleanRecordForStore, IDB_JSON_CACHE_KEY } from "./api.js";
 import { initEditModal, initAddButtons, initDeleteModal, initBatchStatusModal, initMergeRoutesModal, initBatchRouteModal, initLoadResultModal, openSourceMissingModal, closeSourceMissingModal, initSourceMissingModal, initUserGuideModal, openCloseGuardModal, initCloseGuardModal } from "./modals.js";
 import { renderDrivingListsHtml, renderRouteReportsHtml } from "./reports.js";
-import { renderRoutesTable, renderAllTables, updateSortHeaderIndicators, initSortableColumns, initResizableColumns, getFilteredSortedRows, flushPendingFilters, clearAllBatchSelections, updateBatchControls, initTableFilters, initPaginationControls, initCellLinks, initRowActionMenus, initBatchSelectionControls } from "./tables.js";
+import { renderRoutesTable, renderAllTables, updateSortHeaderIndicators, initSortableColumns, initResizableColumns, getFilteredSortedRows, flushPendingFilters, clearAllBatchSelections, updateBatchControls, initTableFilters, initPaginationControls, initCellLinks, initRowActionMenus, initBatchSelectionControls, refreshFilterComponents } from "./tables.js";
 import { initMap, invalidateMapSize, initMapAddressModal, initReassignRouteModal, initDeleteAddressMapModal } from "./map.js";
 
 
@@ -84,8 +84,12 @@ function applyLanguage(lang) {
   setText("subtitle", t("subtitle"));
   renderDataSourceIndicator();
   setText("save-changes", t("saveChangesAction"));
+  setText("save-as-copy", t("saveAsCopyAction"));
+  setAttr("save-dropdown-toggle", "aria-label", t("saveMoreOptions"));
   setText("open-user-guide", t("userGuideAction"));
-  setText("choose-file-label", t("chooseFile"));
+  setText("choose-file-label", t("chooseDataFile"));
+  setAttr("floating-guide-btn", "title", t("userGuideAction"));
+  setAttr("floating-guide-btn", "aria-label", t("userGuideAction"));
   setText("derived-note", t("derivedValuesNote"));
   setText("settings-label", t("settings"));
   setAttr("language-select", "aria-label", t("ariaLanguageSelect"));
@@ -1925,6 +1929,8 @@ document.querySelectorAll(".tab-btn").forEach(function (btn) {
     if (tabName === "map") {
       initMap("map-container");
       invalidateMapSize();
+    } else {
+      refreshFilterComponents(tabName);
     }
   });
 });

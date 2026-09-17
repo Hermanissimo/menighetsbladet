@@ -176,13 +176,13 @@ export let filterFieldMap = {
       route: ["routes"],
       status: ["status"],
       distributorName: ["distributorName"],
-      driverName: ["name"],
+      driverName: ["name", "driverName"],
       postnr: ["postnr"]
     },
     distributors: {
       route: ["routes"],
       status: ["status"],
-      distributorName: ["name"],
+      distributorName: ["name", "distributorName"],
       driverName: ["driverName"],
       postnr: ["postnr"]
     },
@@ -195,8 +195,8 @@ export let filterFieldMap = {
     routes: {
       route: ["routeId"],
       status: ["status"],
-      distributorName: ["distributorNames"],
-      driverName: ["driver"],
+      distributorName: ["distributorNames", "distributor"],
+      driverName: ["driver", "driverName"],
       postnr: ["postnrs"]
     }
   };

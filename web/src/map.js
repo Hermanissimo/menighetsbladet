@@ -58,9 +58,19 @@ export function initMap(containerId) {
   // Nordstrand Kirke
   mapInstance = L.map(containerId).setView([59.8624, 10.7960], 14);
 
-  const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const cartoUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+  
+  const osmLayer = L.tileLayer(osmUrl, {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19
+  });
+
+  osmLayer.on('tileerror', function(e) {
+    if (this._url !== cartoUrl) {
+      console.warn("OSM tile load failed, falling back to CartoDB Voyager");
+      this.setUrl(cartoUrl);
+    }
   });
 
   const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -308,10 +318,20 @@ function initMiniMap(lat, lon, routes) {
   const containerId = 'add-address-minimap';
   if (!miniMapInstance) {
     miniMapInstance = L.map(containerId).setView([lat, lon], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: 'OSM',
+    const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const cartoUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    const miniLayer = L.tileLayer(osmUrl, {
+      attribution: '&copy; OSM',
       maxZoom: 19
-    }).addTo(miniMapInstance);
+    });
+    
+    miniLayer.on('tileerror', function(e) {
+      if (this._url !== cartoUrl) {
+        this.setUrl(cartoUrl);
+      }
+    });
+    
+    miniLayer.addTo(miniMapInstance);
   } else {
     miniMapInstance.setView([lat, lon], 16);
   }

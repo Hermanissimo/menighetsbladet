@@ -370,6 +370,10 @@
       statusAutosavedIdle: "Autosaved source file after inactivity.",
       statusSavedOnClose: "Saved source file on page close.",
       saveChangesAction: "Save Changes",
+      saveAsCopyAction: "Save as copy",
+      saveMoreOptions: "Save options",
+      statusSavedCopyNow: "Copy saved.",
+      modalErrorMissing: "This field is required.",
       closeGuardTitle: "Unsaved changes",
       closeGuardMessage: "You have unsaved changes in IndexedDB. Choose what to do before leaving.",
       closeGuardSave: "Save Changes",
@@ -723,6 +727,35 @@
       statusAutosavedIdle: "Lagret kildefil etter inaktivitet.",
       statusSavedOnClose: "Lagret kildefil ved lukking av side.",
       saveChangesAction: "Lagre endringer",
+      saveAsCopyAction: "Lagre som kopi",
+      saveMoreOptions: "Lagringsalternativer",
+      statusSavedCopyNow: "Kopi lagret.",
+      modalErrorMissing: "Dette feltet er obligatorisk.",
+      rowPersonnel: "Personell",
+      routesColDescription: "Adresseoppsummering",
+      routesColNotes: "Notater",
+      editModalTitle: "Rediger rad",
+      batchRouteLabel: "Rute",
+      btnCancel: "Avbryt",
+      btnUpdateGeonorge: "Oppdater fra Geonorge",
+      btnMergeRoutes: "Sl\xE5 sammen ruter",
+      mergeRoutesTitle: "Sl\xE5 sammen ruter",
+      mergeRoutesMessage: "Sammensl\xE5ing av f\xF8lgende ruter vil overf\xF8re alle adressene til den nye ruten nedenfor, og slette de gamle rutene.",
+      mergeRoutesApply: "Sl\xE5 sammen",
+      geonorgeNotFound: "Fant ikke adressen p\xE5 Geonorge. Vurder \xE5 slette denne adressen.",
+      geonorgeError: "Kunne ikke koble til Geonorge API.",
+      batchRouteApply: "Tildel rute",
+      deleteModalTitle: "Slett",
+      deleteModalTransferLabel: "Overf\xF8r til:",
+      selectedChipEmpty: "Valgt: 0",
+      pageInfoEmpty: "Side 1 / 1",
+      totalsEmpty: "Summer",
+      filterActiveLabel: "Aktiv",
+      filterActivePlaceholder: "Aktiv",
+      batchRouteMessage: "Velg en ny rute for {count} valgte adresser.",
+      selectRoutePlaceholder: "Velg rute...",
+      batchRouteNoValue: "Vennligst velg en rute.",
+      batchRouteWithCount: "Oppdater rute ({count})",
       closeGuardTitle: "Ulagrede endringer",
       closeGuardMessage: "Du har ulagrede endringer i IndexedDB. Velg hva du vil gjore for du lukker siden.",
       closeGuardSave: "Lagre endringer",
@@ -1070,6 +1103,35 @@
       statusAutosavedIdle: "Lagra kjeldefil etter inaktivitet.",
       statusSavedOnClose: "Lagra kjeldefil ved lukking av side.",
       saveChangesAction: "Lagre endringar",
+      saveAsCopyAction: "Lagre som kopi",
+      saveMoreOptions: "Lagringsalternativ",
+      statusSavedCopyNow: "Kopi lagra.",
+      modalErrorMissing: "Dette feltet er obligatorisk.",
+      rowPersonnel: "Personell",
+      routesColDescription: "Adresseoppsummering",
+      routesColNotes: "Notat",
+      editModalTitle: "Rediger rad",
+      batchRouteLabel: "Rute",
+      btnCancel: "Avbryt",
+      btnUpdateGeonorge: "Oppdater fr\xE5 Geonorge",
+      btnMergeRoutes: "Sl\xE5 saman ruter",
+      mergeRoutesTitle: "Sl\xE5 saman ruter",
+      mergeRoutesMessage: "Samansl\xE5ing av f\xF8lgjande ruter vil overf\xF8re alle adressene til den nye ruta nedanfor, og slette dei gamle rutene.",
+      mergeRoutesApply: "Sl\xE5 saman",
+      geonorgeNotFound: "Fann ikkje adressa p\xE5 Geonorge. Vurder \xE5 slette denne adressa.",
+      geonorgeError: "Kunne ikkje kople til Geonorge API.",
+      batchRouteApply: "Tildel rute",
+      deleteModalTitle: "Slett",
+      deleteModalTransferLabel: "Overf\xF8r til:",
+      selectedChipEmpty: "Vald: 0",
+      pageInfoEmpty: "Side 1 / 1",
+      totalsEmpty: "Summer",
+      filterActiveLabel: "Aktiv",
+      filterActivePlaceholder: "Aktiv",
+      batchRouteMessage: "Vel ei ny rute for {count} valde adresser.",
+      selectRoutePlaceholder: "Vel rute...",
+      batchRouteNoValue: "Ver vennleg og vel ei rute.",
+      batchRouteWithCount: "Oppdater rute ({count})",
       closeGuardTitle: "Ulagra endringar",
       closeGuardMessage: "Du har ulagra endringar i IndexedDB. Vel kva du vil gjere for du lukkar sida.",
       closeGuardSave: "Lagre endringar",
@@ -1408,6 +1470,43 @@
       statusAutosavedIdle: "Sparade kallfil efter inaktivitet.",
       statusSavedOnClose: "Sparade kallfil vid stangning.",
       saveChangesAction: "Spara andringar",
+      saveAsCopyAction: "Spara som kopia",
+      saveMoreOptions: "Sparaalternativ",
+      statusSavedCopyNow: "Kopia sparad.",
+      modalErrorMissing: "Detta f\xE4lt \xE4r obligatoriskt.",
+      title: "Menighetsbladet",
+      langLabel: "Spr\xE5k",
+      subtitle: "F\xF6rar-, distribut\xF6rs- och adressantal fr\xE5n k\xE4lldata.",
+      chooseFile: "V\xE4lj datafil",
+      derivedValuesNote: "Instrumentpanel, tidnings- och ruttantal ber\xE4knas dynamiskt och sparas inte i source.json.",
+      settings: "Inst\xE4llningar",
+      statusReady: "Klar. Ladda data f\xF6r att fylla instrumentpanelen.",
+      rowPersonnel: "Personal",
+      routesColDescription: "Adress\xF6versikt",
+      routesColNotes: "Anteckningar",
+      editModalTitle: "Redigera rad",
+      batchRouteLabel: "Rutt",
+      btnCancel: "Avbryt",
+      btnUpdateGeonorge: "Uppdatera fr\xE5n Geonorge",
+      btnMergeRoutes: "Sl\xE5 ihop rutter",
+      mergeRoutesTitle: "Sl\xE5 ihop rutter",
+      mergeRoutesMessage: "Sammanslagning av f\xF6ljande rutter kommer att flytta alla deras adresser till den nya rutten nedan, och ta bort de gamla rutterna.",
+      mergeRoutesApply: "Sl\xE5 ihop",
+      geonorgeNotFound: "Adressen hittades inte p\xE5 Geonorge. \xD6verv\xE4g att ta bort adressen.",
+      geonorgeError: "Kunde inte ansluta till Geonorge API.",
+      batchRouteApply: "Tilldela rutt",
+      deleteModalTitle: "Ta bort",
+      deleteModalTransferLabel: "\xD6verf\xF6r till:",
+      selectedChipEmpty: "Valda: 0",
+      pageInfoEmpty: "Sida 1 / 1",
+      totalsEmpty: "Totalt",
+      filterActiveLabel: "Aktiv",
+      filterActivePlaceholder: "Aktiv",
+      batchRouteMessage: "V\xE4lj en ny rutt f\xF6r {count} valda adresser.",
+      selectRoutePlaceholder: "V\xE4lj rutt...",
+      batchRouteNoValue: "V\xE4nligen v\xE4lj en rutt.",
+      batchRouteWithCount: "Uppdatera rutt ({count})",
+      routeReportExcludedHouseholds: "Exkluderade hush\xE5ll",
       closeGuardTitle: "Osparade andringar",
       closeGuardMessage: "Du har osparade andringar i IndexedDB. Valj vad du vill gora innan du stanger sidan.",
       closeGuardSave: "Spara andringar",
@@ -1773,13 +1872,13 @@
       route: ["routes"],
       status: ["status"],
       distributorName: ["distributorName"],
-      driverName: ["name"],
+      driverName: ["name", "driverName"],
       postnr: ["postnr"]
     },
     distributors: {
       route: ["routes"],
       status: ["status"],
-      distributorName: ["name"],
+      distributorName: ["name", "distributorName"],
       driverName: ["driverName"],
       postnr: ["postnr"]
     },
@@ -1792,8 +1891,8 @@
     routes: {
       route: ["routeId"],
       status: ["status"],
-      distributorName: ["distributorNames"],
-      driverName: ["driver"],
+      distributorName: ["distributorNames", "distributor"],
+      driverName: ["driver", "driverName"],
       postnr: ["postnrs"]
     }
   };
@@ -2024,7 +2123,6 @@
       row.distributor = dist.name || "";
       row.driverName = dist.driverName || "";
     } else {
-      row.distributor = "";
       var rt = null;
       if (currentData.routes && currentData.routes.length) {
         for (var k = 0; k < currentData.routes.length; k += 1) {
@@ -2034,7 +2132,8 @@
           }
         }
       }
-      row.driverName = rt ? rt.driverName || "" : "";
+      row.distributor = rt ? rt.distributor || "" : "";
+      row.driverName = rt ? rt.driver || rt.driverName || "" : "";
     }
     return row;
   }
@@ -3332,7 +3431,13 @@
     setTotals("addresses", t("totalsLabel") + ": " + t("totalsRecords") + "=" + filteredRows.length + " | " + t("totalsIncluded") + "=" + included + " | " + t("totalsExcluded") + "=" + excluded + " | " + t("rowHouseholds") + "=" + includedHouseholds + "/" + excludedHouseholds);
     setPagerState("addresses", pageData.page, pageData.totalPages);
   }
+  function refreshAllFilterComponents() {
+    ["drivers", "distributors", "addresses", "routes"].forEach(function(tableName) {
+      refreshFilterComponents(tableName);
+    });
+  }
   function renderAllTables() {
+    refreshAllFilterComponents();
     requestAnimationFrame(() => {
       recalculateAndRenderDashboard();
       requestAnimationFrame(() => {
@@ -3725,28 +3830,49 @@
       return String(value == null ? "" : value).trim().toLowerCase();
     }
     function optionsForFilter(tableName, criterionKey) {
-      var rows = currentData[tableName] || [];
-      var fieldsForCriterion = (filterFieldMap[tableName] || {})[criterionKey] || [];
       var out = [];
       var seen = {};
+      function addOption(raw) {
+        if (raw == null) return;
+        String(raw).split(",").forEach(function(part) {
+          var value = String(part || "").trim();
+          if (!value) return;
+          var low = value.toLowerCase();
+          if (seen[low]) return;
+          seen[low] = true;
+          out.push(value);
+        });
+      }
+      if (criterionKey === "route") {
+        (currentData.routes || []).forEach(function(r) {
+          if (r && r.routeId) addOption(r.routeId);
+        });
+      } else if (criterionKey === "distributorName") {
+        (currentData.distributors || []).forEach(function(d) {
+          if (d && d.name) addOption(d.name);
+          if (d && d.distributorName) addOption(d.distributorName);
+        });
+        (currentData.routes || []).forEach(function(r) {
+          if (r && r.distributor) addOption(r.distributor);
+        });
+      } else if (criterionKey === "driverName") {
+        (currentData.drivers || []).forEach(function(drv) {
+          if (drv && drv.name) addOption(drv.name);
+          if (drv && drv.driverName) addOption(drv.driverName);
+        });
+        (currentData.distributors || []).forEach(function(d) {
+          if (d && d.driverName) addOption(d.driverName);
+        });
+        (currentData.routes || []).forEach(function(r) {
+          if (r && r.driver) addOption(r.driver);
+          if (r && r.driverName) addOption(r.driverName);
+        });
+      }
+      var rows = currentData[tableName] || [];
+      var fieldsForCriterion = (filterFieldMap[tableName] || {})[criterionKey] || [];
       rows.forEach(function(row) {
         fieldsForCriterion.forEach(function(fieldName) {
-          var raw = row[fieldName];
-          if (raw == null) {
-            return;
-          }
-          String(raw).split(",").forEach(function(part) {
-            var value = String(part || "").trim();
-            if (!value) {
-              return;
-            }
-            var low = value.toLowerCase();
-            if (seen[low]) {
-              return;
-            }
-            seen[low] = true;
-            out.push(value);
-          });
+          addOption(row[fieldName]);
         });
       });
       return out.sort(function(a, b) {
@@ -3855,7 +3981,7 @@
             return false;
           }
           return !search || low.indexOf(search) !== -1;
-        }).slice(0, 60);
+        }).slice(0, 500);
         menuEl.innerHTML = "";
         if (isOpen && options.length) {
           options.forEach(function(value) {
@@ -4388,6 +4514,7 @@
     fields.forEach(function(fieldName) {
       var label = document.createElement("label");
       label.className = "modal-field";
+      label.dataset.fieldName = fieldName;
       var span = document.createElement("span");
       var labelKey = (fieldLabelKeyByTable[tableName] || {})[fieldName] || fieldName;
       span.textContent = t(labelKey);
@@ -5825,7 +5952,7 @@
       idErr.hidden = true;
     }
     if (!newId) {
-      setFieldError("routeId", t("modalErrorMissing"), "merge-routes-fields");
+      setFieldError("routeId", t("routeEmptyError") || t("modalErrorMissing") || "Rute-ID kan ikke v\xE6re tom.", "merge-routes-fields");
       errEl.textContent = t("modalFixErrorsBelow") || "Vennligst rett opp feilene nedenfor.";
       errEl.removeAttribute("hidden");
       return;
@@ -6282,6 +6409,8 @@
     setText("subtitle", t("subtitle"));
     renderDataSourceIndicator();
     setText("save-changes", t("saveChangesAction"));
+    setText("save-as-copy", t("saveAsCopyAction"));
+    setAttr("save-dropdown-toggle", "aria-label", t("saveMoreOptions"));
     setText("open-user-guide", t("userGuideAction"));
     setText("choose-file-label", t("chooseFile"));
     setText("derived-note", t("derivedValuesNote"));
@@ -7904,6 +8033,8 @@
       if (tabName === "map") {
         initMap("map-container");
         invalidateMapSize();
+      } else {
+        refreshFilterComponents(tabName);
       }
     });
   });

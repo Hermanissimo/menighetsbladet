@@ -1,7 +1,7 @@
 import { setHasUserCommittedEdits, setShowSaveChanges, debugSaveChangesLog, validateRequiredFields, validateFieldFormats, canEditCurrentData, syncCurrentDataFromJson, loadUserGuideText, saveChangesToSource, promptForDataFile, getRequiredFields, render, refreshUnsavedChangesFromData, scheduleAutosave } from "./main.js";
 import { t } from "./i18n.js";
 import { currentData, editState, deleteState, batchStatusState, batchRouteState, editFieldsByTable, addFieldsByTable, tableTitleKeys, tableTitleSingleKeys, fieldLabelKeyByTable } from "./state.js";
-import { statusEl, fileInput, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, userGuideModal, userGuideContent, closeGuardModal, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, openDataFolderBtn } from "./dom.js";
+import { statusEl, fileInput, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, floatingGuideBtn, userGuideModal, userGuideContent, closeGuardModal, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, openDataFolderBtn } from "./dom.js";
 import { normalizeRouteIdentifier, recomputeMetricsFromCurrentData, normalizeRecords, normalizeAddressRow, normalizeRouteValues, getDistributorRoutes, normalizeDistributorRow, recalculateRoutesFromCurrentData, recalculatePaperCounts } from "./calculations.js";
 
 import { renderAllTables, getSelectedIndexes, clearBatchSelection, buildDeleteSummaryHtml, statusOptionsForTable } from "./tables.js";
@@ -51,6 +51,7 @@ export function buildModalFields(tableName, row, fields) {
     fields.forEach(function (fieldName) {
       var label = document.createElement("label");
       label.className = "modal-field";
+      label.dataset.fieldName = fieldName;
 
       var span = document.createElement("span");
       var labelKey = (fieldLabelKeyByTable[tableName] || {})[fieldName] || fieldName;
@@ -1324,6 +1325,9 @@ export function initUserGuideModal() {
     if (openUserGuideBtn) {
       openUserGuideBtn.addEventListener("click", openUserGuideModal);
     }
+    if (floatingGuideBtn) {
+      floatingGuideBtn.addEventListener("click", openUserGuideModal);
+    }
     if (closeBtn) {
       closeBtn.addEventListener("click", closeUserGuideModal);
     }
@@ -1622,7 +1626,7 @@ function executeMergeRoutes() {
   }
 
   if (!newId) {
-    setFieldError("routeId", t("modalErrorMissing"), "merge-routes-fields");
+    setFieldError("routeId", t("routeEmptyError") || t("modalErrorMissing") || "Rute-ID kan ikke være tom.", "merge-routes-fields");
     errEl.textContent = t("modalFixErrorsBelow") || "Vennligst rett opp feilene nedenfor.";
     errEl.removeAttribute("hidden");
     return;

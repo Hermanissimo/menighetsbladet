@@ -151,7 +151,14 @@ export function renderAddressesTable(rows) {
   }
 
 
+export function refreshAllFilterComponents() {
+    ["drivers", "distributors", "addresses", "routes"].forEach(function (tableName) {
+        refreshFilterComponents(tableName);
+    });
+}
+
 export function renderAllTables() {
+    refreshAllFilterComponents();
     requestAnimationFrame(() => {
         recalculateAndRenderDashboard();
         requestAnimationFrame(() => {
@@ -635,30 +642,57 @@ export function initTableFilters() {
     }
 
     function optionsForFilter(tableName, criterionKey) {
-      var rows = currentData[tableName] || [];
-      var fieldsForCriterion = (filterFieldMap[tableName] || {})[criterionKey] || [];
       var out = [];
       var seen = {};
+
+      function addOption(raw) {
+        if (raw == null) return;
+        String(raw).split(",").forEach(function (part) {
+          var value = String(part || "").trim();
+          if (!value) return;
+          var low = value.toLowerCase();
+          if (seen[low]) return;
+          seen[low] = true;
+          out.push(value);
+        });
+      }
+
+      // Canonical collections are always consulted for their primary identity
+      if (criterionKey === "route") {
+        (currentData.routes || []).forEach(function (r) {
+          if (r && r.routeId) addOption(r.routeId);
+        });
+      } else if (criterionKey === "distributorName") {
+        (currentData.distributors || []).forEach(function (d) {
+          if (d && d.name) addOption(d.name);
+          if (d && d.distributorName) addOption(d.distributorName);
+        });
+        (currentData.routes || []).forEach(function (r) {
+          if (r && r.distributor) addOption(r.distributor);
+        });
+      } else if (criterionKey === "driverName") {
+        (currentData.drivers || []).forEach(function (drv) {
+          if (drv && drv.name) addOption(drv.name);
+          if (drv && drv.driverName) addOption(drv.driverName);
+        });
+        (currentData.distributors || []).forEach(function (d) {
+          if (d && d.driverName) addOption(d.driverName);
+        });
+        (currentData.routes || []).forEach(function (r) {
+          if (r && r.driver) addOption(r.driver);
+          if (r && r.driverName) addOption(r.driverName);
+        });
+      }
+
+      // Also harvest from the specific table rows
+      var rows = currentData[tableName] || [];
+      var fieldsForCriterion = (filterFieldMap[tableName] || {})[criterionKey] || [];
       rows.forEach(function (row) {
         fieldsForCriterion.forEach(function (fieldName) {
-          var raw = row[fieldName];
-          if (raw == null) {
-            return;
-          }
-          String(raw).split(",").forEach(function (part) {
-            var value = String(part || "").trim();
-            if (!value) {
-              return;
-            }
-            var low = value.toLowerCase();
-            if (seen[low]) {
-              return;
-            }
-            seen[low] = true;
-            out.push(value);
-          });
+          addOption(row[fieldName]);
         });
       });
+
       return out.sort(function (a, b) {
         return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
       });
@@ -772,7 +806,7 @@ export function initTableFilters() {
             return false;
           }
           return !search || low.indexOf(search) !== -1;
-        }).slice(0, 60);
+        }).slice(0, 500);
 
         menuEl.innerHTML = "";
         if (isOpen && options.length) {

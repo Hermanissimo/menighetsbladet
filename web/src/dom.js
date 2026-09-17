@@ -24,6 +24,7 @@ export let loadResultModal = document.getElementById("load-result-modal");
 export let loadResultTitle = document.getElementById("load-result-title");
 export let loadResultMessage = document.getElementById("load-result-message");
 export let openUserGuideBtn = document.getElementById("open-user-guide");
+export let floatingGuideBtn = document.getElementById("floating-guide-btn");
 export let userGuideModal = document.getElementById("user-guide-modal");
 export let userGuideTitle = document.getElementById("user-guide-title");
 export let userGuideContent = document.getElementById("user-guide-content");
