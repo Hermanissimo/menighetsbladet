@@ -5,7 +5,7 @@ import { statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAs
 import { normalizeRouteIdentifier, recomputeMetricsFromCurrentData, normalizeRecords, normalizeAddressRow, getDistributorRoutes, normalizeDistributorRow, recalculateRoutesFromCurrentData, recalculatePaperCounts } from "./calculations.js";
 import { getIndexedDb, idbGetValue, idbSetValue, idbGetAll, withoutStoreId, cleanRecordForStore, IDB_JSON_CACHE_KEY } from "./api.js";
 import { initEditModal, initAddButtons, initDeleteModal, initBatchStatusModal, initMergeRoutesModal, initBatchRouteModal, initLoadResultModal, openSourceMissingModal, closeSourceMissingModal, initSourceMissingModal, initUserGuideModal, openCloseGuardModal, initCloseGuardModal } from "./modals.js";
-import { renderDrivingListsHtml, renderRouteReportsHtml } from "./reports.js";
+import { renderDrivingListsHtml, renderRouteReportsHtml, initRouteReportMaps, cleanupRouteReportMaps, invalidateRouteReportMaps } from "./reports.js";
 import { renderRoutesTable, renderAllTables, updateSortHeaderIndicators, initSortableColumns, initResizableColumns, getFilteredSortedRows, flushPendingFilters, clearAllBatchSelections, updateBatchControls, initTableFilters, initPaginationControls, initCellLinks, initRowActionMenus, initBatchSelectionControls, refreshFilterComponents } from "./tables.js";
 import { initMap, invalidateMapSize, initMapAddressModal, initReassignRouteModal, initDeleteAddressMapModal } from "./map.js";
 
@@ -290,6 +290,7 @@ function applyLanguage(lang) {
   setText("report-modal-print", t("reportModalPrint"));
   setText("route-report-modal-title", t("routeReportModalTitle"));
   setText("route-report-modal-print", t("reportModalPrint"));
+  setText("route-report-include-map-label", t("routeReportIncludeMap"));
   setText("batch-route-addresses", t("batchRouteAction"));
   ["drivers", "distributors", "addresses", "routes"].forEach(function (tableName) {
     setText("selected-chip-" + tableName, t("selectedChipEmpty"));
@@ -1463,11 +1464,27 @@ export function openReportModal(driversToPrint) {
   });
 }
 
+let currentRouteReportsToPrint = [];
+
+export function renderActiveRouteReports() {
+  if (!currentRouteReportsToPrint || currentRouteReportsToPrint.length === 0) return;
+  import("./dom.js").then(dom => {
+    var includeMap = dom.routeReportIncludeMap ? dom.routeReportIncludeMap.checked : true;
+    var html = renderRouteReportsHtml(currentRouteReportsToPrint, { includeMap: includeMap });
+    dom.routeReportModalContent.innerHTML = html;
+    if (includeMap) {
+      initRouteReportMaps(dom.routeReportModalContent);
+    } else {
+      cleanupRouteReportMaps();
+    }
+  });
+}
+
 export function openRouteReportModal(routesToPrint) {
   if (!routesToPrint || routesToPrint.length === 0) return;
+  currentRouteReportsToPrint = routesToPrint;
   import("./dom.js").then(dom => {
-    var html = renderRouteReportsHtml(routesToPrint);
-    dom.routeReportModalContent.innerHTML = html;
+    renderActiveRouteReports();
     dom.routeReportModal.removeAttribute('hidden');
   });
 }
@@ -2093,22 +2110,35 @@ import("./dom.js").then(dom => {
       window.print();
     });
   }
+  if (dom.routeReportIncludeMap) {
+    dom.routeReportIncludeMap.addEventListener('change', function () {
+      renderActiveRouteReports();
+    });
+  }
   if (dom.routeReportModalClose) {
     dom.routeReportModalClose.addEventListener('click', function () {
+      cleanupRouteReportMaps();
       dom.routeReportModal.setAttribute('hidden', '');
     });
   }
   if (dom.routeReportModalPrint) {
     dom.routeReportModalPrint.addEventListener('click', function () {
-      window.print();
+      invalidateRouteReportMaps();
+      setTimeout(function () {
+        window.print();
+      }, 100);
     });
   }
+  window.addEventListener('beforeprint', function () {
+    invalidateRouteReportMaps();
+  });
   // Also close modal when clicking the backdrop
   document.addEventListener('click', function (e) {
     if (e.target.matches('[data-report-modal-close="1"]')) {
       dom.reportModal.setAttribute('hidden', '');
     }
     if (e.target.matches('[data-route-report-modal-close="1"]')) {
+      cleanupRouteReportMaps();
       dom.routeReportModal.setAttribute('hidden', '');
     }
   });

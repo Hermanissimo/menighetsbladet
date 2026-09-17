@@ -48,3 +48,6 @@ export let routeReportModal = document.getElementById("route-report-modal");
 export let routeReportModalClose = document.getElementById("route-report-modal-close");
 export let routeReportModalPrint = document.getElementById("route-report-modal-print");
 export let routeReportModalContent = document.getElementById("route-report-modal-content");
+export let routeReportIncludeMap = document.getElementById("route-report-include-map");
+export let routeReportIncludeMapLabel = document.getElementById("route-report-include-map-label");
+

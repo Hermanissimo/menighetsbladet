@@ -192,7 +192,8 @@ function sortAddressItems(items) {
 }
 
 // Generate HTML for one or more route reports
-export function renderRouteReportsHtml(routes) {
+export function renderRouteReportsHtml(routes, options) {
+  var includeMap = options && options.includeMap !== undefined ? options.includeMap : true;
   var html = "";
 
   var distByName = {};
@@ -243,6 +244,7 @@ export function renderRouteReportsHtml(routes) {
     var streetMap = {};
     var includedAddressesCount = 0;
     var excludedAddressesCount = 0;
+    var partialAddressesCount = 0;
     var includedHouseholds = 0;
     var excludedHouseholds = 0;
 
@@ -268,6 +270,9 @@ export function renderRouteReportsHtml(routes) {
 
       if (inc > 0) {
         includedAddressesCount += 1;
+        if (ex > 0) {
+          partialAddressesCount += 1;
+        }
         var item = {
           num: parsed.num,
           hh: hh,
@@ -391,6 +396,39 @@ export function renderRouteReportsHtml(routes) {
     html += "</div>";
 
     html += "</div>"; // End print-page
+
+    if (includeMap) {
+      var safeRouteId = "r" + rIdx + "-" + routeId.replace(/[^a-zA-Z0-9_-]/g, "_");
+      var mapTitle = escapeHtml(t("routeReportMapHeading", { route: routeId }) || ("Rute " + routeId + " kart"));
+
+      html += "<div class=\"print-page route-report-page route-report-map-page\">";
+      html += "  <div class=\"route-report-header\">";
+      html += "    <h2 class=\"print-title\"><u class=\"solid-underline\">" + mapTitle + "</u></h2>";
+      html += "    <div class=\"route-report-meta\" style=\"display:flex; justify-content:space-between; flex-wrap:wrap; font-size:11pt; margin-top:0.3rem;\">";
+      html += "      <div>";
+      html += "        <strong>" + escapeHtml(t("routeReportDistributor") || "Bladbærer") + ":</strong> " + escapeHtml(distName || "-") + " &nbsp;|&nbsp; ";
+      html += "        <strong>" + escapeHtml(t("routeReportDriver") || "Kjører") + ":</strong> " + escapeHtml(driverName || "-") + (driverNr ? " (" + escapeHtml(t("kjoererNrLabel") || "Nr.") + " " + escapeHtml(driverNr) + ")" : "");
+      html += "      </div>";
+      html += "      <div>";
+      html += "        <strong>" + escapeHtml(t("routeReportIncludedAddresses") || "Inkluderte adresser") + ":</strong> " + includedAddressesCount + " &nbsp;|&nbsp; ";
+      html += "        <strong>" + escapeHtml(t("routeReportTotalPapers") || "Totalt blad") + ":</strong> <u class=\"double-underline\">" + totalPapers + "</u>";
+      html += "      </div>";
+      html += "    </div>";
+      html += "  </div>";
+      html += "  <hr class=\"route-report-divider\" />";
+      html += "  <div id=\"route-report-map-" + safeRouteId + "\" class=\"route-report-map-container\" data-route-id=\"" + escapeHtml(routeId) + "\"></div>";
+      html += "  <div class=\"route-report-map-legend\">";
+      var normalCount = includedAddressesCount - partialAddressesCount;
+      html += "    <span class=\"legend-item\"><span class=\"legend-badge normal\"></span> " + escapeHtml(t("routeReportDeliverTo") || "Leveres til") + " (" + normalCount + ")</span>";
+      if (partialAddressesCount > 0) {
+        html += "    <span class=\"legend-item\"><span class=\"legend-badge partial\"></span> " + escapeHtml(t("routeReportPartialDelivery") || "Delvis levering") + " (" + partialAddressesCount + ")</span>";
+      }
+      if (excludedAddressesCount > 0) {
+        html += "    <span class=\"legend-item\"><span class=\"legend-badge excluded\"></span> " + escapeHtml(t("routeReportDoNotDeliver") || "Leveres ikke") + " (" + excludedAddressesCount + ")</span>";
+      }
+      html += "  </div>";
+      html += "</div>"; // End map print-page
+    }
   });
 
   if (routes.length === 0) {
@@ -399,3 +437,133 @@ export function renderRouteReportsHtml(routes) {
 
   return html;
 }
+
+var activeReportMaps = [];
+
+export function cleanupRouteReportMaps() {
+  if (activeReportMaps && activeReportMaps.length > 0) {
+    activeReportMaps.forEach(function (m) {
+      try {
+        m.remove();
+      } catch (e) {
+        console.warn("Failed to remove report map:", e);
+      }
+    });
+    activeReportMaps = [];
+  }
+}
+
+export function invalidateRouteReportMaps() {
+  if (activeReportMaps && activeReportMaps.length > 0) {
+    activeReportMaps.forEach(function (m) {
+      try {
+        m.invalidateSize();
+      } catch (e) {}
+    });
+  }
+}
+
+export function initRouteReportMaps(containerEl) {
+  cleanupRouteReportMaps();
+  if (!containerEl || typeof window === "undefined" || typeof L === "undefined") return;
+
+  var mapContainers = containerEl.querySelectorAll(".route-report-map-container");
+  if (!mapContainers || mapContainers.length === 0) return;
+
+  var osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+  var cartoUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+
+  mapContainers.forEach(function (el) {
+    var routeId = el.getAttribute("data-route-id");
+    if (!routeId) return;
+
+    var routeAddrs = (currentData.addresses || []).filter(function (a) {
+      return normalizeRouteIdentifier(a.route || "") === routeId;
+    });
+
+    var coordsAddrs = routeAddrs.filter(function (a) {
+      return a.lat && a.lon;
+    });
+
+    if (coordsAddrs.length === 0) {
+      el.innerHTML = "<p class=\"route-report-empty-map\">" + escapeHtml(t("routeReportNoCoordinates") || "Ingen kartkoordinater tilgjengelig for denne ruten.") + "</p>";
+      return;
+    }
+
+    try {
+      var map = L.map(el, {
+        zoomControl: true,
+        attributionControl: false,
+        scrollWheelZoom: false
+      });
+
+      var tileLayer = L.tileLayer(osmUrl, {
+        maxZoom: 19
+      });
+      tileLayer.on("tileerror", function () {
+        if (this._url !== cartoUrl) {
+          this.setUrl(cartoUrl);
+        }
+      });
+      tileLayer.addTo(map);
+
+      var bounds = L.latLngBounds();
+
+      coordsAddrs.forEach(function (a) {
+        var hh = Math.max(1, toInt(a.numberOfHouseholds));
+        var ex = Math.max(0, toInt(a.numberOfExcludedHouseholds));
+        if (ex > hh) ex = hh;
+        var inc = hh - ex;
+        var isExcluded = inc === 0;
+        var isPartial = inc > 0 && ex > 0;
+
+        var parsed = parseAddressParts(a.address);
+        var numStr = parsed.num || "";
+
+        var badgeClass = isExcluded ? "excluded" : (isPartial ? "partial" : "normal");
+
+        var icon = L.divIcon({
+          className: "route-map-marker-container",
+          html: "<div class=\"route-map-badge " + badgeClass + "\"><span>" + escapeHtml(numStr || "•") + "</span></div>",
+          iconSize: [26, 20],
+          iconAnchor: [13, 10]
+        });
+
+        var marker = L.marker([a.lat, a.lon], { icon: icon });
+
+        var tooltip = "<strong>" + escapeHtml(a.address) + "</strong><br>" + escapeHtml(t("addrColHouseholds") || "Husstander") + ": " + hh;
+        if (ex > 0) {
+          tooltip += "<br><span style=\"color:#d32f2f\">⛔ " + escapeHtml(t("routeReportExcluded") || "Ekskludert") + ": " + ex + "</span>";
+        }
+        if (a.note) {
+          tooltip += "<br><em>" + escapeHtml(a.note) + "</em>";
+        }
+        marker.bindTooltip(tooltip, { direction: "top", offset: [0, -10] });
+        marker.addTo(map);
+
+        bounds.extend([a.lat, a.lon]);
+      });
+
+      if (bounds.isValid()) {
+        if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+          map.setView(bounds.getCenter(), 16);
+        } else {
+          map.fitBounds(bounds, { padding: [35, 35], maxZoom: 17 });
+        }
+      }
+
+      activeReportMaps.push(map);
+
+      setTimeout(function () {
+        map.invalidateSize();
+      }, 100);
+      setTimeout(function () {
+        map.invalidateSize();
+      }, 350);
+    } catch (err) {
+      console.error("Error initializing route report map:", err);
+      el.innerHTML = "<p class=\"route-report-empty-map\">Feil ved lasting av kart.</p>";
+    }
+  });
+}
+
