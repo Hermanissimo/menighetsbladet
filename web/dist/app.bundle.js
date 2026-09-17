@@ -2815,57 +2815,94 @@
   }
   var TILE_PROVIDERS = [
     {
-      name: "OpenStreetMap",
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      probeUrl: "https://a.tile.openstreetmap.org/0/0/0.png",
-      options: {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
-      }
-    },
-    {
-      name: "CartoDB Voyager",
-      url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-      probeUrl: "https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png",
-      options: {
-        attribution: "&copy; CartoDB &copy; OpenStreetMap",
-        maxZoom: 19
-      }
-    },
-    {
       name: "ESRI Topo",
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
       probeUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0",
       options: {
         attribution: "Tiles &copy; Esri",
-        maxZoom: 19
+        maxZoom: 19,
+        crossOrigin: true
+      }
+    },
+    {
+      name: "Kartverket Topo",
+      url: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png",
+      probeUrl: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/0/0/0.png",
+      options: {
+        attribution: '&copy; <a href="https://www.kartverket.no/">Kartverket</a>',
+        maxZoom: 18,
+        crossOrigin: true
+      }
+    },
+    {
+      name: "OpenStreetMap",
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      probeUrl: "https://a.tile.openstreetmap.org/0/0/0.png",
+      options: {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        crossOrigin: true
       }
     }
   ];
-  function probeTileAccess(url) {
-    return new Promise((resolve) => {
-      if (typeof Image === "undefined") {
-        return resolve(true);
+  async function probeTileAccess(url) {
+    try {
+      const res = await fetch(url, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache"
+      });
+      if (!res.ok || res.status === 403 || res.status === 429) {
+        return false;
       }
-      const img = new Image();
-      const timer = setTimeout(() => {
-        resolve(false);
-      }, 3500);
-      img.onload = () => {
-        clearTimeout(timer);
-        resolve(true);
-      };
-      img.onerror = () => {
-        clearTimeout(timer);
-        resolve(false);
-      };
-      img.src = url;
-    });
+      return true;
+    } catch (_) {
+      return new Promise((resolve) => {
+        if (typeof Image === "undefined") {
+          return resolve(true);
+        }
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        const timer = setTimeout(() => {
+          resolve(false);
+        }, 3e3);
+        img.onload = () => {
+          clearTimeout(timer);
+          resolve(true);
+        };
+        img.onerror = () => {
+          clearTimeout(timer);
+          resolve(false);
+        };
+        img.src = url;
+      });
+    }
   }
   async function checkBlockedTiles(testUrl) {
     const probeUrl = testUrl || TILE_PROVIDERS[0].probeUrl;
     const accessible = await probeTileAccess(probeUrl);
     return !accessible;
+  }
+  function isBlockedHazardTile(img) {
+    try {
+      if (!img || !img.naturalWidth) return false;
+      const canvas = document.createElement("canvas");
+      canvas.width = 32;
+      canvas.height = 32;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0, 32, 32);
+      const data = ctx.getImageData(0, 0, 32, 32).data;
+      let yellowHazard = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        if (r > 220 && g > 220 && b < 40) {
+          yellowHazard++;
+        }
+      }
+      return yellowHazard > 40;
+    } catch (_) {
+      return false;
+    }
   }
   function setupResilientTileLayer(map, containerEl, options = {}) {
     let currentProviderIdx = 0;
@@ -2898,13 +2935,14 @@
     }
     const initialProvider = TILE_PROVIDERS[0];
     const tileLayer = L.tileLayer(initialProvider.url, Object.assign({}, initialProvider.options, options.tileOptions || {}, {
-      maxZoom: 19
+      maxZoom: 19,
+      crossOrigin: true
     }));
     function switchToNextProvider() {
       currentProviderIdx++;
       if (currentProviderIdx < TILE_PROVIDERS.length) {
         const nextProvider = TILE_PROVIDERS[currentProviderIdx];
-        console.warn(`Tile load failed, switching to fallback: ${nextProvider.name}`);
+        console.warn(`Tile load failed or blocked, switching to fallback: ${nextProvider.name}`);
         tileLayer.setUrl(nextProvider.url);
         errorCount = 0;
       } else {
@@ -2918,32 +2956,30 @@
         switchToNextProvider();
       }
     });
-    tileLayer.on("tileload", function() {
+    tileLayer.on("tileload", function(e) {
+      if (e.tile && isBlockedHazardTile(e.tile)) {
+        console.warn("Detected OSM 403 blocked tile graphic, switching provider immediately.");
+        switchToNextProvider();
+        return;
+      }
       hideBlockedBanner();
     });
     tileLayer.addTo(map);
-    probeTileAccess(initialProvider.probeUrl).then((ok) => {
-      if (!ok && currentProviderIdx === 0) {
-        console.warn(`Proactive check: ${initialProvider.name} is blocked, testing fallback...`);
-        probeTileAccess(TILE_PROVIDERS[1].probeUrl).then((cartoOk) => {
-          if (cartoOk) {
-            console.warn(`Fallback ${TILE_PROVIDERS[1].name} is accessible, switching immediately.`);
-            currentProviderIdx = 1;
-            tileLayer.setUrl(TILE_PROVIDERS[1].url);
-          } else {
-            console.warn(`Fallback ${TILE_PROVIDERS[1].name} also blocked, checking ESRI.`);
-            probeTileAccess(TILE_PROVIDERS[2].probeUrl).then((esriOk) => {
-              if (esriOk) {
-                currentProviderIdx = 2;
-                tileLayer.setUrl(TILE_PROVIDERS[2].url);
-              } else {
-                showBlockedBanner();
-              }
-            });
+    (async function checkProvidersProactively() {
+      for (let i = currentProviderIdx; i < TILE_PROVIDERS.length; i++) {
+        const p = TILE_PROVIDERS[i];
+        const ok = await probeTileAccess(p.probeUrl);
+        if (ok) {
+          if (i !== currentProviderIdx) {
+            console.warn(`Proactive check: Provider ${TILE_PROVIDERS[currentProviderIdx].name} failed, switching to ${p.name}`);
+            currentProviderIdx = i;
+            tileLayer.setUrl(p.url);
           }
-        });
+          return;
+        }
       }
-    });
+      showBlockedBanner();
+    })();
     return tileLayer;
   }
   function initMap(containerId) {

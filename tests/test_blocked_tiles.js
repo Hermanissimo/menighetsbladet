@@ -117,17 +117,18 @@ function createStaticServer(rootDir, port) {
     const blockedContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const blockedPage = await blockedContext.newPage();
     
-    // Abort all requests to openstreetmap, cartocdn, and arcgis tile servers
+    // Abort all requests to openstreetmap, cartocdn, arcgis, and kartverket tile servers
     await blockedPage.route('**/*tile.openstreetmap.org/**', route => route.abort('blockedbyclient'));
     await blockedPage.route('**/*basemaps.cartocdn.com/**', route => route.abort('blockedbyclient'));
     await blockedPage.route('**/*server.arcgisonline.com/**', route => route.abort('blockedbyclient'));
+    await blockedPage.route('**/*cache.kartverket.no/**', route => route.abort('blockedbyclient'));
 
     await blockedPage.goto(`http://localhost:${port}/web/index.html`);
     await blockedPage.waitForLoadState('networkidle');
 
     // Switch to Map tab
     await blockedPage.click('#tab-map');
-    await blockedPage.waitForTimeout(2000);
+    await blockedPage.waitForTimeout(3000);
 
     // Verify banner or warning status appears in the UI
     const blockedStatus = await blockedPage.evaluate(() => {
