@@ -911,12 +911,16 @@ a.mailto-link:hover {
   font-size: 0.88rem;
 }
 
-.guide-content {
+.guide-content-wrapper {
   border: 1px solid var(--line);
   background: #f8fbfd;
   border-radius: 8px;
-  padding: 0.7rem;
+  overflow: hidden;
   margin: 0;
+}
+
+.guide-content {
+  padding: 0.7rem;
   max-height: 58vh;
   overflow: auto;
   white-space: pre-wrap;
@@ -924,6 +928,12 @@ a.mailto-link:hover {
   font-size: 0.84rem;
   line-height: 1.4;
   color: var(--ink);
+}
+
+.guide-content ul {
+  padding-left: 1.2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 @media (max-width: 640px) {
