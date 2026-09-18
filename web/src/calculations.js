@@ -522,16 +522,15 @@ export function recalculateRoutesFromCurrentData() {
       if (!routeId || !routeMap[routeId]) {
         return;
       }
-            var parsed = parseAddressForRange(addr.address);
-      if (!routeAddresses[routeId][parsed.street]) {
-        routeAddresses[routeId][parsed.street] = {};
-      }
-      if (parsed.num) {
-        routeAddresses[routeId][parsed.street][parsed.num] = true;
-      }
-      
-      if (getAddressPaperCount(addr) > 0) {
+            if (getAddressPaperCount(addr) > 0) {
         routeMap[routeId].includedAddresses += 1;
+        var parsed = parseAddressForRange(addr.address);
+        if (!routeAddresses[routeId][parsed.street]) {
+          routeAddresses[routeId][parsed.street] = {};
+        }
+        if (parsed.num) {
+          routeAddresses[routeId][parsed.street][parsed.num] = true;
+        }
       }
       if (addr.postnr) {
         routePostnrSets[routeId][addr.postnr] = true;

@@ -2423,15 +2423,15 @@
       if (!routeId || !routeMap[routeId]) {
         return;
       }
-      var parsed = parseAddressForRange(addr.address);
-      if (!routeAddresses[routeId][parsed.street]) {
-        routeAddresses[routeId][parsed.street] = {};
-      }
-      if (parsed.num) {
-        routeAddresses[routeId][parsed.street][parsed.num] = true;
-      }
       if (getAddressPaperCount(addr) > 0) {
         routeMap[routeId].includedAddresses += 1;
+        var parsed = parseAddressForRange(addr.address);
+        if (!routeAddresses[routeId][parsed.street]) {
+          routeAddresses[routeId][parsed.street] = {};
+        }
+        if (parsed.num) {
+          routeAddresses[routeId][parsed.street][parsed.num] = true;
+        }
       }
       if (addr.postnr) {
         routePostnrSets[routeId][addr.postnr] = true;
@@ -8032,6 +8032,8 @@
       var html = renderDrivingListsHtml(driversToPrint);
       dom.reportModalContent.innerHTML = html;
       dom.reportModal.removeAttribute("hidden");
+      dom.reportModal.scrollTop = 0;
+      if (dom.reportModal.firstElementChild) dom.reportModal.firstElementChild.scrollTop = 0;
     });
   }
   var currentRouteReportsToPrint = [];
@@ -8054,6 +8056,8 @@
     Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
       renderActiveRouteReports();
       dom.routeReportModal.removeAttribute("hidden");
+      dom.routeReportModal.scrollTop = 0;
+      if (dom.routeReportModal.firstElementChild) dom.routeReportModal.firstElementChild.scrollTop = 0;
     });
   }
   function tryLoadRecordSnapshot() {

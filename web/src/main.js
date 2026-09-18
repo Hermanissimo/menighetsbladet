@@ -1461,6 +1461,8 @@ export function openReportModal(driversToPrint) {
     var html = renderDrivingListsHtml(driversToPrint);
     dom.reportModalContent.innerHTML = html;
     dom.reportModal.removeAttribute('hidden');
+    dom.reportModal.scrollTop = 0;
+    if (dom.reportModal.firstElementChild) dom.reportModal.firstElementChild.scrollTop = 0;
   });
 }
 
@@ -1486,6 +1488,8 @@ export function openRouteReportModal(routesToPrint) {
   import("./dom.js").then(dom => {
     renderActiveRouteReports();
     dom.routeReportModal.removeAttribute('hidden');
+    dom.routeReportModal.scrollTop = 0;
+    if (dom.routeReportModal.firstElementChild) dom.routeReportModal.firstElementChild.scrollTop = 0;
   });
 }
 
