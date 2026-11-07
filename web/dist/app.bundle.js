@@ -2247,17 +2247,47 @@
   function normalizeDistributorRow(row) {
     row.status = row.status || "active";
     row.name = row.name || "";
-    row.driverNr = row.driverNr || "";
     row.routes = getDistributorRoutes(row);
     delete row.route;
-    if (row.driverNr) {
-      var i;
-      for (i = 0; i < currentData.drivers.length; i += 1) {
-        if ((currentData.drivers[i].driverNr || "") === row.driverNr) {
-          row.driverName = currentData.drivers[i].name || "";
-          break;
+    var drivers = currentData && currentData.drivers || [];
+    var driverName = String(row.driverName || "").trim();
+    var driverNr = String(row.driverNr || "").trim();
+    if (driverName) {
+      var matchedByName = drivers.find(function(d) {
+        return String(d.name || d.driverName || "").trim() === driverName;
+      });
+      if (matchedByName) {
+        row.driverName = matchedByName.name || matchedByName.driverName || driverName;
+        row.driverNr = matchedByName.driverNr || "";
+      } else if (driverNr) {
+        var matchedByNr = drivers.find(function(d) {
+          return String(d.driverNr || "").trim() === driverNr;
+        });
+        if (matchedByNr) {
+          row.driverName = matchedByNr.name || matchedByNr.driverName || "";
+          row.driverNr = matchedByNr.driverNr || driverNr;
+        } else {
+          row.driverName = driverName;
+          row.driverNr = driverNr;
         }
+      } else {
+        row.driverName = driverName;
+        row.driverNr = "";
       }
+    } else if (driverNr) {
+      var matchedByNr = drivers.find(function(d) {
+        return String(d.driverNr || "").trim() === driverNr;
+      });
+      if (matchedByNr) {
+        row.driverName = matchedByNr.name || matchedByNr.driverName || "";
+        row.driverNr = matchedByNr.driverNr || driverNr;
+      } else {
+        row.driverName = "";
+        row.driverNr = driverNr;
+      }
+    } else {
+      row.driverName = "";
+      row.driverNr = "";
     }
     return row;
   }
@@ -2333,8 +2363,9 @@
       }
       var distName = routeRow.distributor || "";
       var distObj = distributorByName[distName] || {};
-      var driverName = distObj.driverName || routeRow.driver || routeRow.driverName || "";
-      var driverNr = distObj.driverNr || routeRow.driverNr || "";
+      var reqDist = routeRow.requiresDistributor !== false;
+      var driverName = reqDist ? distObj.driverName || "" : routeRow.driver || routeRow.driverName || "";
+      var driverNr = reqDist ? distObj.driverNr || "" : routeRow.driverNr || "";
       if (!driverNr && driverName && driverByName[driverName]) {
         driverNr = driverByName[driverName].driverNr || "";
       }
@@ -2383,11 +2414,8 @@
             postnrs: "",
             notes: ""
           };
-        }
-        if (!routeMap[routeId].driverNr) {
+        } else if (routeMap[routeId].requiresDistributor !== false) {
           routeMap[routeId].driverNr = dist.driverNr || "";
-        }
-        if (!routeMap[routeId].driver) {
           routeMap[routeId].driver = dist.driverName || "";
         }
       });
@@ -5154,53 +5182,57 @@
           });
         }
       } else if (editState.tableName === "distributors") {
-        normalizeDistributorRow(row);
         if (row.driverName) {
           var matchedDriver = currentData.drivers.find(function(d) {
-            return d.name === row.driverName;
+            return String(d.name || d.driverName || "").trim() === String(row.driverName).trim();
           });
-          if (matchedDriver) row.driverNr = matchedDriver.driverNr;
+          row.driverNr = matchedDriver ? matchedDriver.driverNr || "" : "";
+        } else {
+          row.driverNr = "";
         }
+        normalizeDistributorRow(row);
         var oldDistName = editState.originalName;
         var newDistName = row.name;
-        if (editState.mode === "edit" && oldDistName && oldDistName !== newDistName) {
-          currentData.routes.forEach(function(rt) {
-            if (rt.distributor === oldDistName) {
-              rt.distributor = newDistName;
-            }
-          });
-        }
+        currentData.routes.forEach(function(rt) {
+          if (rt.distributor === row.name || oldDistName && rt.distributor === oldDistName) {
+            rt.distributor = newDistName;
+            rt.driver = row.driverName || "";
+            rt.driverNr = row.driverNr || "";
+          }
+        });
         var newRoutes = row.routes || [];
         newRoutes.forEach(function(rId) {
-          if (oldRoutes.indexOf(rId) === -1) {
+          var normRId = normalizeRouteIdentifier(rId);
+          if (oldRoutes.map(normalizeRouteIdentifier).indexOf(normRId) === -1) {
             currentData.distributors.forEach(function(otherDist) {
               if (otherDist !== targetRow) {
-                var idx = (otherDist.routes || []).indexOf(rId);
+                var otherRoutes = otherDist.routes || [];
+                var idx = otherRoutes.map(normalizeRouteIdentifier).indexOf(normRId);
                 if (idx !== -1) {
                   otherDist.routes.splice(idx, 1);
                 }
               }
             });
-            var matchedRoute = currentData.routes.find(function(rt) {
-              return rt.routeId === rId;
-            });
-            if (matchedRoute) {
-              matchedRoute.distributor = row.name;
-              var driverObj = currentData.drivers.find(function(d) {
-                return d.name === row.driverName;
-              });
-              matchedRoute.driver = row.driverName || (driverObj ? driverObj.name : "");
-            }
+          }
+          var matchedRoute = currentData.routes.find(function(rt) {
+            return normalizeRouteIdentifier(rt.routeId) === normRId;
+          });
+          if (matchedRoute) {
+            matchedRoute.distributor = row.name;
+            matchedRoute.driver = row.driverName || "";
+            matchedRoute.driverNr = row.driverNr || "";
           }
         });
         oldRoutes.forEach(function(rId) {
-          if (newRoutes.indexOf(rId) === -1) {
+          var normRId = normalizeRouteIdentifier(rId);
+          if (newRoutes.map(normalizeRouteIdentifier).indexOf(normRId) === -1) {
             var matchedRoute = currentData.routes.find(function(rt) {
-              return rt.routeId === rId;
+              return normalizeRouteIdentifier(rt.routeId) === normRId;
             });
-            if (matchedRoute && matchedRoute.distributor === row.name) {
+            if (matchedRoute && (matchedRoute.distributor === row.name || oldDistName && matchedRoute.distributor === oldDistName)) {
               matchedRoute.distributor = "";
               matchedRoute.driver = "";
+              matchedRoute.driverNr = "";
             }
           }
         });
@@ -6428,8 +6460,8 @@
         distName = distName.split(",")[0].trim();
       }
       var dist = distByName[distName] || {};
-      var driverName = routeRow.driver || dist.driverName || "";
-      var driverNr = dist.driverNr || "";
+      var driverName = routeRow.requiresDistributor !== false && distName ? dist.driverName || "" : routeRow.driver || dist.driverName || "";
+      var driverNr = routeRow.requiresDistributor !== false && distName ? dist.driverNr || "" : routeRow.driverNr || dist.driverNr || "";
       if (!driverNr && driverName && drvByName[driverName]) {
         driverNr = drvByName[driverName].driverNr || "";
       }

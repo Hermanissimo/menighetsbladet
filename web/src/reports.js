@@ -223,8 +223,8 @@ export function renderRouteReportsHtml(routes, options) {
     var dist = distByName[distName] || {};
 
     // Resolve driver
-    var driverName = routeRow.driver || dist.driverName || "";
-    var driverNr = dist.driverNr || "";
+    var driverName = (routeRow.requiresDistributor !== false && distName) ? (dist.driverName || "") : (routeRow.driver || dist.driverName || "");
+    var driverNr = (routeRow.requiresDistributor !== false && distName) ? (dist.driverNr || "") : (routeRow.driverNr || dist.driverNr || "");
     if (!driverNr && driverName && drvByName[driverName]) {
       driverNr = drvByName[driverName].driverNr || "";
     }

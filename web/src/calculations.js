@@ -325,17 +325,49 @@ export function getDistributorRoutes(row) {
 export function normalizeDistributorRow(row) {
     row.status = row.status || "active";
     row.name = row.name || "";
-    row.driverNr = row.driverNr || "";
     row.routes = getDistributorRoutes(row);
     delete row.route;
-    if (row.driverNr) {
-      var i;
-      for (i = 0; i < currentData.drivers.length; i += 1) {
-        if ((currentData.drivers[i].driverNr || "") === row.driverNr) {
-          row.driverName = currentData.drivers[i].name || "";
-          break;
+
+    var drivers = (currentData && currentData.drivers) || [];
+    var driverName = String(row.driverName || "").trim();
+    var driverNr = String(row.driverNr || "").trim();
+
+    if (driverName) {
+      var matchedByName = drivers.find(function (d) {
+        return String(d.name || d.driverName || "").trim() === driverName;
+      });
+      if (matchedByName) {
+        row.driverName = matchedByName.name || matchedByName.driverName || driverName;
+        row.driverNr = matchedByName.driverNr || "";
+      } else if (driverNr) {
+        var matchedByNr = drivers.find(function (d) {
+          return String(d.driverNr || "").trim() === driverNr;
+        });
+        if (matchedByNr) {
+          row.driverName = matchedByNr.name || matchedByNr.driverName || "";
+          row.driverNr = matchedByNr.driverNr || driverNr;
+        } else {
+          row.driverName = driverName;
+          row.driverNr = driverNr;
         }
+      } else {
+        row.driverName = driverName;
+        row.driverNr = "";
       }
+    } else if (driverNr) {
+      var matchedByNr = drivers.find(function (d) {
+        return String(d.driverNr || "").trim() === driverNr;
+      });
+      if (matchedByNr) {
+        row.driverName = matchedByNr.name || matchedByNr.driverName || "";
+        row.driverNr = matchedByNr.driverNr || driverNr;
+      } else {
+        row.driverName = "";
+        row.driverNr = driverNr;
+      }
+    } else {
+      row.driverName = "";
+      row.driverNr = "";
     }
     return row;
   }
@@ -425,9 +457,10 @@ export function recalculateRoutesFromCurrentData() {
       
       var distName = routeRow.distributor || "";
       var distObj = distributorByName[distName] || {};
+      var reqDist = routeRow.requiresDistributor !== false;
       
-      var driverName = distObj.driverName || routeRow.driver || routeRow.driverName || "";
-      var driverNr = distObj.driverNr || routeRow.driverNr || "";
+      var driverName = reqDist ? (distObj.driverName || "") : (routeRow.driver || routeRow.driverName || "");
+      var driverNr = reqDist ? (distObj.driverNr || "") : (routeRow.driverNr || "");
       if (!driverNr && driverName && driverByName[driverName]) {
         driverNr = driverByName[driverName].driverNr || "";
       }
@@ -478,11 +511,8 @@ export function recalculateRoutesFromCurrentData() {
             postnrs: "",
             notes: ""
           };
-        }
-        if (!routeMap[routeId].driverNr) {
+        } else if (routeMap[routeId].requiresDistributor !== false) {
           routeMap[routeId].driverNr = dist.driverNr || "";
-        }
-        if (!routeMap[routeId].driver) {
           routeMap[routeId].driver = dist.driverName || "";
         }
       });

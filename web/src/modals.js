@@ -506,50 +506,64 @@ export function initEditModal() {
           });
         }
       } else if (editState.tableName === "distributors") {
-        normalizeDistributorRow(row);
         if (row.driverName) {
-          var matchedDriver = currentData.drivers.find(function(d) { return d.name === row.driverName; });
-          if (matchedDriver) row.driverNr = matchedDriver.driverNr;
+          var matchedDriver = currentData.drivers.find(function(d) {
+            return String(d.name || d.driverName || "").trim() === String(row.driverName).trim();
+          });
+          row.driverNr = matchedDriver ? (matchedDriver.driverNr || "") : "";
+        } else {
+          row.driverNr = "";
         }
+        normalizeDistributorRow(row);
         var oldDistName = editState.originalName;
         var newDistName = row.name;
-        if (editState.mode === "edit" && oldDistName && oldDistName !== newDistName) {
-          currentData.routes.forEach(function (rt) {
-            if (rt.distributor === oldDistName) {
-              rt.distributor = newDistName;
-            }
-          });
-        }
+
+        // Keep all routes assigned to this distributor in sync
+        currentData.routes.forEach(function (rt) {
+          if (rt.distributor === row.name || (oldDistName && rt.distributor === oldDistName)) {
+            rt.distributor = newDistName;
+            rt.driver = row.driverName || "";
+            rt.driverNr = row.driverNr || "";
+          }
+        });
 
         var newRoutes = row.routes || [];
         // Remove assigned routes from other distributors
         newRoutes.forEach(function(rId) {
-          if (oldRoutes.indexOf(rId) === -1) {
+          var normRId = normalizeRouteIdentifier(rId);
+          if (oldRoutes.map(normalizeRouteIdentifier).indexOf(normRId) === -1) {
             currentData.distributors.forEach(function(otherDist) {
               if (otherDist !== targetRow) {
-                var idx = (otherDist.routes || []).indexOf(rId);
+                var otherRoutes = otherDist.routes || [];
+                var idx = otherRoutes.map(normalizeRouteIdentifier).indexOf(normRId);
                 if (idx !== -1) {
                   otherDist.routes.splice(idx, 1);
                 }
               }
             });
-            // Update route record in memory
-            var matchedRoute = currentData.routes.find(function(rt) { return rt.routeId === rId; });
-            if (matchedRoute) {
-              matchedRoute.distributor = row.name;
-              var driverObj = currentData.drivers.find(function(d) { return d.name === row.driverName; });
-              matchedRoute.driver = row.driverName || (driverObj ? driverObj.name : "");
-            }
+          }
+          // Update route record in memory
+          var matchedRoute = currentData.routes.find(function(rt) {
+            return normalizeRouteIdentifier(rt.routeId) === normRId;
+          });
+          if (matchedRoute) {
+            matchedRoute.distributor = row.name;
+            matchedRoute.driver = row.driverName || "";
+            matchedRoute.driverNr = row.driverNr || "";
           }
         });
         
         // Clear routes that were unassigned
         oldRoutes.forEach(function(rId) {
-          if (newRoutes.indexOf(rId) === -1) {
-            var matchedRoute = currentData.routes.find(function(rt) { return rt.routeId === rId; });
-            if (matchedRoute && matchedRoute.distributor === row.name) {
+          var normRId = normalizeRouteIdentifier(rId);
+          if (newRoutes.map(normalizeRouteIdentifier).indexOf(normRId) === -1) {
+            var matchedRoute = currentData.routes.find(function(rt) {
+              return normalizeRouteIdentifier(rt.routeId) === normRId;
+            });
+            if (matchedRoute && (matchedRoute.distributor === row.name || (oldDistName && matchedRoute.distributor === oldDistName))) {
               matchedRoute.distributor = "";
               matchedRoute.driver = "";
+              matchedRoute.driverNr = "";
             }
           }
         });
