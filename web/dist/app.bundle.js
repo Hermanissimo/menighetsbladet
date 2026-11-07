@@ -447,7 +447,8 @@
       distColName: "Name",
       distColStatus: "Status",
       distColRoute: "Route",
-      distColDriverNo: "Driver",
+      distColDriverNo: "Driver no.",
+      distColDriverName: "Driver",
       distColPhone: "Phone",
       distColEmail: "Email",
       distColAddress: "Address",
@@ -836,6 +837,7 @@
       distColStatus: "Status",
       distColRoute: "Rute",
       distColDriverNo: "Kj\xF8rer nr.",
+      distColDriverName: "Kj\xF8rer",
       distColPhone: "Telefon",
       distColEmail: "E-post",
       distColAddress: "Adresse",
@@ -1218,6 +1220,7 @@
       distColStatus: "Status",
       distColRoute: "Rute",
       distColDriverNo: "Kj\xF8rer nr.",
+      distColDriverName: "Kj\xF8rer",
       distColPhone: "Telefon",
       distColEmail: "E-post",
       distColAddress: "Adresse",
@@ -1598,7 +1601,8 @@
       distColName: "Namn",
       distColStatus: "Status",
       distColRoute: "Rutt",
-      distColDriverNo: "Forare",
+      distColDriverNo: "F\xF6rare nr.",
+      distColDriverName: "F\xF6rare",
       distColPhone: "Telefon",
       distColEmail: "E-post",
       distColAddress: "Adress",
@@ -1877,7 +1881,7 @@
       status: "distColStatus",
       routes: "distColRoute",
       driverNr: "distColDriverNo",
-      driverName: "distColDriverNo",
+      driverName: "distColDriverName",
       phone: "distColPhone",
       email: "distColEmail",
       address: "distColAddress",
@@ -6923,7 +6927,7 @@
     setText("dist-col-name", t("distColName"));
     setText("dist-col-status", t("distColStatus"));
     setText("dist-col-route", t("distColRoute"));
-    setText("dist-col-drivernr", t("routeColDriverName"));
+    setText("dist-col-drivernr", t("distColDriverName"));
     setText("dist-col-phone", t("distColPhone"));
     setText("dist-col-email", t("distColEmail"));
     setText("dist-col-address", t("distColAddress"));

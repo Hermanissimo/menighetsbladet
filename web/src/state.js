@@ -127,7 +127,7 @@ export let fieldLabelKeyByTable = {
       status: "distColStatus",
       routes: "distColRoute",
       driverNr: "distColDriverNo",
-      driverName: "distColDriverNo",
+      driverName: "distColDriverName",
       phone: "distColPhone",
       email: "distColEmail",
       address: "distColAddress",

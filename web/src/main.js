@@ -212,7 +212,7 @@ function applyLanguage(lang) {
   setText("dist-col-name", t("distColName"));
   setText("dist-col-status", t("distColStatus"));
   setText("dist-col-route", t("distColRoute"));
-  setText("dist-col-drivernr", t("routeColDriverName"));
+  setText("dist-col-drivernr", t("distColDriverName"));
   setText("dist-col-phone", t("distColPhone"));
   setText("dist-col-email", t("distColEmail"));
   setText("dist-col-address", t("distColAddress"));
