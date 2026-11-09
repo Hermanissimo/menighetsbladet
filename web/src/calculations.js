@@ -374,7 +374,6 @@ export function normalizeDistributorRow(row) {
     return row;
   }
 
-
 function parseNum(numStr) {
   var m = String(numStr).match(/^(\d+)/);
   return m ? parseInt(m[1], 10) : 0;

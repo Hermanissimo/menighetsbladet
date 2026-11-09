@@ -20,7 +20,6 @@ export function clearModalError() {
     }
   }
 
-
 export function setModalError(message) {
   if (editModalError) {
     editModalError.textContent = message;
@@ -45,7 +44,6 @@ export function setFieldError(fieldName, message, containerId) {
     errDiv.hidden = !message;
   }
 }
-
 
 export function buildModalFields(tableName, row, fields) {
     editModalFields.innerHTML = "";
@@ -275,7 +273,6 @@ export function buildModalFields(tableName, row, fields) {
     }
   }
 
-
 export function closeEditModal() {
     editState.tableName = null;
     editState.rowIndex = -1;
@@ -286,7 +283,6 @@ export function closeEditModal() {
     editModalFields.innerHTML = "";
     clearModalError();
   }
-
 
 export function openEditModal(tableName, rowIndex) {
     if (!canEditCurrentData()) {
@@ -319,7 +315,6 @@ export function openEditModal(tableName, rowIndex) {
     }
   }
 
-
 export function openAddModal(tableName) {
     if (!canEditCurrentData()) {
       statusEl.textContent = t("statusReadOnlySnapshot");
@@ -347,7 +342,6 @@ export function openAddModal(tableName) {
       firstControl.focus();
     }
   }
-
 
 export function initEditModal() {
     editModalClose.addEventListener("click", closeEditModal);
@@ -633,7 +627,6 @@ export function initEditModal() {
     });
   }
 
-
 export function initAddButtons() {
     addDriverBtn.addEventListener("click", function () {
       openAddModal("drivers");
@@ -650,7 +643,6 @@ export function initAddButtons() {
       });
     }
   }
-
 
 export function populateDeleteTransferOptions(tableName, selectedIndexes, transferSelect) {
     var selectedMap = {};
@@ -675,7 +667,6 @@ export function populateDeleteTransferOptions(tableName, selectedIndexes, transf
       transferSelect.appendChild(opt);
     });
   }
-
 
 export function openDeleteDialog(tableName, rowIndexes, mode) {
     if (!canEditCurrentData()) {
@@ -749,11 +740,9 @@ export function openDeleteDialog(tableName, rowIndexes, mode) {
     }
   }
 
-
 export function openDeleteModal(tableName, rowIndex) {
     openDeleteDialog(tableName, [rowIndex], "single");
   }
-
 
 export function openBatchDeleteModal(tableName) {
     var selectedIndexes = getSelectedIndexes(tableName);
@@ -762,7 +751,6 @@ export function openBatchDeleteModal(tableName) {
     }
     openDeleteDialog(tableName, selectedIndexes, "batch");
   }
-
 
 export function getBatchStatusOptions(tableName) {
     if (tableName === "addresses") {
@@ -776,7 +764,6 @@ export function getBatchStatusOptions(tableName) {
       { value: "inactive", label: t("statusInactive") }
     ];
   }
-
 
 export function openBatchStatusModal(tableName) {
     if (!canEditCurrentData()) {
@@ -817,7 +804,6 @@ export function openBatchStatusModal(tableName) {
     selectEl.focus();
   }
 
-
 export function closeBatchStatusModal() {
     batchStatusState.tableName = null;
     batchStatusState.rowIndexes = [];
@@ -826,7 +812,6 @@ export function closeBatchStatusModal() {
     errEl.textContent = "";
     document.getElementById("batch-status-modal").setAttribute("hidden", "");
   }
-
 
 export function executeBatchStatusUpdate() {
     var tableName = batchStatusState.tableName;
@@ -894,7 +879,6 @@ export function executeBatchStatusUpdate() {
     closeBatchStatusModal();
   }
 
-
 export function openBatchRouteModal(tableName) {
     if (!canEditCurrentData()) {
       statusEl.textContent = t("statusReadOnlySnapshot");
@@ -944,7 +928,6 @@ export function openBatchRouteModal(tableName) {
     selectEl.focus();
 }
 
-
 export function closeBatchRouteModal() {
     batchRouteState.tableName = null;
     batchRouteState.rowIndexes = [];
@@ -953,7 +936,6 @@ export function closeBatchRouteModal() {
     errEl.textContent = "";
     document.getElementById("batch-route-modal").setAttribute("hidden", "");
 }
-
 
 export function executeBatchRouteUpdate() {
     var tableName = batchRouteState.tableName;
@@ -994,7 +976,6 @@ export function executeBatchRouteUpdate() {
     closeBatchRouteModal();
 }
 
-
 export function initBatchRouteModal() {
     var closeBtns = document.querySelectorAll("#batch-route-close, #batch-route-cancel, [data-batch-route-close]");
     closeBtns.forEach(function (btn) {
@@ -1011,7 +992,6 @@ export function initBatchRouteModal() {
     }
 }
 
-
 export function closeDeleteModal() {
     deleteState.mode = "single";
     deleteState.tableName = null;
@@ -1023,7 +1003,6 @@ export function closeDeleteModal() {
     }
     document.getElementById("delete-modal").setAttribute("hidden", "");
   }
-
 
 export function executeDelete() {
     var tableName = deleteState.tableName;
@@ -1181,7 +1160,6 @@ export function executeDelete() {
     closeDeleteModal();
   }
 
-
 export function initDeleteModal() {
     var deleteModal = document.getElementById("delete-modal");
     document.getElementById("delete-modal-close").addEventListener("click", closeDeleteModal);
@@ -1199,7 +1177,6 @@ export function initDeleteModal() {
       }
     });
   }
-
 
 export function initBatchStatusModal() {
     var modal = document.getElementById("batch-status-modal");
@@ -1219,7 +1196,6 @@ export function initBatchStatusModal() {
     });
   }
 
-
 export function openLoadResultModal(ok, message) {
     if (!loadResultModal) {
       return;
@@ -1233,14 +1209,12 @@ export function openLoadResultModal(ok, message) {
     loadResultModal.removeAttribute("hidden");
   }
 
-
 export function closeLoadResultModal() {
     if (!loadResultModal) {
       return;
     }
     loadResultModal.setAttribute("hidden", "");
   }
-
 
 export function initLoadResultModal() {
     if (!loadResultModal) {
@@ -1267,7 +1241,6 @@ export function initLoadResultModal() {
     });
   }
 
-
 export function openSourceMissingModal() {
     if (!sourceMissingModal) {
       return;
@@ -1278,14 +1251,12 @@ export function openSourceMissingModal() {
     }
   }
 
-
 export function closeSourceMissingModal() {
     if (!sourceMissingModal) {
       return;
     }
     sourceMissingModal.setAttribute("hidden", "");
   }
-
 
 export function initSourceMissingModal() {
     if (!sourceMissingModal || !openDataFolderBtn) {
@@ -1296,12 +1267,10 @@ export function initSourceMissingModal() {
     });
   }
 
-
 function stripSetupInfo(text) {
   if (!text) return "";
   return String(text).trim();
 }
-
 
 export function openUserGuideModal() {
     if (!userGuideModal || !userGuideContent) {
@@ -1319,14 +1288,12 @@ export function openUserGuideModal() {
       });
   }
 
-
 export function closeUserGuideModal() {
     if (!userGuideModal) {
       return;
     }
     userGuideModal.setAttribute("hidden", "");
   }
-
 
 export function initUserGuideModal() {
     if (!userGuideModal) {
@@ -1359,7 +1326,6 @@ export function initUserGuideModal() {
     });
   }
 
-
 export function openCloseGuardModal() {
     if (!closeGuardModal) {
       return;
@@ -1371,7 +1337,6 @@ export function openCloseGuardModal() {
     }
   }
 
-
 export function closeCloseGuardModal() {
     if (!closeGuardModal) {
       return;
@@ -1379,7 +1344,6 @@ export function closeCloseGuardModal() {
     closeGuardState.pending = false;
     closeGuardModal.setAttribute("hidden", "");
   }
-
 
 export function initCloseGuardModal() {
     if (!closeGuardModal) {
@@ -1412,7 +1376,6 @@ export function initCloseGuardModal() {
     });
   }
 
-
 export function attemptClosePage() {
     closeGuardState.bypass = true;
     try {
@@ -1426,7 +1389,6 @@ export function attemptClosePage() {
       }
     }, 10);
   }
-
 
 export function defaultRowForTable(tableName) {
     if (tableName === "drivers") {
@@ -1479,7 +1441,6 @@ export function defaultRowForTable(tableName) {
   export function openDataFolder() {
     promptForDataFile();
   }
-
 
 export function initMergeRoutesModal() {
   var mergeBtn = document.getElementById("merge-routes-btn");

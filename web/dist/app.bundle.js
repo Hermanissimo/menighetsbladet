@@ -1,129 +1,4 @@
 (() => {
-  var __defProp = Object.defineProperty;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __esm = (fn, res, err) => function __init() {
-    if (err) throw err[0];
-    try {
-      return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-    } catch (e) {
-      throw err = [e], e;
-    }
-  };
-  var __export = (target, all) => {
-    for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
-  };
-
-  // web/src/dom.js
-  var dom_exports = {};
-  __export(dom_exports, {
-    addAddressBtn: () => addAddressBtn,
-    addDistributorBtn: () => addDistributorBtn,
-    addDriverBtn: () => addDriverBtn,
-    addRouteBtn: () => addRouteBtn,
-    chooseFileLabel: () => chooseFileLabel,
-    closeGuardCloseBtn: () => closeGuardCloseBtn,
-    closeGuardContinueBtn: () => closeGuardContinueBtn,
-    closeGuardMessage: () => closeGuardMessage,
-    closeGuardModal: () => closeGuardModal,
-    closeGuardSaveBtn: () => closeGuardSaveBtn,
-    closeGuardTitle: () => closeGuardTitle,
-    editModal: () => editModal,
-    editModalCancel: () => editModalCancel,
-    editModalClose: () => editModalClose,
-    editModalError: () => editModalError,
-    editModalFields: () => editModalFields,
-    editModalForm: () => editModalForm,
-    editModalTitle: () => editModalTitle,
-    fileInput: () => fileInput,
-    floatingGuideBtn: () => floatingGuideBtn,
-    languageSelect: () => languageSelect,
-    loadResultMessage: () => loadResultMessage,
-    loadResultModal: () => loadResultModal,
-    loadResultTitle: () => loadResultTitle,
-    openDataFolderBtn: () => openDataFolderBtn,
-    openUserGuideBtn: () => openUserGuideBtn,
-    reportModal: () => reportModal,
-    reportModalClose: () => reportModalClose,
-    reportModalContent: () => reportModalContent,
-    reportModalPrint: () => reportModalPrint,
-    routeReportIncludeMap: () => routeReportIncludeMap,
-    routeReportIncludeMapLabel: () => routeReportIncludeMapLabel,
-    routeReportModal: () => routeReportModal,
-    routeReportModalClose: () => routeReportModalClose,
-    routeReportModalContent: () => routeReportModalContent,
-    routeReportModalPrint: () => routeReportModalPrint,
-    saveAsCopyBtn: () => saveAsCopyBtn,
-    saveChangesBtn: () => saveChangesBtn,
-    saveDropdownMenu: () => saveDropdownMenu,
-    saveDropdownToggle: () => saveDropdownToggle,
-    saveGroup: () => saveGroup,
-    settingsPanel: () => settingsPanel,
-    settingsToggle: () => settingsToggle,
-    sourceMissingMessage: () => sourceMissingMessage,
-    sourceMissingModal: () => sourceMissingModal,
-    sourceMissingTitle: () => sourceMissingTitle,
-    statusEl: () => statusEl,
-    userGuideContent: () => userGuideContent,
-    userGuideModal: () => userGuideModal,
-    userGuideTitle: () => userGuideTitle
-  });
-  var statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, floatingGuideBtn, userGuideModal, userGuideTitle, userGuideContent, closeGuardModal, closeGuardTitle, closeGuardMessage, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, sourceMissingTitle, sourceMissingMessage, openDataFolderBtn, reportModal, reportModalClose, reportModalPrint, reportModalContent, routeReportModal, routeReportModalClose, routeReportModalPrint, routeReportModalContent, routeReportIncludeMap, routeReportIncludeMapLabel;
-  var init_dom = __esm({
-    "web/src/dom.js"() {
-      statusEl = document.getElementById("status");
-      fileInput = document.getElementById("xml-file");
-      chooseFileLabel = document.getElementById("choose-file-label");
-      saveGroup = document.getElementById("save-group");
-      saveChangesBtn = document.getElementById("save-changes");
-      saveAsCopyBtn = document.getElementById("save-as-copy");
-      saveDropdownToggle = document.getElementById("save-dropdown-toggle");
-      saveDropdownMenu = document.getElementById("save-dropdown-menu");
-      languageSelect = document.getElementById("language-select");
-      settingsToggle = document.getElementById("settings-toggle");
-      settingsPanel = document.getElementById("settings-panel");
-      editModal = document.getElementById("edit-modal");
-      editModalTitle = document.getElementById("edit-modal-title");
-      editModalClose = document.getElementById("edit-modal-close");
-      editModalCancel = document.getElementById("edit-modal-cancel");
-      editModalForm = document.getElementById("edit-modal-form");
-      editModalFields = document.getElementById("edit-modal-fields");
-      editModalError = document.getElementById("edit-modal-error");
-      addDriverBtn = document.getElementById("add-driver");
-      addDistributorBtn = document.getElementById("add-distributor");
-      addAddressBtn = document.getElementById("add-address");
-      addRouteBtn = document.getElementById("add-route");
-      loadResultModal = document.getElementById("load-result-modal");
-      loadResultTitle = document.getElementById("load-result-title");
-      loadResultMessage = document.getElementById("load-result-message");
-      openUserGuideBtn = document.getElementById("open-user-guide");
-      floatingGuideBtn = document.getElementById("floating-guide-btn");
-      userGuideModal = document.getElementById("user-guide-modal");
-      userGuideTitle = document.getElementById("user-guide-title");
-      userGuideContent = document.getElementById("user-guide-content");
-      closeGuardModal = document.getElementById("close-guard-modal");
-      closeGuardTitle = document.getElementById("close-guard-title");
-      closeGuardMessage = document.getElementById("close-guard-message");
-      closeGuardSaveBtn = document.getElementById("close-guard-save");
-      closeGuardContinueBtn = document.getElementById("close-guard-continue");
-      closeGuardCloseBtn = document.getElementById("close-guard-close");
-      sourceMissingModal = document.getElementById("source-missing-modal");
-      sourceMissingTitle = document.getElementById("source-missing-title");
-      sourceMissingMessage = document.getElementById("source-missing-message");
-      openDataFolderBtn = document.getElementById("open-data-folder");
-      reportModal = document.getElementById("report-modal");
-      reportModalClose = document.getElementById("report-modal-close");
-      reportModalPrint = document.getElementById("report-modal-print");
-      reportModalContent = document.getElementById("report-modal-content");
-      routeReportModal = document.getElementById("route-report-modal");
-      routeReportModalClose = document.getElementById("route-report-modal-close");
-      routeReportModalPrint = document.getElementById("route-report-modal-print");
-      routeReportModalContent = document.getElementById("route-report-modal-content");
-      routeReportIncludeMap = document.getElementById("route-report-include-map");
-      routeReportIncludeMapLabel = document.getElementById("route-report-include-map-label");
-    }
-  });
-
   // web/src/utils.js
   function toInt(value) {
     var v = parseInt(value, 10);
@@ -1970,8 +1845,57 @@
     }
   };
 
-  // web/src/main.js
-  init_dom();
+  // web/src/dom.js
+  var statusEl = document.getElementById("status");
+  var fileInput = document.getElementById("xml-file");
+  var chooseFileLabel = document.getElementById("choose-file-label");
+  var saveGroup = document.getElementById("save-group");
+  var saveChangesBtn = document.getElementById("save-changes");
+  var saveAsCopyBtn = document.getElementById("save-as-copy");
+  var saveDropdownToggle = document.getElementById("save-dropdown-toggle");
+  var saveDropdownMenu = document.getElementById("save-dropdown-menu");
+  var languageSelect = document.getElementById("language-select");
+  var settingsToggle = document.getElementById("settings-toggle");
+  var settingsPanel = document.getElementById("settings-panel");
+  var editModal = document.getElementById("edit-modal");
+  var editModalTitle = document.getElementById("edit-modal-title");
+  var editModalClose = document.getElementById("edit-modal-close");
+  var editModalCancel = document.getElementById("edit-modal-cancel");
+  var editModalForm = document.getElementById("edit-modal-form");
+  var editModalFields = document.getElementById("edit-modal-fields");
+  var editModalError = document.getElementById("edit-modal-error");
+  var addDriverBtn = document.getElementById("add-driver");
+  var addDistributorBtn = document.getElementById("add-distributor");
+  var addAddressBtn = document.getElementById("add-address");
+  var addRouteBtn = document.getElementById("add-route");
+  var loadResultModal = document.getElementById("load-result-modal");
+  var loadResultTitle = document.getElementById("load-result-title");
+  var loadResultMessage = document.getElementById("load-result-message");
+  var openUserGuideBtn = document.getElementById("open-user-guide");
+  var floatingGuideBtn = document.getElementById("floating-guide-btn");
+  var userGuideModal = document.getElementById("user-guide-modal");
+  var userGuideTitle = document.getElementById("user-guide-title");
+  var userGuideContent = document.getElementById("user-guide-content");
+  var closeGuardModal = document.getElementById("close-guard-modal");
+  var closeGuardTitle = document.getElementById("close-guard-title");
+  var closeGuardMessage = document.getElementById("close-guard-message");
+  var closeGuardSaveBtn = document.getElementById("close-guard-save");
+  var closeGuardContinueBtn = document.getElementById("close-guard-continue");
+  var closeGuardCloseBtn = document.getElementById("close-guard-close");
+  var sourceMissingModal = document.getElementById("source-missing-modal");
+  var sourceMissingTitle = document.getElementById("source-missing-title");
+  var sourceMissingMessage = document.getElementById("source-missing-message");
+  var openDataFolderBtn = document.getElementById("open-data-folder");
+  var reportModal = document.getElementById("report-modal");
+  var reportModalClose = document.getElementById("report-modal-close");
+  var reportModalPrint = document.getElementById("report-modal-print");
+  var reportModalContent = document.getElementById("report-modal-content");
+  var routeReportModal = document.getElementById("route-report-modal");
+  var routeReportModalClose = document.getElementById("route-report-modal-close");
+  var routeReportModalPrint = document.getElementById("route-report-modal-print");
+  var routeReportModalContent = document.getElementById("route-report-modal-content");
+  var routeReportIncludeMap = document.getElementById("route-report-include-map");
+  var routeReportIncludeMapLabel = document.getElementById("route-report-include-map-label");
 
   // web/src/calculations.js
   function normalizeRouteIdentifier(raw) {
@@ -2821,9 +2745,6 @@
     }
     return out;
   }
-
-  // web/src/modals.js
-  init_dom();
 
   // web/src/map.js
   var mapInstance = null;
@@ -7978,37 +7899,31 @@
   }
   function openReportModal(driversToPrint) {
     if (!driversToPrint || driversToPrint.length === 0) return;
-    Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-      var html = renderDrivingListsHtml(driversToPrint);
-      dom.reportModalContent.innerHTML = html;
-      dom.reportModal.removeAttribute("hidden");
-      dom.reportModal.scrollTop = 0;
-      if (dom.reportModal.firstElementChild) dom.reportModal.firstElementChild.scrollTop = 0;
-    });
+    var html = renderDrivingListsHtml(driversToPrint);
+    reportModalContent.innerHTML = html;
+    reportModal.removeAttribute("hidden");
+    reportModal.scrollTop = 0;
+    if (reportModal.firstElementChild) reportModal.firstElementChild.scrollTop = 0;
   }
   var currentRouteReportsToPrint = [];
   function renderActiveRouteReports() {
     if (!currentRouteReportsToPrint || currentRouteReportsToPrint.length === 0) return;
-    Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-      var includeMap = dom.routeReportIncludeMap ? dom.routeReportIncludeMap.checked : true;
-      var html = renderRouteReportsHtml(currentRouteReportsToPrint, { includeMap });
-      dom.routeReportModalContent.innerHTML = html;
-      if (includeMap) {
-        initRouteReportMaps(dom.routeReportModalContent);
-      } else {
-        cleanupRouteReportMaps();
-      }
-    });
+    var includeMap = routeReportIncludeMap ? routeReportIncludeMap.checked : true;
+    var html = renderRouteReportsHtml(currentRouteReportsToPrint, { includeMap });
+    routeReportModalContent.innerHTML = html;
+    if (includeMap) {
+      initRouteReportMaps(routeReportModalContent);
+    } else {
+      cleanupRouteReportMaps();
+    }
   }
   function openRouteReportModal(routesToPrint) {
     if (!routesToPrint || routesToPrint.length === 0) return;
     currentRouteReportsToPrint = routesToPrint;
-    Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-      renderActiveRouteReports();
-      dom.routeReportModal.removeAttribute("hidden");
-      dom.routeReportModal.scrollTop = 0;
-      if (dom.routeReportModal.firstElementChild) dom.routeReportModal.firstElementChild.scrollTop = 0;
-    });
+    renderActiveRouteReports();
+    routeReportModal.removeAttribute("hidden");
+    routeReportModal.scrollTop = 0;
+    if (routeReportModal.firstElementChild) routeReportModal.firstElementChild.scrollTop = 0;
   }
   function tryLoadRecordSnapshot() {
     return Promise.all([
@@ -8507,48 +8422,46 @@
   initRowActionMenus();
   initBatchSelectionControls();
   initExportButtons();
-  Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-    if (dom.reportModalClose) {
-      dom.reportModalClose.addEventListener("click", function() {
-        dom.reportModal.setAttribute("hidden", "");
-      });
-    }
-    if (dom.reportModalPrint) {
-      dom.reportModalPrint.addEventListener("click", function() {
-        window.print();
-      });
-    }
-    if (dom.routeReportIncludeMap) {
-      dom.routeReportIncludeMap.addEventListener("change", function() {
-        renderActiveRouteReports();
-      });
-    }
-    if (dom.routeReportModalClose) {
-      dom.routeReportModalClose.addEventListener("click", function() {
-        cleanupRouteReportMaps();
-        dom.routeReportModal.setAttribute("hidden", "");
-      });
-    }
-    if (dom.routeReportModalPrint) {
-      dom.routeReportModalPrint.addEventListener("click", function() {
-        invalidateRouteReportMaps();
-        setTimeout(function() {
-          window.print();
-        }, 100);
-      });
-    }
-    window.addEventListener("beforeprint", function() {
+  if (reportModalClose) {
+    reportModalClose.addEventListener("click", function() {
+      reportModal.setAttribute("hidden", "");
+    });
+  }
+  if (reportModalPrint) {
+    reportModalPrint.addEventListener("click", function() {
+      window.print();
+    });
+  }
+  if (routeReportIncludeMap) {
+    routeReportIncludeMap.addEventListener("change", function() {
+      renderActiveRouteReports();
+    });
+  }
+  if (routeReportModalClose) {
+    routeReportModalClose.addEventListener("click", function() {
+      cleanupRouteReportMaps();
+      routeReportModal.setAttribute("hidden", "");
+    });
+  }
+  if (routeReportModalPrint) {
+    routeReportModalPrint.addEventListener("click", function() {
       invalidateRouteReportMaps();
+      setTimeout(function() {
+        window.print();
+      }, 100);
     });
-    document.addEventListener("click", function(e) {
-      if (e.target.matches('[data-report-modal-close="1"]')) {
-        dom.reportModal.setAttribute("hidden", "");
-      }
-      if (e.target.matches('[data-route-report-modal-close="1"]')) {
-        cleanupRouteReportMaps();
-        dom.routeReportModal.setAttribute("hidden", "");
-      }
-    });
+  }
+  window.addEventListener("beforeprint", function() {
+    invalidateRouteReportMaps();
+  });
+  document.addEventListener("click", function(e) {
+    if (e.target.matches('[data-report-modal-close="1"]')) {
+      reportModal.setAttribute("hidden", "");
+    }
+    if (e.target.matches('[data-route-report-modal-close="1"]')) {
+      cleanupRouteReportMaps();
+      routeReportModal.setAttribute("hidden", "");
+    }
   });
   initCellLinks();
   window.createAddressesResetBackup = createAddressesResetBackup;

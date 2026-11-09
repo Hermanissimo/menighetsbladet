@@ -1,7 +1,7 @@
 import { saveTextDownload } from "./utils.js";
 import { currentLang, setLang, detectInitialLanguage, t } from "./i18n.js";
 import { currentData, filterState, editState, paginationState, tableTitleKeys, fieldLabelKeyByTable, requiredFieldsByMode, closeGuardState, COL_WIDTHS_KEY } from "./state.js";
-import { statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModalTitle } from "./dom.js";
+import { statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModalTitle, reportModal, reportModalClose, reportModalPrint, reportModalContent, routeReportModal, routeReportModalClose, routeReportModalPrint, routeReportModalContent, routeReportIncludeMap } from "./dom.js";
 import { normalizeRouteIdentifier, recomputeMetricsFromCurrentData, normalizeRecords, normalizeAddressRow, getDistributorRoutes, normalizeDistributorRow, recalculateRoutesFromCurrentData, recalculatePaperCounts } from "./calculations.js";
 import { getIndexedDb, idbGetValue, idbSetValue, idbGetAll, withoutStoreId, cleanRecordForStore, IDB_JSON_CACHE_KEY, IDB_RECORD_STORES } from "./api.js";
 import { initEditModal, initAddButtons, initDeleteModal, initBatchStatusModal, initMergeRoutesModal, initBatchRouteModal, initLoadResultModal, openSourceMissingModal, closeSourceMissingModal, initSourceMissingModal, initUserGuideModal, openCloseGuardModal, initCloseGuardModal } from "./modals.js";
@@ -9,17 +9,10 @@ import { renderDrivingListsHtml, renderRouteReportsHtml, initRouteReportMaps, cl
 import { renderRoutesTable, renderAllTables, updateSortHeaderIndicators, initSortableColumns, initResizableColumns, getFilteredSortedRows, flushPendingFilters, clearAllBatchSelections, updateBatchControls, initTableFilters, initPaginationControls, initCellLinks, initRowActionMenus, initBatchSelectionControls, refreshFilterComponents } from "./tables.js";
 import { initMap, invalidateMapSize, initMapAddressModal, initReassignRouteModal, initDeleteAddressMapModal, checkBlockedTiles } from "./map.js";
 
-
-
-
-
-
 var JSON_CACHE_KEY = "source-json-cache";
 var JSON_CACHE_LABEL_KEY = "source-json-cache-label";
 var currentDataFormat = "none";
 var hasUnsavedChanges = false;
-
-
 
 var currentDataSource = { source: "none", label: "" };
 var lastCommittedDataText = "";
@@ -31,8 +24,6 @@ export var currentFileHandle = null;
 export function setHasUserCommittedEdits(val) { hasUserCommittedEdits = val; }
 export function setShowSaveChanges(val) { showSaveChanges = val; }
 var DEBUG_SAVE_CHANGES = true;
-
-
 
 function getDataSourceText(source, label) {
   if (source === "default") {
@@ -125,7 +116,6 @@ function applyLanguage(lang) {
   setText("delete-address-map-btn-confirm", t("mapBtnDelete"));
   setText("delete-address-map-confirm-prompt", t("mapDeleteConfirmPrompt"));
   setText("delete-address-map-confirm-suffix", t("mapDeleteConfirmSuffix"));
-
 
   setAttr("routes-table", "aria-label", t("ariaRoutesTable"));
   setAttr("edit-modal-close", "aria-label", t("ariaClose"));
@@ -398,8 +388,6 @@ function setAttr(id, name, value) {
   el.setAttribute(name, String(value));
 }
 
-
-
 export function render(metrics) {
   setText("addr-included", metrics.addrIncluded);
   setText("addr-excluded", metrics.addrExcluded);
@@ -462,12 +450,10 @@ export function getStatusLabel(value) {
   return value || "";
 }
 
-
 export function setBodyRows(bodyId, rowsHtml) {
   var body = document.getElementById(bodyId);
   body.innerHTML = rowsHtml;
 }
-
 
 export var fieldFormatValidators = {
   email: {
@@ -558,7 +544,6 @@ export function validateFieldFormats(tableName, row, fieldNames) {
   return errors;
 }
 
-
 export function asComparable(value) {
   if (Array.isArray(value)) {
     return { type: "str", value: value.map(function (item) { return String(item == null ? "" : item).trim().toLowerCase(); }).filter(Boolean).join(",") };
@@ -571,40 +556,9 @@ export function asComparable(value) {
   return { type: "str", value: v.toLowerCase() };
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export function canEditCurrentData() {
   return currentDataFormat === "json";
 }
-
-
-
-
-
-
-
-
 
 export function syncCurrentDataFromJson() {
   currentData.addresses = normalizeRecords(currentData.addresses).map(function (row) {
@@ -721,8 +675,6 @@ function serializeCurrentJsonData() {
     routes: stripDerivedForRoutes(currentData.routes)
   };
 }
-
-
 
 export function debugSaveChangesLog(eventName, extra) {
   if (!DEBUG_SAVE_CHANGES) {
@@ -927,14 +879,6 @@ export function scheduleAutosave() {
   statusEl.textContent = t("statusChangesPending");
 }
 
-
-
-
-
-
-
-
-
 function csvEscape(value) {
   var text = String(value == null ? "" : value);
   if (/[",\r\n]/.test(text)) {
@@ -951,7 +895,6 @@ function toCsvText(headers, rows) {
   });
   return lines.join("\r\n");
 }
-
 
 function getDashboardExportData() {
   recalculateAndRenderDashboard();
@@ -1367,61 +1310,35 @@ function initExportButtons() {
 
 export function openReportModal(driversToPrint) {
   if (!driversToPrint || driversToPrint.length === 0) return;
-  import("./dom.js").then(dom => {
-    var html = renderDrivingListsHtml(driversToPrint);
-    dom.reportModalContent.innerHTML = html;
-    dom.reportModal.removeAttribute('hidden');
-    dom.reportModal.scrollTop = 0;
-    if (dom.reportModal.firstElementChild) dom.reportModal.firstElementChild.scrollTop = 0;
-  });
+  var html = renderDrivingListsHtml(driversToPrint);
+  reportModalContent.innerHTML = html;
+  reportModal.removeAttribute('hidden');
+  reportModal.scrollTop = 0;
+  if (reportModal.firstElementChild) reportModal.firstElementChild.scrollTop = 0;
 }
 
 let currentRouteReportsToPrint = [];
 
 export function renderActiveRouteReports() {
   if (!currentRouteReportsToPrint || currentRouteReportsToPrint.length === 0) return;
-  import("./dom.js").then(dom => {
-    var includeMap = dom.routeReportIncludeMap ? dom.routeReportIncludeMap.checked : true;
-    var html = renderRouteReportsHtml(currentRouteReportsToPrint, { includeMap: includeMap });
-    dom.routeReportModalContent.innerHTML = html;
-    if (includeMap) {
-      initRouteReportMaps(dom.routeReportModalContent);
-    } else {
-      cleanupRouteReportMaps();
-    }
-  });
+  var includeMap = routeReportIncludeMap ? routeReportIncludeMap.checked : true;
+  var html = renderRouteReportsHtml(currentRouteReportsToPrint, { includeMap: includeMap });
+  routeReportModalContent.innerHTML = html;
+  if (includeMap) {
+    initRouteReportMaps(routeReportModalContent);
+  } else {
+    cleanupRouteReportMaps();
+  }
 }
 
 export function openRouteReportModal(routesToPrint) {
   if (!routesToPrint || routesToPrint.length === 0) return;
   currentRouteReportsToPrint = routesToPrint;
-  import("./dom.js").then(dom => {
-    renderActiveRouteReports();
-    dom.routeReportModal.removeAttribute('hidden');
-    dom.routeReportModal.scrollTop = 0;
-    if (dom.routeReportModal.firstElementChild) dom.routeReportModal.firstElementChild.scrollTop = 0;
-  });
+  renderActiveRouteReports();
+  routeReportModal.removeAttribute('hidden');
+  routeReportModal.scrollTop = 0;
+  if (routeReportModal.firstElementChild) routeReportModal.firstElementChild.scrollTop = 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function refreshRoutesFromStore() {
   idbGetAll("routes").then(function (rows) {
@@ -1441,7 +1358,6 @@ function refreshRoutesFromStore() {
     updateSortHeaderIndicators("routes");
   });
 }
-
 
 function tryLoadRecordSnapshot() {
   return Promise.all([
@@ -1572,8 +1488,6 @@ function resetAddressesDatabase(options) {
     };
   });
 }
-
-
 
 function persistRecordSnapshot(dataByTable) {
   getIndexedDb().then(function (db) {
@@ -1782,14 +1696,6 @@ function loadInitialData() {
   });
 }
 
-
-
-
-
-
-
-
-
 export function loadUserGuideText() {
   var lang = (currentLang || "en");
   var localizedName = "README_USER." + lang + ".md";
@@ -1819,12 +1725,6 @@ export function loadUserGuideText() {
   return tryFetch(0);
 }
 
-
-
-
-
-
-
 export function setActiveTab(tabName) {
   var tabButtons = document.querySelectorAll(".tab-btn");
   var panels = document.querySelectorAll(".tab-panel");
@@ -1844,13 +1744,9 @@ export function setActiveTab(tabName) {
   });
 }
 
-
-
 languageSelect.addEventListener("change", function () {
   applyLanguage(languageSelect.value);
 });
-
-
 
 document.querySelectorAll(".tab-btn").forEach(function (btn) {
   btn.addEventListener("click", function () {
@@ -2013,49 +1909,47 @@ initRowActionMenus();
 initBatchSelectionControls();
 initExportButtons();
 
-import("./dom.js").then(dom => {
-  if (dom.reportModalClose) {
-    dom.reportModalClose.addEventListener('click', function () {
-      dom.reportModal.setAttribute('hidden', '');
-    });
-  }
-  if (dom.reportModalPrint) {
-    dom.reportModalPrint.addEventListener('click', function () {
-      window.print();
-    });
-  }
-  if (dom.routeReportIncludeMap) {
-    dom.routeReportIncludeMap.addEventListener('change', function () {
-      renderActiveRouteReports();
-    });
-  }
-  if (dom.routeReportModalClose) {
-    dom.routeReportModalClose.addEventListener('click', function () {
-      cleanupRouteReportMaps();
-      dom.routeReportModal.setAttribute('hidden', '');
-    });
-  }
-  if (dom.routeReportModalPrint) {
-    dom.routeReportModalPrint.addEventListener('click', function () {
-      invalidateRouteReportMaps();
-      setTimeout(function () {
-        window.print();
-      }, 100);
-    });
-  }
-  window.addEventListener('beforeprint', function () {
+if (reportModalClose) {
+  reportModalClose.addEventListener('click', function () {
+    reportModal.setAttribute('hidden', '');
+  });
+}
+if (reportModalPrint) {
+  reportModalPrint.addEventListener('click', function () {
+    window.print();
+  });
+}
+if (routeReportIncludeMap) {
+  routeReportIncludeMap.addEventListener('change', function () {
+    renderActiveRouteReports();
+  });
+}
+if (routeReportModalClose) {
+  routeReportModalClose.addEventListener('click', function () {
+    cleanupRouteReportMaps();
+    routeReportModal.setAttribute('hidden', '');
+  });
+}
+if (routeReportModalPrint) {
+  routeReportModalPrint.addEventListener('click', function () {
     invalidateRouteReportMaps();
+    setTimeout(function () {
+      window.print();
+    }, 100);
   });
-  // Also close modal when clicking the backdrop
-  document.addEventListener('click', function (e) {
-    if (e.target.matches('[data-report-modal-close="1"]')) {
-      dom.reportModal.setAttribute('hidden', '');
-    }
-    if (e.target.matches('[data-route-report-modal-close="1"]')) {
-      cleanupRouteReportMaps();
-      dom.routeReportModal.setAttribute('hidden', '');
-    }
-  });
+}
+window.addEventListener('beforeprint', function () {
+  invalidateRouteReportMaps();
+});
+// Also close modal when clicking the backdrop
+document.addEventListener('click', function (e) {
+  if (e.target.matches('[data-report-modal-close="1"]')) {
+    reportModal.setAttribute('hidden', '');
+  }
+  if (e.target.matches('[data-route-report-modal-close="1"]')) {
+    cleanupRouteReportMaps();
+    routeReportModal.setAttribute('hidden', '');
+  }
 });
 
 initCellLinks();

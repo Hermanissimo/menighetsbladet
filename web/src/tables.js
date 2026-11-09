@@ -32,7 +32,6 @@ export function renderDriversTable(rows) {
     setPagerState("drivers", pageData.page, pageData.totalPages);
   }
 
-
 export function renderDistributorsTable(rows) {
     var filteredRows = applyFilter("distributors", rows);
     var sortedRows = applySort("distributors", filteredRows);
@@ -75,7 +74,6 @@ export function renderDistributorsTable(rows) {
     setPagerState("distributors", pageData.page, pageData.totalPages);
   }
 
-
 export function renderRoutesTable(rows) {
     var filteredRows = applyFilter("routes", rows);
     var sortedRows = applySort("routes", filteredRows);
@@ -108,7 +106,6 @@ export function renderRoutesTable(rows) {
     setTotals("routes", t("totalsLabel") + ": " + t("totalsRecords") + "=" + filteredRows.length + " | " + t("totalsDistributors") + "=" + distTotal + " | " + t("totalsAddresses") + "=" + addrTotal + " | " + t("totalsPapers") + "=" + paperTotal);
     setPagerState("routes", pageData.page, pageData.totalPages);
   }
-
 
 export function renderAddressesTable(rows) {
     var filteredRows = applyFilter("addresses", rows);
@@ -150,7 +147,6 @@ export function renderAddressesTable(rows) {
     setPagerState("addresses", pageData.page, pageData.totalPages);
   }
 
-
 export function refreshAllFilterComponents() {
     ["drivers", "distributors", "addresses", "routes"].forEach(function (tableName) {
         refreshFilterComponents(tableName);
@@ -183,7 +179,6 @@ export function renderAllTables() {
     });
 }
 
-
 export function buildEditButton(tableName, row) {
     var rowIndex = currentData[tableName].indexOf(row);
     if (rowIndex < 0) {
@@ -193,7 +188,6 @@ export function buildEditButton(tableName, row) {
       escapeHtml(t("editAction")) + "</button>";
   }
 
-
 export function buildDeleteButton(tableName, row) {
     var rowIndex = currentData[tableName].indexOf(row);
     if (rowIndex < 0) {
@@ -202,7 +196,6 @@ export function buildDeleteButton(tableName, row) {
     return "<button class=\"btn tertiary delete-row-btn\" type=\"button\" data-table=\"" + tableName + "\" data-index=\"" + rowIndex + "\">" +
       escapeHtml(t("deleteAction")) + "</button>";
   }
-
 
 export function buildRowActionSelect(tableName, row) {
     var rowIndex = currentData[tableName].indexOf(row);
@@ -226,7 +219,6 @@ export function buildRowActionSelect(tableName, row) {
     return html;
   }
 
-
 export function buildRowSelectCell(tableName, row) {
     var rowIndex = currentData[tableName].indexOf(row);
     if (rowIndex < 0) {
@@ -238,7 +230,6 @@ export function buildRowSelectCell(tableName, row) {
       "</td>";
   }
 
-
 export function buildNavCell(text, targetTab, criterionKey, criterionVal) {
     var display = escapeHtml(String(text));
     if (!display || !criterionVal) { return display; }
@@ -248,7 +239,6 @@ export function buildNavCell(text, targetTab, criterionKey, criterionVal) {
       "data-nav-val=\"" + escapeHtml(String(criterionVal)) + "\">" +
       display + "</button>";
   }
-
 
 export function updateSortHeaderIndicators(tableName) {
     var cfg = sortConfig[tableName];
@@ -272,7 +262,6 @@ export function updateSortHeaderIndicators(tableName) {
       }
     });
   }
-
 
 var suppressSortClickUntil = 0;
 
@@ -304,7 +293,6 @@ export function initSortableColumns() {
       });
     });
   }
-
 
 export function initResizableColumns() {
     function getTableStorageKey(table) {
@@ -421,7 +409,6 @@ export function initResizableColumns() {
     });
   }
 
-
 export function applySort(tableName, rows) {
     var state = sortState[tableName];
     if (!state || !state.key) {
@@ -454,7 +441,6 @@ export function applySort(tableName, rows) {
     
     return mapped.map(function(el) { return el.row; });
   }
-
 
 export function applyFilter(tableName, rows) {
     var criteria = filterState[tableName] || emptyFilterCriteria();
@@ -495,7 +481,6 @@ export function applyFilter(tableName, rows) {
     });
   }
 
-
 export function paginateRows(tableName, rows) {
     var state = paginationState[tableName];
     if (!state) {
@@ -513,7 +498,6 @@ export function paginateRows(tableName, rows) {
     };
   }
 
-
 export function setPagerState(tableName, page, totalPages) {
     setText("page-info-" + tableName, t("pagerPage", { current: page, total: totalPages }));
     var prevBtn = document.getElementById("page-prev-" + tableName);
@@ -526,17 +510,14 @@ export function setPagerState(tableName, page, totalPages) {
     }
   }
 
-
 export function setTotals(tableName, text) {
     setText(tableName + "-totals", text);
   }
-
 
 export function getFilteredSortedRows(tableName) {
     var rows = currentData[tableName] || [];
     return applySort(tableName, applyFilter(tableName, rows));
   }
-
 
 export function setRowSelected(tableName, rowIndex, selected) {
     if (!Number.isFinite(rowIndex) || rowIndex < 0) {
@@ -550,7 +531,6 @@ export function setRowSelected(tableName, rowIndex, selected) {
     updateBatchControls(tableName);
   }
 
-
 export function getSelectedIndexes(tableName) {
     var map = batchSelectionState[tableName] || {};
     return Object.keys(map).map(function (key) {
@@ -560,11 +540,9 @@ export function getSelectedIndexes(tableName) {
     }).sort(function (a, b) { return a - b; });
   }
 
-
 export function clearBatchSelection(tableName) {
     batchSelectionState[tableName] = {};
   }
-
 
 export function clearAllBatchSelections() {
     ["drivers", "distributors", "addresses", "routes"].forEach(function (tableName) {
@@ -572,7 +550,6 @@ export function clearAllBatchSelections() {
       updateBatchControls(tableName);
     });
   }
-
 
 export function updateBatchControls(tableName) {
     var selectedCount = getSelectedIndexes(tableName).length;
@@ -625,7 +602,6 @@ export function updateBatchControls(tableName) {
       selectAll.indeterminate = !allChecked && !noneChecked;
     }
   }
-
 
 export function initTableFilters() {
     var fields = ["route", "status", "distributorName", "driverName", "postnr"];
@@ -944,7 +920,6 @@ export function initTableFilters() {
     }
   }
 
-
 export function initPaginationControls() {
     ["drivers", "distributors", "addresses", "routes"].forEach(function (tableName) {
       var sizeEl = document.getElementById("page-size-" + tableName);
@@ -974,7 +949,6 @@ export function initPaginationControls() {
     });
   }
 
-
 export function initCellLinks() {
     document.addEventListener("click", function (event) {
       var target = event.target;
@@ -1002,7 +976,6 @@ export function initCellLinks() {
       }
     });
   }
-
 
 export function initRowActionMenus() {
     ["drivers", "distributors", "routes", "addresses"].forEach(function (tableName) {
@@ -1056,7 +1029,6 @@ export function initRowActionMenus() {
     });
   }
 
-
 export function initBatchSelectionControls() {
     ["drivers", "distributors", "addresses", "routes"].forEach(function (tableName) {
       var selectAll = document.getElementById("select-all-" + tableName);
@@ -1096,7 +1068,6 @@ export function initBatchSelectionControls() {
       updateBatchControls(tableName);
     });
   }
-
 
 export function buildDeleteSummaryHtml(tableName, rows) {
     var lines = [];
@@ -1159,7 +1130,6 @@ export function buildDeleteSummaryHtml(tableName, rows) {
     }).join("");
   }
 
-
 export function statusOptionsForTable(tableName) {
     if (tableName === "addresses") {
       return [
@@ -1172,7 +1142,6 @@ export function statusOptionsForTable(tableName) {
       { value: "inactive", label: t("statusInactive") }
     ];
   }
-
 
 export function setFilterSelection(tableName, criterionKey, values) {
     var dedup = [];
@@ -1192,11 +1161,9 @@ export function setFilterSelection(tableName, criterionKey, values) {
     filterState[tableName][criterionKey] = dedup;
   }
 
-
 export function clearFilterSelection(tableName, criterionKey) {
     filterState[tableName][criterionKey] = [];
   }
-
 
 export function refreshFilterComponents(tableName) {
     var tableComps = filterComponents[tableName] || {};
@@ -1207,7 +1174,6 @@ export function refreshFilterComponents(tableName) {
       }
     });
   }
-
 
 export function navigateToTable(targetTab, criterionKey, criterionVal) {
     var criterionToField = {
@@ -1235,7 +1201,6 @@ export function navigateToTable(targetTab, criterionKey, criterionVal) {
     renderAllTables();
     setActiveTab(targetTab);
   }
-
 
 export function rowMatchesAnyField(row, fieldKeys, needles) {
     if (!needles || !needles.length) {
@@ -1281,7 +1246,6 @@ export function rowMatchesAnyField(row, fieldKeys, needles) {
     return false;
   }
 
-
 export function addressMatchesSubstring(row, fieldKeys, searchText) {
     if (!searchText || !searchText.trim()) {
       return true;
@@ -1296,7 +1260,6 @@ export function addressMatchesSubstring(row, fieldKeys, searchText) {
     return false;
   }
 
-
 export function rowMatchesAllCriteria(row, map, normalizedCriteria) {
     return rowMatchesAnyField(row, map.route || [], normalizedCriteria.route) &&
       rowMatchesAnyField(row, map.status || [], normalizedCriteria.status) &&
@@ -1306,7 +1269,6 @@ export function rowMatchesAllCriteria(row, map, normalizedCriteria) {
       rowMatchesAnyField(row, map.active || [], normalizedCriteria.active) &&
       addressMatchesSubstring(row, map.address || [], normalizedCriteria.addressText);
   }
-
 
 export function normalizeFilterValues(values) {
     var out = [];
