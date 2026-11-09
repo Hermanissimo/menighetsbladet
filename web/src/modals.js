@@ -1,7 +1,7 @@
 import { setHasUserCommittedEdits, setShowSaveChanges, debugSaveChangesLog, validateRequiredFields, validateFieldFormats, canEditCurrentData, syncCurrentDataFromJson, loadUserGuideText, saveChangesToSource, promptForDataFile, getRequiredFields, render, refreshUnsavedChangesFromData, scheduleAutosave } from "./main.js";
-import { escapeHtml, parseMarkdown } from "./utils.js";
+import { escapeHtml, parseMarkdown, toInt } from "./utils.js";
 import { t } from "./i18n.js";
-import { currentData, editState, deleteState, batchStatusState, batchRouteState, editFieldsByTable, addFieldsByTable, tableTitleKeys, tableTitleSingleKeys, fieldLabelKeyByTable } from "./state.js";
+import { currentData, editState, deleteState, batchStatusState, batchRouteState, editFieldsByTable, addFieldsByTable, tableTitleKeys, tableTitleSingleKeys, fieldLabelKeyByTable, closeGuardState } from "./state.js";
 import { statusEl, fileInput, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, floatingGuideBtn, userGuideModal, userGuideContent, closeGuardModal, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, openDataFolderBtn } from "./dom.js";
 import { normalizeRouteIdentifier, recomputeMetricsFromCurrentData, normalizeRecords, normalizeAddressRow, normalizeRouteValues, getDistributorRoutes, normalizeDistributorRow, recalculateRoutesFromCurrentData, recalculatePaperCounts } from "./calculations.js";
 
@@ -433,8 +433,11 @@ export function initEditModal() {
       var topErrors = [];
 
       if (missing.length) {
-        missing.forEach(function(f) {
-          setFieldError(f, t("modalRequiredError", { fields: f }));
+        missing.forEach(function(item) {
+          var fieldName = typeof item === "object" ? item.field : item;
+          var fieldLabel = typeof item === "object" ? item.label : item;
+          setFieldError(fieldName, t("modalRequiredError", { fields: fieldLabel }));
+          topErrors.push(t("modalRequiredError", { fields: fieldLabel }));
           hasErrors = true;
         });
       }
@@ -1367,7 +1370,7 @@ export function openCloseGuardModal() {
     if (!closeGuardModal) {
       return;
     }
-    closeGuardPending = false;
+    closeGuardState.pending = false;
     closeGuardModal.removeAttribute("hidden");
     if (closeGuardSaveBtn) {
       closeGuardSaveBtn.focus();
@@ -1379,7 +1382,7 @@ export function closeCloseGuardModal() {
     if (!closeGuardModal) {
       return;
     }
-    closeGuardPending = false;
+    closeGuardState.pending = false;
     closeGuardModal.setAttribute("hidden", "");
   }
 
@@ -1397,7 +1400,7 @@ export function initCloseGuardModal() {
     }
     if (closeGuardContinueBtn) {
       closeGuardContinueBtn.addEventListener("click", function () {
-        closeGuardBypass = false;
+        closeGuardState.bypass = false;
         closeCloseGuardModal();
       });
     }
@@ -1409,7 +1412,7 @@ export function initCloseGuardModal() {
     }
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && !closeGuardModal.hasAttribute("hidden")) {
-        closeGuardBypass = false;
+        closeGuardState.bypass = false;
         closeCloseGuardModal();
       }
     });
@@ -1417,7 +1420,7 @@ export function initCloseGuardModal() {
 
 
 export function attemptClosePage() {
-    closeGuardBypass = true;
+    closeGuardState.bypass = true;
     try {
       window.close();
     } catch (e) {

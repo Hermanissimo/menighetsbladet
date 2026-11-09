@@ -1,9 +1,9 @@
 import { saveTextDownload } from "./utils.js";
 import { currentLang, setLang, detectInitialLanguage, t } from "./i18n.js";
-import { currentData, filterState, editState, paginationState, tableTitleKeys, fieldLabelKeyByTable, requiredFieldsByMode } from "./state.js";
+import { currentData, filterState, editState, paginationState, tableTitleKeys, fieldLabelKeyByTable, requiredFieldsByMode, closeGuardState, COL_WIDTHS_KEY } from "./state.js";
 import { statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModalTitle } from "./dom.js";
 import { normalizeRouteIdentifier, recomputeMetricsFromCurrentData, normalizeRecords, normalizeAddressRow, getDistributorRoutes, normalizeDistributorRow, recalculateRoutesFromCurrentData, recalculatePaperCounts } from "./calculations.js";
-import { getIndexedDb, idbGetValue, idbSetValue, idbGetAll, withoutStoreId, cleanRecordForStore, IDB_JSON_CACHE_KEY } from "./api.js";
+import { getIndexedDb, idbGetValue, idbSetValue, idbGetAll, withoutStoreId, cleanRecordForStore, IDB_JSON_CACHE_KEY, IDB_RECORD_STORES } from "./api.js";
 import { initEditModal, initAddButtons, initDeleteModal, initBatchStatusModal, initMergeRoutesModal, initBatchRouteModal, initLoadResultModal, openSourceMissingModal, closeSourceMissingModal, initSourceMissingModal, initUserGuideModal, openCloseGuardModal, initCloseGuardModal } from "./modals.js";
 import { renderDrivingListsHtml, renderRouteReportsHtml, initRouteReportMaps, cleanupRouteReportMaps, invalidateRouteReportMaps } from "./reports.js";
 import { renderRoutesTable, renderAllTables, updateSortHeaderIndicators, initSortableColumns, initResizableColumns, getFilteredSortedRows, flushPendingFilters, clearAllBatchSelections, updateBatchControls, initTableFilters, initPaginationControls, initCellLinks, initRowActionMenus, initBatchSelectionControls, refreshFilterComponents } from "./tables.js";
@@ -16,15 +16,12 @@ import { initMap, invalidateMapSize, initMapAddressModal, initReassignRouteModal
 
 var JSON_CACHE_KEY = "source-json-cache";
 var JSON_CACHE_LABEL_KEY = "source-json-cache-label";
-var COL_WIDTHS_KEY = "table-column-widths";
 var currentDataFormat = "none";
 var hasUnsavedChanges = false;
 
 
 
 var currentDataSource = { source: "none", label: "" };
-var closeGuardBypass = false;
-var closeGuardPending = false;
 var lastCommittedDataText = "";
 var hasLoadedEditableSource = false;
 var hasUserCommittedEdits = false;
@@ -528,12 +525,19 @@ export function validateRequiredFields(tableName, row) {
   var missing = [];
   requiredFields.forEach(function (fieldName) {
     var value = row[fieldName];
+    var isBlank = false;
     if (Array.isArray(value)) {
       if (!value.length) {
-        missing.push(getFieldLabel(tableName, fieldName));
+        isBlank = true;
       }
     } else if (String(value == null ? "" : value).trim() === "") {
-      missing.push(getFieldLabel(tableName, fieldName));
+      isBlank = true;
+    }
+    if (isBlank) {
+      missing.push({
+        field: fieldName,
+        label: getFieldLabel(tableName, fieldName)
+      });
     }
   });
   return missing;
@@ -1680,7 +1684,7 @@ function persistRecordSnapshot(dataByTable) {
         });
       });
     } catch (e) {
-      // Ignore snapshot failures; XML cache remains source of truth.
+      console.warn("IndexedDB snapshot failed:", e);
     }
   });
 }
@@ -2066,16 +2070,16 @@ fileInput.addEventListener("change", function (event) {
 
 window.addEventListener("beforeunload", function (event) {
   debugSaveChangesLog("beforeunload:check");
-  if (closeGuardBypass || !hasLoadedEditableSource || !showSaveChanges) {
+  if (closeGuardState.bypass || !hasLoadedEditableSource || !showSaveChanges) {
     debugSaveChangesLog("beforeunload:allow");
     return;
   }
   event.preventDefault();
   event.returnValue = "";
   debugSaveChangesLog("beforeunload:block-open-guard");
-  closeGuardPending = true;
+  closeGuardState.pending = true;
   setTimeout(function () {
-    if (closeGuardPending && !document.hidden) {
+    if (closeGuardState.pending && !document.hidden) {
       openCloseGuardModal();
     }
   }, 0);

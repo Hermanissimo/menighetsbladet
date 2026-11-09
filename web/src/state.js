@@ -30,11 +30,18 @@ export let filterComponents = {
     addresses: {},
     routes: {}
   };
+export let closeGuardState = {
+  bypass: false,
+  pending: false
+};
+
+export let COL_WIDTHS_KEY = "table-column-widths";
+
 export let editState = {
-    mode: "edit",
-    tableName: null,
-    rowIndex: -1
-  };
+  mode: "edit",
+  tableName: null,
+  rowIndex: -1
+};
 export let deleteState = {
     mode: "single",
     tableName: null,

@@ -1,7 +1,7 @@
 import { getStatusLabel, setText, exportDriverDistributorsCsv, setActiveTab, exportDriverDistributorsXlsx, setBodyRows, asComparable, recalculateAndRenderDashboard, openReportModal, openRouteReportModal } from "./main.js";
 import { toInt, escapeHtml, debounce } from "./utils.js";
 import { t } from "./i18n.js";
-import { currentData, emptyFilterCriteria, filterState, filterComponents, batchSelectionState, sortState, paginationState, sortConfig, filterFieldMap } from "./state.js";
+import { currentData, emptyFilterCriteria, filterState, filterComponents, batchSelectionState, sortState, paginationState, sortConfig, filterFieldMap, COL_WIDTHS_KEY } from "./state.js";
 import { normalizeRouteIdentifier, getDistributorRoutes } from "./calculations.js";
 
 import { openEditModal, openDeleteModal, openBatchDeleteModal, openBatchStatusModal, openBatchRouteModal } from "./modals.js";

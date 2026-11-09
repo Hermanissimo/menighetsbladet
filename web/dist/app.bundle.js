@@ -125,7 +125,7 @@
   });
 
   // web/src/utils.js
-  function toInt2(value) {
+  function toInt(value) {
     var v = parseInt(value, 10);
     return Number.isFinite(v) ? v : 0;
   }
@@ -1784,6 +1784,11 @@
     addresses: {},
     routes: {}
   };
+  var closeGuardState = {
+    bypass: false,
+    pending: false
+  };
+  var COL_WIDTHS_KEY = "table-column-widths";
   var editState = {
     mode: "edit",
     tableName: null,
@@ -2035,11 +2040,11 @@
       if (isUnassigned) {
         addrUnassigned += 1;
       }
-      var households = toInt2(row.numberOfHouseholds);
+      var households = toInt(row.numberOfHouseholds);
       if (households < 1) {
         households = 1;
       }
-      var excludedHouseholds = toInt2(row.numberOfExcludedHouseholds);
+      var excludedHouseholds = toInt(row.numberOfExcludedHouseholds);
       if (excludedHouseholds < 0) {
         excludedHouseholds = 0;
       }
@@ -2084,16 +2089,16 @@
       }
     });
     (currentData.drivers || []).forEach(function(row) {
-      var e = toInt2(row.extraPapers);
+      var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.distributors || []).forEach(function(row) {
-      var e = toInt2(row.extraPapers);
+      var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.routes || []).forEach(function(row) {
       if (row.active === false) return;
-      var e = toInt2(row.extraPapers);
+      var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     var papersToOrder = Math.max(0, householdsIncluded + extraPapersTotal);
@@ -2150,11 +2155,11 @@
     row.address = row.address || "";
     row.postnr = row.postnr || "";
     row.note = row.note || "";
-    row.numberOfHouseholds = toInt2(row.numberOfHouseholds);
+    row.numberOfHouseholds = toInt(row.numberOfHouseholds);
     if (row.numberOfHouseholds < 1) {
       row.numberOfHouseholds = 1;
     }
-    row.numberOfExcludedHouseholds = toInt2(row.numberOfExcludedHouseholds);
+    row.numberOfExcludedHouseholds = toInt(row.numberOfExcludedHouseholds);
     if (row.numberOfExcludedHouseholds < 0) {
       row.numberOfExcludedHouseholds = 0;
     }
@@ -2195,11 +2200,11 @@
     return row;
   }
   function getAddressPaperCount(row) {
-    var households = toInt2(row.numberOfHouseholds);
+    var households = toInt(row.numberOfHouseholds);
     if (households < 1) {
       households = 1;
     }
-    var excluded = toInt2(row.numberOfExcludedHouseholds);
+    var excluded = toInt(row.numberOfExcludedHouseholds);
     if (excluded < 0) {
       excluded = 0;
     }
@@ -2387,7 +2392,7 @@
         distributorCount: 0,
         distributorNames: "",
         includedAddresses: 0,
-        extraPapers: toInt2(routeRow.extraPapers) || 0,
+        extraPapers: toInt(routeRow.extraPapers) || 0,
         paperCount: 0,
         postnrs: "",
         addressRanges: routeRow.addressRanges || "",
@@ -2635,7 +2640,7 @@
     var finalRoutePaperCounts = {};
     routes.forEach(function(route) {
       var routeId = normalizeRouteIdentifier(route.routeId || "");
-      var count = route.status !== "inactive" ? Math.max(0, (routePaperCounts[routeId] || 0) + toInt2(route.extraPapers)) : 0;
+      var count = route.status !== "inactive" ? Math.max(0, (routePaperCounts[routeId] || 0) + toInt(route.extraPapers)) : 0;
       finalRoutePaperCounts[routeId] = count;
       route.paperCount = String(count);
     });
@@ -2650,7 +2655,7 @@
       Object.keys(routeSet).forEach(function(routeId) {
         paper += finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0;
       });
-      paper += toInt2(driver.extraPapers);
+      paper += toInt(driver.extraPapers);
       var distributorSet = nr ? driverDistributorSetsByNr[nr] || {} : driverDistributorSetsByName[name] || {};
       if ((!distributorSet || !Object.keys(distributorSet).length) && name) {
         distributorSet = driverDistributorSetsByName[name] || {};
@@ -2668,7 +2673,7 @@
       routeIds.forEach(function(routeId) {
         base += finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0;
       });
-      base += toInt2(dist.extraPapers);
+      base += toInt(dist.extraPapers);
       dist.paperCount = String(base);
     });
     _cachedPaperCountsVersion = currentDataVersion;
@@ -2678,7 +2683,7 @@
   var IDB_DB_NAME = "menighetsbladet-local";
   var IDB_STORE_NAME = "kv";
   var IDB_JSON_CACHE_KEY = "source-json-cache";
-  var IDB_RECORD_STORES2 = ["drivers", "distributors", "addresses", "routes"];
+  var IDB_RECORD_STORES = ["drivers", "distributors", "addresses", "routes"];
   var idbDbPromise = null;
   function getIndexedDb() {
     if (!window.indexedDB) {
@@ -2695,7 +2700,7 @@
           if (!db.objectStoreNames.contains(IDB_STORE_NAME)) {
             db.createObjectStore(IDB_STORE_NAME);
           }
-          IDB_RECORD_STORES2.forEach(function(storeName) {
+          IDB_RECORD_STORES.forEach(function(storeName) {
             if (!db.objectStoreNames.contains(storeName)) {
               db.createObjectStore(storeName, { keyPath: "_id", autoIncrement: true });
             }
@@ -3587,10 +3592,10 @@
     }).join("");
     setBodyRows("drivers-body", html);
     var routeTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.routeCount);
+      return acc + toInt(r.routeCount);
     }, 0);
     var paperTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.paperCount);
+      return acc + toInt(r.paperCount);
     }, 0);
     setTotals("drivers", t("totalsLabel") + ": " + t("totalsRecords") + "=" + filteredRows.length + " | " + t("totalsRoutes") + "=" + routeTotal + " | " + t("totalsPapers") + "=" + paperTotal);
     setPagerState("drivers", pageData.page, pageData.totalPages);
@@ -3617,7 +3622,7 @@
     }).join("");
     setBodyRows("distributors-body", html);
     var paperTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.paperCount);
+      return acc + toInt(r.paperCount);
     }, 0);
     var activeNoDriverCount = filteredRows.filter(function(r) {
       var isActive = (r.status || "active").toLowerCase() === "active";
@@ -3645,13 +3650,13 @@
     setBodyRows("routes-body", html);
     updateBatchControls("routes");
     var distTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.distributorCount);
+      return acc + toInt(r.distributorCount);
     }, 0);
     var addrTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.includedAddresses);
+      return acc + toInt(r.includedAddresses);
     }, 0);
     var paperTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.paperCount);
+      return acc + toInt(r.paperCount);
     }, 0);
     setTotals("routes", t("totalsLabel") + ": " + t("totalsRecords") + "=" + filteredRows.length + " | " + t("totalsDistributors") + "=" + distTotal + " | " + t("totalsAddresses") + "=" + addrTotal + " | " + t("totalsPapers") + "=" + paperTotal);
     setPagerState("routes", pageData.page, pageData.totalPages);
@@ -3671,8 +3676,8 @@
     var includedHouseholds = 0;
     var excludedHouseholds = 0;
     filteredRows.forEach(function(r) {
-      var hh = Math.max(1, toInt2(r.numberOfHouseholds));
-      var ex = Math.max(0, toInt2(r.numberOfExcludedHouseholds));
+      var hh = Math.max(1, toInt(r.numberOfHouseholds));
+      var ex = Math.max(0, toInt(r.numberOfExcludedHouseholds));
       ex = Math.min(ex, hh);
       includedHouseholds += hh - ex;
       excludedHouseholds += ex;
@@ -4556,8 +4561,8 @@
       var includedHouseholds = 0;
       var excludedHouseholds = 0;
       rows.forEach(function(r) {
-        var hh = Math.max(1, toInt2(r.numberOfHouseholds));
-        var ex = Math.max(0, toInt2(r.numberOfExcludedHouseholds));
+        var hh = Math.max(1, toInt(r.numberOfHouseholds));
+        var ex = Math.max(0, toInt(r.numberOfExcludedHouseholds));
         ex = Math.min(ex, hh);
         includedHouseholds += hh - ex;
         excludedHouseholds += ex;
@@ -5110,8 +5115,11 @@
       var hasErrors = false;
       var topErrors = [];
       if (missing.length) {
-        missing.forEach(function(f) {
-          setFieldError(f, t("modalRequiredError", { fields: f }));
+        missing.forEach(function(item) {
+          var fieldName = typeof item === "object" ? item.field : item;
+          var fieldLabel = typeof item === "object" ? item.label : item;
+          setFieldError(fieldName, t("modalRequiredError", { fields: fieldLabel }));
+          topErrors.push(t("modalRequiredError", { fields: fieldLabel }));
           hasErrors = true;
         });
       }
@@ -5962,7 +5970,7 @@
     if (!closeGuardModal) {
       return;
     }
-    closeGuardPending = false;
+    closeGuardState.pending = false;
     closeGuardModal.removeAttribute("hidden");
     if (closeGuardSaveBtn) {
       closeGuardSaveBtn.focus();
@@ -5972,7 +5980,7 @@
     if (!closeGuardModal) {
       return;
     }
-    closeGuardPending = false;
+    closeGuardState.pending = false;
     closeGuardModal.setAttribute("hidden", "");
   }
   function initCloseGuardModal() {
@@ -5988,7 +5996,7 @@
     }
     if (closeGuardContinueBtn) {
       closeGuardContinueBtn.addEventListener("click", function() {
-        closeGuardBypass = false;
+        closeGuardState.bypass = false;
         closeCloseGuardModal();
       });
     }
@@ -6000,13 +6008,13 @@
     }
     document.addEventListener("keydown", function(event) {
       if (event.key === "Escape" && !closeGuardModal.hasAttribute("hidden")) {
-        closeGuardBypass = false;
+        closeGuardState.bypass = false;
         closeCloseGuardModal();
       }
     });
   }
   function attemptClosePage() {
-    closeGuardBypass = true;
+    closeGuardState.bypass = true;
     try {
       window.close();
     } catch (e) {
@@ -6396,7 +6404,7 @@
         html += '  <td colspan="4"><div class="report-note-editable" contenteditable="true" spellcheck="false" data-placeholder="' + escapeHtml(t("clickToAddNote") || "Click to add note") + '">' + escapeHtml(notes) + "</div></td>";
         html += "</tr>";
       });
-      var driverExtra = toInt2(driver.extraPapers) || 0;
+      var driverExtra = toInt(driver.extraPapers) || 0;
       if (driverExtra > 0) {
         totalDriverPapers += driverExtra;
         html += '<tr class="route-row">';
@@ -6495,8 +6503,8 @@
             excluded: []
           };
         }
-        var hh = Math.max(1, toInt2(addr.numberOfHouseholds));
-        var ex = Math.max(0, toInt2(addr.numberOfExcludedHouseholds));
+        var hh = Math.max(1, toInt(addr.numberOfHouseholds));
+        var ex = Math.max(0, toInt(addr.numberOfExcludedHouseholds));
         if (ex > hh) ex = hh;
         var inc = hh - ex;
         includedHouseholds += inc;
@@ -6534,7 +6542,7 @@
           });
         }
       });
-      var extraPapers = toInt2(routeRow.extraPapers) || 0;
+      var extraPapers = toInt(routeRow.extraPapers) || 0;
       var totalPapers = Math.max(0, includedHouseholds + extraPapers);
       html += '<div class="print-page route-report-page">';
       html += '<div class="route-report-header">';
@@ -6695,8 +6703,8 @@
         setupResilientTileLayer(map, el);
         var bounds = L.latLngBounds();
         coordsAddrs.forEach(function(a) {
-          var hh = Math.max(1, toInt2(a.numberOfHouseholds));
-          var ex = Math.max(0, toInt2(a.numberOfExcludedHouseholds));
+          var hh = Math.max(1, toInt(a.numberOfHouseholds));
+          var ex = Math.max(0, toInt(a.numberOfExcludedHouseholds));
           if (ex > hh) ex = hh;
           var inc = hh - ex;
           var isExcluded = inc === 0;
@@ -6750,8 +6758,6 @@
   var currentDataFormat = "none";
   var hasUnsavedChanges = false;
   var currentDataSource = { source: "none", label: "" };
-  var closeGuardBypass2 = false;
-  var closeGuardPending2 = false;
   var lastCommittedDataText = "";
   var hasLoadedEditableSource = false;
   var hasUserCommittedEdits = false;
@@ -7223,12 +7229,19 @@
     var missing = [];
     requiredFields.forEach(function(fieldName) {
       var value = row[fieldName];
+      var isBlank = false;
       if (Array.isArray(value)) {
         if (!value.length) {
-          missing.push(getFieldLabel(tableName, fieldName));
+          isBlank = true;
         }
       } else if (String(value == null ? "" : value).trim() === "") {
-        missing.push(getFieldLabel(tableName, fieldName));
+        isBlank = true;
+      }
+      if (isBlank) {
+        missing.push({
+          field: fieldName,
+          label: getFieldLabel(tableName, fieldName)
+        });
       }
     });
     return missing;
@@ -8227,6 +8240,7 @@
           });
         });
       } catch (e) {
+        console.warn("IndexedDB snapshot failed:", e);
       }
     });
   }
@@ -8557,16 +8571,16 @@
   });
   window.addEventListener("beforeunload", function(event) {
     debugSaveChangesLog("beforeunload:check");
-    if (closeGuardBypass2 || !hasLoadedEditableSource || !showSaveChanges) {
+    if (closeGuardState.bypass || !hasLoadedEditableSource || !showSaveChanges) {
       debugSaveChangesLog("beforeunload:allow");
       return;
     }
     event.preventDefault();
     event.returnValue = "";
     debugSaveChangesLog("beforeunload:block-open-guard");
-    closeGuardPending2 = true;
+    closeGuardState.pending = true;
     setTimeout(function() {
-      if (closeGuardPending2 && !document.hidden) {
+      if (closeGuardState.pending && !document.hidden) {
         openCloseGuardModal();
       }
     }, 0);
