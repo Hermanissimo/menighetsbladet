@@ -1,44 +1,60 @@
 # Agent Guide
 
-This repository is a static, browser-based route and distribution management app. The core objective is to maintain a canonical, human-editable source dataset in JSON while providing a friendly UI for route assignment, distributor/driver management, dashboard summaries, and export workflows.
+This repository is a static, browser-based route and distribution management app for parish magazine delivery (*Menighetsbladet*). The core objective is to maintain a canonical, human-editable source dataset in JSON while providing a friendly, responsive UI for route assignment, distributor/driver management, dashboard summaries, map visualization, and export workflows.
 
 The app is designed around a single source of truth:
-- `source.json` for editable operational data
-- `web/app.js` for rendering, normalization, filters, derived calculations, and exports
+- `data/source.json` for editable operational data
+- `web/src/` modular ES modules compiled into `web/dist/app.bundle.js` via `esbuild`
 - `web/index.html` / `web/styles.css` for the UI shell
+- `standalonePS/` for portable Windows PowerShell local offline serving and `/api/save` direct file persistence
 
 ## Project Goal
 
-The product helps plan parish magazine (menighetsblad) delivery routes by tracking:
-- addresses
-- distributors
-- drivers
-- route definitions
-- per-route and per-driver assignments
+The product helps plan parish magazine delivery routes by tracking:
+- addresses (including household and exclusion counts, notes, and geographic coordinates)
+- distributors (*bladbærere*)
+- drivers (*kjørerister*)
+- route definitions (*ruter*)
+- per-route, per-distributor, and per-driver assignments
 
-The main operational expectation is that route, distributor, and driver metadata stay synchronized. When a route is reassigned, the associated address rows and the resolved distributor/driver linkage must remain coherent.
+The main operational expectation is that route, distributor, and driver metadata stay synchronized. When a route is reassigned or modified, the associated address rows and the resolved distributor/driver linkage must remain coherent.
 
 ## Repository Layout
 
 - `web/`: browser UI assets
-  - `index.html`: main UI structure
-  - `app.js`: all app logic, normalization, rendering, filtering, and export behavior
-  - `styles.css`: layout and styling
-- `data/`: canonical dataset and local source snapshots
+  - `index.html`: main UI structure and layout shell
+  - `styles.css`: app styling and table layouts
+  - `src/`: modular ES6+ source code
+    - `main.js`: application bootstrap, language initialization, and global event wiring
+    - `state.js`: centralized state (records, filters, pagination, sort, edit/modal state, close guard)
+    - `calculations.js`: route normalization, paper counts, and metrics calculations
+    - `tables.js`: table rendering, sorting, pagination, multi-select filters, and column resizing
+    - `modals.js`: modal forms (add, edit, delete, batch route/status, merge routes, close guard)
+    - `map.js`: Leaflet interactive map, marker clusters, convex hulls, and map edit actions
+    - `reports.js`: print/PDF run-sheets (*kjørelister*) and street reports (*gatelister*)
+    - `api.js`: IndexedDB cache/snapshot storage and Kartverket/Geonorge API
+    - `dom.js`: shared DOM element references
+    - `utils.js`: pure utility helpers (toInt, escapeHtml, parseMarkdown, debounce, saveTextDownload)
+    - `i18n.js`: localized translation dictionaries (`nb`, `nn`, `en`, `sv`)
+    - `report_styles.css`: print report typography and layout styles
+  - `dist/`: compiled bundle (`app.bundle.js` and `app.bundle.js.map`)
+- `data/`: canonical dataset
   - `source.json`: current editable source of truth
-  - `source.xml`: XML snapshot/export format
-  - `source.backup-*`: backup copies
-- `scripts/`: maintenance and migration utilities
-  - route normalization and migration scripts
-  - duplicate resolution utilities
-  - geocoding and projection helpers
-- `misc/`: cached/reference datasets used for enrichment and diagnosis
-  - Kartverket lookup caches
-  - route maps and extracted data
+- `scripts/`: automation and build tools
+  - `build.js`: unified build script (`npm run build`) that bundles `web/src/`, syncs User Guides, compiles assets to `standalonePS/web/`, and mirrors `data/source.json` to `standalonePS/data/source.json`
+- `standalonePS/`: portable offline distribution for Windows PowerShell
+  - `START.bat` / `STOPP.bat`: one-click batch starters
+  - `server.ps1`: lightweight local HTTP server with automatic `/api/save` timestamped backups
+  - `data/`: portable local dataset
+  - `web/`: portable mirror of the web UI assets
+- `tests/`: automated testing and quality assurance
+  - `audit_translations.js`: validates that all translation keys exist across all 4 locales
+  - `test_user_guide.js`: validates that the in-app User Guide renders clean markdown
+  - `test_all_6_requirements.js`: Playwright E2E test verifying mailto links, route validation, Norwegian translations, driver-distributor warning badges, and add-route non-corruption
 
 ## Current Data Model
 
-The canonical data lives under the top-level collections in `source.json`:
+The canonical data lives under the top-level collections in `data/source.json`:
 - `addresses`
 - `distributors`
 - `drivers`
@@ -46,182 +62,110 @@ The canonical data lives under the top-level collections in `source.json`:
 
 ### Address records
 
-Address rows are stored under `addresses` and should describe one physical address row with the following semantic fields:
-- `address`
-- `route`
-- `postnr`
-- `note`
-- `numberOfHouseholds` (default `1`)
-- `numberOfExcludedHouseholds` (default `0`)
+Address rows are stored under `addresses` and describe one physical delivery location with the following semantic fields:
+- `address`: street name and house number (e.g., `"Storgata 12"`)
+- `route`: canonical route identifier (e.g., `"A 1"`, `"B 4"`)
+- `postnr`: 4-digit postal code
+- `numberOfHouseholds`: household count (integer, default `1`)
+- `numberOfExcludedHouseholds`: excluded/reserved households (integer, default `0`)
+- `note`: optional delivery instruction or note
+- `lat`: optional geographic latitude
+- `lon`: optional geographic longitude
 
-Address records should not carry legacy presentation/supply fields or redundant denormalized fields such as:
+Address records should **not** carry legacy presentation/supply fields or redundant denormalized fields such as:
 - `status`
 - `street`
 - `houseNo`
 - `extraPapers`
-- `distributor` (now derived dynamically from `route`)
-- `driverName` (now derived dynamically from `route`)
+- `distributor` (derived dynamically from `route`)
+- `driverName` (derived dynamically from `route`)
 
 If any of those legacy keys appear, normalize them away or remove them in app logic and writes.
 
 ### Distributor records
 
-Distributor rows should be normalized to the modern model where route membership is stored as a list in `routes`, not a single string `route` field.
-
-Required/expected fields include:
-- `name`
-- `status`
-- `driverNr`
-- `driverName`
-- `phone`
-- `email`
-- `address`
-- `postnr`
-- `routes`: array of route identifiers
-- `extraPapers` (supported for distributors)
+Distributor rows store route membership as an array in `routes`:
+- `name`: distributor's full name
+- `status`: `"active"` or `"inactive"`
+- `driverNr`: optional driver reference number
+- `driverName`: assigned driver's full name
+- `phone`: contact phone number
+- `email`: contact email address
+- `address`: home address
+- `postnr`: postal code
+- `routes`: array of route identifiers (e.g., `["A 1", "A 2"]`)
+- `extraPapers`: optional extra buffer magazines for this distributor
 
 ### Driver records
 
-Driver rows are also route-aware and may carry:
-- `driverNr`
-- `driverName`
-- `phone`
-- `email`
-- `address`
-- `postnr`
-- `routes`
-- `extraPapers`
+Driver rows represent logistics drivers delivering bundles to distributors:
+- `name` / `driverName`: driver's full name
+- `status`: `"active"` or `"inactive"`
+- `driverNr`: driver reference number
+- `phone`: contact phone number
+- `email`: contact email address
+- `address`: home address
+- `postnr`: postal code
+- `routes`: array of route identifiers
+- `extraPapers`: optional extra buffer magazines for this driver
 
 ### Route records
 
-The `routes` collection stores route metadata entries keyed by `routeId`, typically with:
-- `routeId`
-- `distributor` (The assigned distributor's name)
-- `requiresDistributor`
+The `routes` collection stores route metadata entries keyed by `routeId`:
+- `routeId`: canonical route identifier (e.g., `"A 1"`)
+- `distributor`: assigned distributor's name
+- `status`: `"active"` or `"inactive"`
+- `requiresDistributor`: boolean (`true` if delivered by a distributor; `false` if delivered directly by driver)
+- `driver`: assigned driver's name (used when `requiresDistributor === false`)
+- `extraPapers`: extra buffer magazines for this route
+- `notes`: route notes
+- `addressRanges`: generated address summary ranges
 
-These route records now derive their driver linkage dynamically via the assigned `distributor`. The `app.js` table logic resolves the `driverNr` and `driverName` by checking the matching entry in the `distributors` collection.
+Route records derive their driver linkage dynamically via the assigned `distributor` (or via `driver` if `requiresDistributor === false`).
 
-## Route Normalization and Compatibility Rules
+## Route Normalization Rules
 
-The codebase now expects canonical route identifiers to be normalized through the same helper paths in both the browser app and migration scripts.
+The codebase expects canonical route identifiers to be normalized through `normalizeRouteIdentifier()`:
+- trim leading/trailing whitespace
+- collapse repeated internal spaces
+- ensure a space between the letter prefix and numbers (e.g., `"A 5-6"`, `"A 10"`, `"B 3"`)
+- deduplicate route IDs when an array contains multiple route labels
 
-Key normalization behaviors:
-- trim whitespace
-- collapse repeated spaces
-- preserve mixed-case route identifiers in normalized form
-- ensure a space between the letter prefix and the numbers, e.g., `A 5-6`, `A 10`, `A 11/12/13`, `B 3-6`, etc.
-- deduplicate route IDs when a row contains multiple route labels
-
-Important implementation knowledge:
-- `normalizeRouteIdentifier()` in `web/app.js` is the browser-side canonicalization helper.
-- `normalize_route_identifier()` in `scripts/migrate_distributor_routes.py` mirrors the same intent in Python.
-- `getDistributorRoutes(row)` is the compatibility layer that supports both old and new distributor route shapes.
-
-In practice:
-- older data may still expose `route`
-- modern data should store `routes` as an array
-- any migration must rewrite route values into a deduplicated array form and remove the legacy single-field storage
+Important implementation helper:
+- `normalizeRouteIdentifier()` in `web/src/calculations.js` is the canonicalization helper.
 
 ## Dashboard and Derived Calculation Rules
 
-Dashboard calculations are implemented in `web/app.js` and must stay consistent across the UI, any export, and any recalculation paths.
+Calculations in `web/src/calculations.js` must stay consistent across the UI, CSV/XLSX exports, and recalculation paths:
 
 Use this formula:
 - `includedHouseholds = max(0, numberOfHouseholds - numberOfExcludedHouseholds)`
-- `magazinesToOrder = includedHouseholds + extraPapers`
+- `magazinesToOrder = sum(includedHouseholds) + sum(extraPapers)`
 
-This logic is expected to stay identical across:
-- dashboard rendering
-- CSV/XLSX export
-- magazine/paper-count recalculation
-
-## UI and Table Conventions
-
-General UI expectations:
-- addresses table does not use a status filter or status column
-- addresses table includes numeric fields for `numberOfHouseholds` and `numberOfExcludedHouseholds`
-- add/edit forms must support these numeric fields
-- CSV export labels should use translated strings via `t(...)`
-- export actions must describe the exact output type clearly
-
-Current export strategy:
-- `CSV` and `XLSX` for table exports
-- driver-distributor export path for selected driver rows
-- exports should avoid duplicated columns and should use the same normalized route display logic as the tables
-
-## Known Migration and Cleanup Know-How
-
-This repo has already gone through a structural normalization pass that should be preserved.
-
-### Completed model move
-
-Distributor route storage was migrated away from the legacy single `route` string into normalized `routes` arrays.
-
-### Duplicate-merge policy
-
-Duplicate distributor names must be merged into a single canonical record, preserving the metadata most likely to be used by the UI:
-- `driverNr`
-- `driverName`
-- `phone`
-- `email`
-- `address`
-- `postnr`
-- `routes`
-
-Route lists should be deduplicated and stable.
-
-### Route-transfer consistency
-
-When a route transfer occurs, all of the following must stay in sync:
-- address `route` values
-- the owning `routes` collection metadata (now storing `distributor`)
-- distributor `routes` arrays
-
-*(Note: addresses no longer store `distributor` and `driverName` directly; they are derived dynamically from the route.)*
-
-This matters because route ownership is not just a display label; it feeds export output and downstream route assignment calculations. Linkages now flow primarily from `route` -> `distributor` -> `driver`.
+Extra buffer magazines are summed from active routes, active distributors, and active drivers:
+- Inactive routes (`status === "inactive" || active === false`) are excluded.
+- Inactive distributors (`status === "inactive"`) and drivers (`status === "inactive"`) do not add extra papers.
 
 ## Safe Change Workflow
 
-When editing the live data or logic, always verify in this order:
+When editing code, data, or tests, always follow this workflow:
 
-1. Edit the relevant JS/data source.
-2. Validate JS parse:
-   - `node -e "const fs=require('fs'); new Function(fs.readFileSync('web/app.js','utf8')); console.log('ok');"`
-3. Validate JSON parse:
-   - `python -c "import json; json.load(open('source.json',encoding='utf-8')); print('ok')"`
-4. If changing address schema, verify no legacy keys remain in addresses:
-   - `python -c "import json; d=json.load(open('source.json',encoding='utf-8')); a=d['addresses']; print(sum(1 for r in a if 'status' in r or 'street' in r or 'houseNo' in r))"`
-5. If changing the routes model, verify route references are coherent:
-   - route IDs in address records resolve to known route entries
-   - distributor `routes` arrays resolve to known route entries
-   - route-to-driver linkage in address rows matches the matched route record
+1. Edit the relevant JS/CSS/JSON source files in `web/src/` or `data/`.
+2. Rebuild and synchronize the application:
+   - `npm run build`
+3. Run the automated test suite:
+   - `npm test`
+4. Validate JSON integrity of `data/source.json`:
+   - `python -c "import json; d=json.load(open('data/source.json', encoding='utf-8')); print('Addresses:', len(d['addresses']), 'Routes:', len(d['routes']))"`
+5. Verify no legacy keys remain in addresses:
+   - `python -c "import json; d=json.load(open('data/source.json', encoding='utf-8')); a=d['addresses']; print('Legacy keys count:', sum(1 for r in a if 'status' in r or 'street' in r or 'houseNo' in r or 'distributor' in r or 'driverName' in r))"`
 
 ## Verification Checklist for Common Tasks
 
-Use these checks when making structural changes:
-
-- JS parse check
-- JSON parse check
-- legacy key audit
-- route reference audit
-- duplicate distributor name audit
-- route-to-driver consistency audit
-
-These are the most important guardrails because the app relies on the canonical JSON being both human-readable and machine-coherent.
-
-## External Data Source
-
-Kartverket/Geonorge address household enrichment is used for enrichment and household estimation:
-- Base endpoint: `https://ws.geonorge.no/adresser/v1/sok`
-- Household proxy: `len(bruksenhetsnummer)` per exact address match, with a minimum of `1`
-
-When running live API checks, prefer cached lookups to avoid unnecessary repeated requests.
-
-## Working Notes for Future Agents
-
-- Treat `source.json` as the source of truth for edits.
-- Keep the app’s normalization helper behavior consistent with the Python migration scripts.
-- Do not reintroduce legacy or redundant address fields (like `distributor` or `driverName`) into base rows.
-- Keep route ownership, distributor assignment, and driver assignment in sync.
-- When a route is moved, update the affected address rows and the related distributor/driver metadata in the same pass. (Note: addresses only store the `route`, not the `distributor` or `driverName`).
+- [ ] Build clean check (`npm run build`)
+- [ ] Translation key audit (`node tests/audit_translations.js`)
+- [ ] Requirements verification (`node tests/test_all_6_requirements.js`)
+- [ ] Legacy key audit (zero legacy keys on address records)
+- [ ] Route reference audit (all address routes resolve to existing routes in `routes`)
+- [ ] Duplicate distributor name audit (distributors uniquely identified by name)
+- [ ] Standalone package sync check (files in `standalonePS/web/` match `web/`)
