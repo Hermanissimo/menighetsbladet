@@ -1,10 +1,9 @@
 import { t } from "./i18n.js";
 import { escapeHtml } from "./utils.js";
-import { renderAllTables, initTableFilters } from "./tables.js";
-import { idbSetValue } from "./api.js";
+import { renderAllTables, refreshFilterComponents } from "./tables.js";
 import { currentData } from "./state.js";
-import { normalizeAddressRow, recalculateRoutesFromCurrentData, recalculatePaperCounts } from "./calculations.js";
-import { setHasUserCommittedEdits, setShowSaveChanges, debugSaveChangesLog, refreshUnsavedChangesFromData, scheduleAutosave } from "./main.js";
+import { normalizeAddressRow, recalculateRoutesFromCurrentData, recalculatePaperCounts, recomputeMetricsFromCurrentData } from "./calculations.js";
+import { setHasUserCommittedEdits, setShowSaveChanges, debugSaveChangesLog, refreshUnsavedChangesFromData, scheduleAutosave, syncCurrentDataFromJson, render } from "./main.js";
 
 let mapInstance = null;
 let markerClusterGroup = null;
@@ -721,17 +720,11 @@ export function initMapAddressModal() {
         currentData.addresses.push(normalizedAddress);
       });
       
-      const addressesToSave = currentData.addresses.map(a => {
-        const copy = Object.assign({}, a);
-        delete copy.distributor;
-        delete copy.driverName;
-        return copy;
-      });
-      await idbSetValue('addresses', addressesToSave);
-      
       recalculateRoutesFromCurrentData();
       recalculatePaperCounts();
-      initTableFilters();
+      syncCurrentDataFromJson();
+      render(recomputeMetricsFromCurrentData());
+      refreshFilterComponents("addresses");
       renderAllTables();
       
       setHasUserCommittedEdits(true);
@@ -784,17 +777,11 @@ async function executeReassign(addressObjects, newRoute) {
     });
     
     if (changed) {
-      const addressesToSave = currentData.addresses.map(a => {
-        const copy = Object.assign({}, a);
-        delete copy.distributor;
-        delete copy.driverName;
-        return copy;
-      });
-      await idbSetValue('addresses', addressesToSave);
-      
       recalculateRoutesFromCurrentData();
       recalculatePaperCounts();
-      initTableFilters();
+      syncCurrentDataFromJson();
+      render(recomputeMetricsFromCurrentData());
+      refreshFilterComponents("addresses");
       renderAllTables();
       
       setHasUserCommittedEdits(true);
@@ -852,17 +839,11 @@ export function initDeleteAddressMapModal() {
       if (idx !== -1) {
         currentData.addresses.splice(idx, 1);
         
-        const addressesToSave = currentData.addresses.map(a => {
-          const copy = Object.assign({}, a);
-          delete copy.distributor;
-          delete copy.driverName;
-          return copy;
-        });
-        await idbSetValue('addresses', addressesToSave);
-        
         recalculateRoutesFromCurrentData();
         recalculatePaperCounts();
-        initTableFilters();
+        syncCurrentDataFromJson();
+        render(recomputeMetricsFromCurrentData());
+        refreshFilterComponents("addresses");
         renderAllTables();
         
         setHasUserCommittedEdits(true);

@@ -51,7 +51,7 @@ export function recomputeMetricsFromCurrentData() {
     (currentData.routes || []).forEach(function (row) {
       var rId = normalizeRouteIdentifier(row.routeId || "");
       
-      if (row.active === false) {
+      if (row.status === "inactive" || row.active === false) {
         routesInactive += 1;
         return;
       }
@@ -149,15 +149,17 @@ export function recomputeMetricsFromCurrentData() {
 
     // Sum extra papers from drivers, distributors, and routes
     (currentData.drivers || []).forEach(function (row) {
+      if ((row.status || "").toLowerCase() === "inactive") return;
       var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.distributors || []).forEach(function (row) {
+      if ((row.status || "").toLowerCase() === "inactive") return;
       var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.routes || []).forEach(function (row) {
-      if (row.active === false) return;
+      if (row.status === "inactive" || row.active === false) return;
       var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
@@ -605,7 +607,7 @@ export function recalculateRoutesFromCurrentData() {
       routeRow.active = routeRow.status !== "inactive";
       routeRow.distributorNames = Object.keys(routeDistributorSets[routeId] || {}).sort().join(", ");
       routeRow.postnrs = Object.keys(routePostnrSets[routeId] || {}).sort().join(", ");
-      routeRow.paperCount = routeRow.status !== "inactive" ? Math.max(0, routeRow.includedAddresses + (routeRow.extraPapers || 0)) : 0;
+      routeRow.paperCount = routeRow.paperCount || 0;
       routeRow.notes = routeRow.notes || "";
       routeRow.addressRanges = generatedRanges[routeId] || "";
       return routeRow;
@@ -768,7 +770,9 @@ export function recalculatePaperCounts() {
       Object.keys(routeSet).forEach(function(routeId) {
         paper += (finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0);
       });
-      paper += toInt(driver.extraPapers);
+      if ((driver.status || "").toLowerCase() !== "inactive") {
+        paper += toInt(driver.extraPapers);
+      }
 
       var distributorSet = nr ? (driverDistributorSetsByNr[nr] || {}) : (driverDistributorSetsByName[name] || {});
       if ((!distributorSet || !Object.keys(distributorSet).length) && name) {
@@ -789,7 +793,9 @@ export function recalculatePaperCounts() {
       routeIds.forEach(function(routeId) {
         base += (finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0);
       });
-      base += toInt(dist.extraPapers);
+      if ((dist.status || "").toLowerCase() !== "inactive") {
+        base += toInt(dist.extraPapers);
+      }
       dist.paperCount = String(base);
     });
     

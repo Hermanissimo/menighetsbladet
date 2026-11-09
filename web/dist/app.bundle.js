@@ -2005,7 +2005,7 @@
     var routeActiveMap = {};
     (currentData.routes || []).forEach(function(row) {
       var rId = normalizeRouteIdentifier(row.routeId || "");
-      if (row.active === false) {
+      if (row.status === "inactive" || row.active === false) {
         routesInactive += 1;
         return;
       }
@@ -2089,15 +2089,17 @@
       }
     });
     (currentData.drivers || []).forEach(function(row) {
+      if ((row.status || "").toLowerCase() === "inactive") return;
       var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.distributors || []).forEach(function(row) {
+      if ((row.status || "").toLowerCase() === "inactive") return;
       var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.routes || []).forEach(function(row) {
-      if (row.active === false) return;
+      if (row.status === "inactive" || row.active === false) return;
       var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
@@ -2509,7 +2511,7 @@
       routeRow.active = routeRow.status !== "inactive";
       routeRow.distributorNames = Object.keys(routeDistributorSets[routeId] || {}).sort().join(", ");
       routeRow.postnrs = Object.keys(routePostnrSets[routeId] || {}).sort().join(", ");
-      routeRow.paperCount = routeRow.status !== "inactive" ? Math.max(0, routeRow.includedAddresses + (routeRow.extraPapers || 0)) : 0;
+      routeRow.paperCount = routeRow.paperCount || 0;
       routeRow.notes = routeRow.notes || "";
       routeRow.addressRanges = generatedRanges[routeId] || "";
       return routeRow;
@@ -2655,7 +2657,9 @@
       Object.keys(routeSet).forEach(function(routeId) {
         paper += finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0;
       });
-      paper += toInt(driver.extraPapers);
+      if ((driver.status || "").toLowerCase() !== "inactive") {
+        paper += toInt(driver.extraPapers);
+      }
       var distributorSet = nr ? driverDistributorSetsByNr[nr] || {} : driverDistributorSetsByName[name] || {};
       if ((!distributorSet || !Object.keys(distributorSet).length) && name) {
         distributorSet = driverDistributorSetsByName[name] || {};
@@ -2673,7 +2677,9 @@
       routeIds.forEach(function(routeId) {
         base += finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0;
       });
-      base += toInt(dist.extraPapers);
+      if ((dist.status || "").toLowerCase() !== "inactive") {
+        base += toInt(dist.extraPapers);
+      }
       dist.paperCount = String(base);
     });
     _cachedPaperCountsVersion = currentDataVersion;
@@ -3416,16 +3422,11 @@
           const normalizedAddress = normalizeAddressRow(Object.assign({}, addr));
           currentData.addresses.push(normalizedAddress);
         });
-        const addressesToSave = currentData.addresses.map((a) => {
-          const copy = Object.assign({}, a);
-          delete copy.distributor;
-          delete copy.driverName;
-          return copy;
-        });
-        await idbSetValue("addresses", addressesToSave);
         recalculateRoutesFromCurrentData();
         recalculatePaperCounts();
-        initTableFilters();
+        syncCurrentDataFromJson();
+        render(recomputeMetricsFromCurrentData());
+        refreshFilterComponents("addresses");
         renderAllTables();
         setHasUserCommittedEdits(true);
         setShowSaveChanges(true);
@@ -3469,16 +3470,11 @@
         }
       });
       if (changed) {
-        const addressesToSave = currentData.addresses.map((a) => {
-          const copy = Object.assign({}, a);
-          delete copy.distributor;
-          delete copy.driverName;
-          return copy;
-        });
-        await idbSetValue("addresses", addressesToSave);
         recalculateRoutesFromCurrentData();
         recalculatePaperCounts();
-        initTableFilters();
+        syncCurrentDataFromJson();
+        render(recomputeMetricsFromCurrentData());
+        refreshFilterComponents("addresses");
         renderAllTables();
         setHasUserCommittedEdits(true);
         setShowSaveChanges(true);
@@ -3526,16 +3522,11 @@
         const idx = currentData.addresses.findIndex((a) => a.address === deleteAddressMapTarget.address);
         if (idx !== -1) {
           currentData.addresses.splice(idx, 1);
-          const addressesToSave = currentData.addresses.map((a) => {
-            const copy = Object.assign({}, a);
-            delete copy.distributor;
-            delete copy.driverName;
-            return copy;
-          });
-          await idbSetValue("addresses", addressesToSave);
           recalculateRoutesFromCurrentData();
           recalculatePaperCounts();
-          initTableFilters();
+          syncCurrentDataFromJson();
+          render(recomputeMetricsFromCurrentData());
+          refreshFilterComponents("addresses");
           renderAllTables();
           setHasUserCommittedEdits(true);
           setShowSaveChanges(true);
@@ -7459,16 +7450,32 @@
     }
     var jsonText = JSON.stringify(serializeCurrentJsonData(), null, 2);
     saveJsonCache(jsonText, "source.json (edited)");
+    var savedViaApiOrHandle = false;
     if (currentFileHandle && currentFileHandle.createWritable) {
       try {
         const writable = await currentFileHandle.createWritable();
         await writable.write(jsonText);
         await writable.close();
+        savedViaApiOrHandle = true;
       } catch (e) {
         console.error("Failed to quick save via file handle", e);
-        saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
       }
-    } else {
+    } else if (window.location && window.location.protocol.startsWith("http")) {
+      try {
+        const response = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: jsonText
+        });
+        if (response.ok) {
+          savedViaApiOrHandle = true;
+          debugSaveChangesLog("saveChangesToSource:api-save-success");
+        }
+      } catch (e) {
+        debugSaveChangesLog("saveChangesToSource:api-save-skipped-or-failed", e);
+      }
+    }
+    if (!savedViaApiOrHandle) {
       saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
     }
     lastCommittedDataText = getComparableDataText();

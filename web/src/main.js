@@ -815,16 +815,33 @@ export async function saveChangesToSource() {
   var jsonText = JSON.stringify(serializeCurrentJsonData(), null, 2);
   saveJsonCache(jsonText, "source.json (edited)");
   
+  var savedViaApiOrHandle = false;
   if (currentFileHandle && currentFileHandle.createWritable) {
     try {
       const writable = await currentFileHandle.createWritable();
       await writable.write(jsonText);
       await writable.close();
+      savedViaApiOrHandle = true;
     } catch (e) {
       console.error("Failed to quick save via file handle", e);
-      saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
     }
-  } else {
+  } else if (window.location && window.location.protocol.startsWith("http")) {
+    try {
+      const response = await fetch("/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: jsonText
+      });
+      if (response.ok) {
+        savedViaApiOrHandle = true;
+        debugSaveChangesLog("saveChangesToSource:api-save-success");
+      }
+    } catch (e) {
+      debugSaveChangesLog("saveChangesToSource:api-save-skipped-or-failed", e);
+    }
+  }
+
+  if (!savedViaApiOrHandle) {
     saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
   }
 
