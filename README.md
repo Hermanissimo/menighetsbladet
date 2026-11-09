@@ -11,7 +11,6 @@ Modern data management system and interactive web dashboard hosted online via **
 - `data/` *(local only, gitignored)*: Canonical source data and operational files:
   - `source.json`: The active, canonical single source of truth for addresses, distributors, drivers, and routes.
   - `source.backup-*.json`: Automatic timestamped backups generated on save.
-  - `source.xml`: Snapshot and legacy XML export.
 - `web/`: Modern static browser dashboard:
   - `index.html`: Web application shell, modals, and templates.
   - `styles.css`: Visual styling, print rules, and responsive design.
@@ -22,15 +21,21 @@ Modern data management system and interactive web dashboard hosted online via **
     - `modals.js`: Dialog handling for record creation, editing, batch updates, route merging, and deletions.
     - `map.js`: Leaflet & MarkerCluster interactive map, Geonorge address geocoding, and spatial route assignments.
     - `reports.js`: HTML generation for driver run sheets (*kjørelister*) and route distribution reports (*gatelister*).
+    - `api.js`: IndexedDB persistent cache/snapshot storage and Kartverket/Geonorge address lookup.
     - `state.js`: Central state containers, filter criteria, and configuration definitions.
     - `i18n.js`: Multilingual translations (Bokmål, Nynorsk, English, Swedish).
-    - `dom.js` & `utils.js`: DOM helpers, sanitization, and number parsing.
+    - `dom.js` & `utils.js`: DOM helpers, sanitization, markdown parser, and number formatting.
+    - `report_styles.css`: Typography and print page layouts for run sheets and street reports.
   - `dist/app.bundle.js`: Pre-bundled distribution script built using `esbuild`.
-- `standalonePS/`: Zero-dependency, portable distribution package:
+- `scripts/`: Unified automation and build utilities:
+  - `build.js`: Compiles `web/src/` into `web/dist/app.bundle.js`, syncs User Guides, syncs assets into `standalonePS/web/`, and mirrors `data/source.json` to `standalonePS/data/source.json`.
+- `standalonePS/`: Zero-dependency, portable distribution package for Windows PowerShell:
   - `START.bat`: One-click Windows launcher that starts the local HTTP server and opens the browser.
   - `STOPP.bat`: Clean shutdown script for the background server.
   - `server.ps1`: Lightweight native PowerShell HTTP server with `/api/save` endpoint and auto-backup engine.
-- `tests/`: Automated test suite (Playwright / Node.js) validating data integrity, filters, exports, and user guide modals.
+  - `data/`: Portable operational dataset.
+  - `web/`: Portable mirror of the web UI assets and user guides.
+- `tests/`: Automated test suite (Playwright / Node.js) validating data integrity, filters, exports, translations, and user guide modals.
 - `misc/`: Maintenance and diagnostic scripts for address auditing and route verification.
 
 ---
@@ -54,14 +59,15 @@ Represents physical delivery locations:
 - `numberOfHouseholds` *(integer, min 1)*: Total households at this address.
 - `numberOfExcludedHouseholds` *(integer, min 0)*: Households opting out of delivery (*"Nei takk til uadressert post"*).
 - `note` *(string, optional)*: Specific delivery notes (e.g. `"Inngang B i bakgården"`).
+- `lat` / `lon` *(float, optional)*: Geographic coordinates for interactive mapping.
 
-*(Note: Legacy fields such as `status`, `street`, `houseNo`, `distributor`, and `driverName` are omitted or derived dynamically).*
+*(Note: Legacy fields such as `status`, `street`, `houseNo`, `extraPapers`, `distributor`, and `driverName` are omitted from storage and derived dynamically).*
 
 ### 2. `distributors` (*Bladbærere*)
 Volunteers delivering magazines door-to-door within assigned routes:
 - `name` *(string)*: Full name.
 - `status` *(string)*: `"active"` or `"inactive"`.
-- `driverNr` *(string)*: Associated driver number.
+- `driverNr` *(string)*: Associated driver reference number.
 - `driverName` *(string)*: Associated driver name.
 - `phone` / `email` / `address` / `postnr`: Contact information.
 - `routes` *(array of strings)*: List of assigned route IDs (e.g. `["A 1", "A 2"]`).
@@ -82,8 +88,10 @@ Geographical distribution sectors:
 - `distributor` *(string)*: Name of the assigned distributor.
 - `status` *(string)*: `"active"` or `"inactive"`.
 - `requiresDistributor` *(boolean)*: `true` if route needs a local distributor; `false` if delivered directly by the driver.
+- `driver` *(string)*: Direct driver assignment (used when `requiresDistributor === false`).
 - `extraPapers` *(integer)*: Extra buffer magazines for this specific route.
 - `notes` *(string)*: Special logistics instructions.
+- `addressRanges` *(string)*: Summary address ranges generated automatically.
 
 ---
 
@@ -94,6 +102,8 @@ All views, exports, and dashboards strictly adhere to the following formulas:
 $$\text{Included Households} = \max(0, \text{numberOfHouseholds} - \text{numberOfExcludedHouseholds})$$
 
 $$\text{Magazines to Order} = \sum \text{Included Households} + \sum \text{Extra Papers}$$
+
+Extra buffer magazines are summed from active routes, active distributors, and active drivers (inactive entities do not add buffer copies).
 
 ### Route Normalization
 All route references are canonicalized using `normalizeRouteIdentifier`:
@@ -123,7 +133,7 @@ For fully offline use on Windows machines without internet access or Node.js:
 3. The PowerShell HTTP server starts automatically and launches `http://localhost:8080/web/` in your default browser.
 4. When editing in this mode:
    - Clicking **Save Changes** sends a `POST` request to `/api/save`.
-   - The server creates a timestamped backup (`source.backup-YYYYMMDD-HHmmss.json`) and updates `source.json` directly.
+   - The server creates a timestamped backup (`data/source.backup-YYYYMMDD-HHmmss.json`) and updates `data/source.json` directly.
 5. To stop the server, double-click `STOPP.bat` or press `Ctrl+C` in the console window.
 
 ### 3. Local Development Mode
@@ -132,11 +142,14 @@ For developers editing client-side code in `web/src/`:
 # Install dependencies
 npm install
 
-# Build client bundle (web/dist/app.bundle.js)
+# Build client bundle and synchronize standalone package
 npm run build
 
 # Watch mode for automatic re-bundling during development
 npm run watch
+
+# Run test suite (translation key audit, user guide modal, all 6 requirements)
+npm test
 ```
 Run any local static web server from the project root:
 ```bash
@@ -150,20 +163,17 @@ python -m http.server 8000
 
 ## Testing & Quality Assurance
 
-The test suite in `tests/` verifies end-to-end functionality using Playwright:
+The test suite in `tests/` verifies end-to-end functionality using Playwright and Node.js:
 
 ```bash
-# Verify user guide modal behavior
-node tests/test_user_guide.js
+# Run full automated test suite
+npm test
 
-# Test core requirements and table calculations
-node tests/test_all_6_requirements.js
-
-# Test excluded address filters
-node tests/test_excluded_filters.js
-
-# Test filtered CSV/XLSX exports
-node tests/test_export_filtered.js
+# Run individual test components
+node tests/audit_translations.js      # Verifies 100% translation key parity across nb, nn, en, sv
+node tests/test_user_guide.js          # Verifies markdown formatting and user guide rendering
+node tests/test_all_6_requirements.js  # End-to-end test of email links, validation, badges, and route adding
+node tests/test_filtered_exports.js    # Verifies filtered CSV/XLSX/print export integrity
 ```
 
 ---
