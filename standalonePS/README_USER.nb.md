@@ -215,3 +215,15 @@ Siden applikasjonen kjører lokalt i nettleseren din via GitHub Pages og det ikk
    - **Lagre tidsstemplet arkivkopi**: Benytt valget «Lagre som kopi» for å laste ned en kopi med dato og klokkeslett i filnavnet (f.eks. `source_YYYYMMDD_HHmm.json`), som gir en ryddig historikk over tidligere utdelingsrunder.
    - **Direkte fillagring**: I nettlesere med støtte for File System Access API der du åpnet en lokal fil via fillasteren, kan du lagre oppdateringene direkte tilbake til filen på disken.
 3. **Datasikkerhet**: Husk at nettsiden på GitHub Pages ikke lagrer dataene dine på nett. Last derfor alltid ned en oppdatert `source.json` når du er ferdig med en arbeidsøkt.
+## 5. Ordliste / Begreper
+
+- **Rute**: Et bestemt geografisk område eller sett med gater der menighetsbladet distribueres.
+- **Bladbærer (Distributør)**: Den frivillige som går en rute og leverer blader i de enkelte postkassene.
+- **Kjører (Sjåfør)**: Den frivillige som er ansvarlig for å transportere bunter med blader fra tryckeriet/kirken til de enkelte bladbærerne.
+- **Husstander**: Det totale antallet boenheter på en gitt adresse.
+- **Ekskluderte husstander**: Husstander som har reservert seg mot uadressert post ("Nei takk til uadressert post").
+- **Inkluderte husstander**: Netto antall husstander som skal motta et blad (Totalt antall husstander minus Ekskluderte husstander).
+- **Ekstra blader**: Bufferkopier tildelt en rute, bladbærer eller kjører for å dekke uforutsette behov.
+- **Ufordelt rute**: En opprettet rute som for øyeblikket mangler en tildelt bladbærer eller kjører.
+- **Kjøreliste**: En oversikt for kjørere som viser hvilke ruter og bladbærere de skal levere bunter til, samt nøyaktig antall blader.
+- **Gateliste (Ruterapport)**: En oversikt for bladbærere som viser nøyaktig hvilke adresser og husnummer de skal levere til, inkludert notater om ekskluderte husstander.

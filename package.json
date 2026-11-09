@@ -4,8 +4,10 @@
   "description": "Local data pipeline and dashboard for maintaining distribution data (drivers, distributors, routes, and addresses) for Menighetsbladet.",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap",
-    "watch": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap --watch"
+    "build": "node scripts/build.js",
+    "build:bundle": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap",
+    "watch": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap --watch",
+    "test": "node tests/audit_translations.js && node tests/test_user_guide.js && node tests/test_all_6_requirements.js"
   },
   "keywords": [],
   "author": "",

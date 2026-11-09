@@ -227,3 +227,15 @@ Because the application runs client-side in your browser via GitHub Pages with n
    - **Save Timestamped Archive**: Use the "Save as copy" option to download a snapshot named with a timestamp (e.g. `source_YYYYMMDD_HHmm.json`), providing a reliable historical backup of each distribution round.
    - **Direct File System Save**: If your browser supports the File System Access API and you loaded a local file using the file picker, you can save updates directly back to that file on disk.
 3. **Data Security**: Remember that the online GitHub Pages site does not store your records. Always download your updated `source.json` after completing your work to ensure your local records are up to date.
+## 5. Glossary / Terms Used
+
+- **Route (*Rute*)**: A specific geographical sector or set of streets where magazines are distributed.
+- **Distributor (*Bladbærer*)**: The volunteer responsible for walking a route and delivering magazines to individual mailboxes.
+- **Driver (*Kjører*)**: The volunteer responsible for transporting bundles of magazines from the printer/church to the individual distributors.
+- **Households (*Husstander*)**: The total number of living units at a given address.
+- **Excluded Households (*Ekskluderte husstander*)**: Households that have opted out of receiving unaddressed mail (e.g. "Nei takk til uadressert post").
+- **Included Households**: The net number of households that should receive a magazine (Total Households minus Excluded Households).
+- **Extra Magazines (*Ekstra blader*)**: Buffer copies assigned to a route, distributor, or driver to cover unexpected needs or replacements.
+- **Unassigned Route**: A defined route that currently lacks an assigned distributor or driver.
+- **Kjøreliste**: A run sheet for drivers, detailing which routes and distributors they need to drop bundles off to, along with the exact magazine counts.
+- **Gateliste**: A street report for distributors, detailing the exact addresses and house numbers they need to deliver to, including notes on excluded households.

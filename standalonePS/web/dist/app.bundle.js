@@ -1,131 +1,6 @@
 (() => {
-  var __defProp = Object.defineProperty;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __esm = (fn, res, err) => function __init() {
-    if (err) throw err[0];
-    try {
-      return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-    } catch (e) {
-      throw err = [e], e;
-    }
-  };
-  var __export = (target, all) => {
-    for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
-  };
-
-  // web/src/dom.js
-  var dom_exports = {};
-  __export(dom_exports, {
-    addAddressBtn: () => addAddressBtn,
-    addDistributorBtn: () => addDistributorBtn,
-    addDriverBtn: () => addDriverBtn,
-    addRouteBtn: () => addRouteBtn,
-    chooseFileLabel: () => chooseFileLabel,
-    closeGuardCloseBtn: () => closeGuardCloseBtn,
-    closeGuardContinueBtn: () => closeGuardContinueBtn,
-    closeGuardMessage: () => closeGuardMessage,
-    closeGuardModal: () => closeGuardModal,
-    closeGuardSaveBtn: () => closeGuardSaveBtn,
-    closeGuardTitle: () => closeGuardTitle,
-    editModal: () => editModal,
-    editModalCancel: () => editModalCancel,
-    editModalClose: () => editModalClose,
-    editModalError: () => editModalError,
-    editModalFields: () => editModalFields,
-    editModalForm: () => editModalForm,
-    editModalTitle: () => editModalTitle,
-    fileInput: () => fileInput,
-    floatingGuideBtn: () => floatingGuideBtn,
-    languageSelect: () => languageSelect,
-    loadResultMessage: () => loadResultMessage,
-    loadResultModal: () => loadResultModal,
-    loadResultTitle: () => loadResultTitle,
-    openDataFolderBtn: () => openDataFolderBtn,
-    openUserGuideBtn: () => openUserGuideBtn,
-    reportModal: () => reportModal,
-    reportModalClose: () => reportModalClose,
-    reportModalContent: () => reportModalContent,
-    reportModalPrint: () => reportModalPrint,
-    routeReportIncludeMap: () => routeReportIncludeMap,
-    routeReportIncludeMapLabel: () => routeReportIncludeMapLabel,
-    routeReportModal: () => routeReportModal,
-    routeReportModalClose: () => routeReportModalClose,
-    routeReportModalContent: () => routeReportModalContent,
-    routeReportModalPrint: () => routeReportModalPrint,
-    saveAsCopyBtn: () => saveAsCopyBtn,
-    saveChangesBtn: () => saveChangesBtn,
-    saveDropdownMenu: () => saveDropdownMenu,
-    saveDropdownToggle: () => saveDropdownToggle,
-    saveGroup: () => saveGroup,
-    settingsPanel: () => settingsPanel,
-    settingsToggle: () => settingsToggle,
-    sourceMissingMessage: () => sourceMissingMessage,
-    sourceMissingModal: () => sourceMissingModal,
-    sourceMissingTitle: () => sourceMissingTitle,
-    statusEl: () => statusEl,
-    userGuideContent: () => userGuideContent,
-    userGuideModal: () => userGuideModal,
-    userGuideTitle: () => userGuideTitle
-  });
-  var statusEl, fileInput, chooseFileLabel, saveGroup, saveChangesBtn, saveAsCopyBtn, saveDropdownToggle, saveDropdownMenu, languageSelect, settingsToggle, settingsPanel, editModal, editModalTitle, editModalClose, editModalCancel, editModalForm, editModalFields, editModalError, addDriverBtn, addDistributorBtn, addAddressBtn, addRouteBtn, loadResultModal, loadResultTitle, loadResultMessage, openUserGuideBtn, floatingGuideBtn, userGuideModal, userGuideTitle, userGuideContent, closeGuardModal, closeGuardTitle, closeGuardMessage, closeGuardSaveBtn, closeGuardContinueBtn, closeGuardCloseBtn, sourceMissingModal, sourceMissingTitle, sourceMissingMessage, openDataFolderBtn, reportModal, reportModalClose, reportModalPrint, reportModalContent, routeReportModal, routeReportModalClose, routeReportModalPrint, routeReportModalContent, routeReportIncludeMap, routeReportIncludeMapLabel;
-  var init_dom = __esm({
-    "web/src/dom.js"() {
-      statusEl = document.getElementById("status");
-      fileInput = document.getElementById("xml-file");
-      chooseFileLabel = document.getElementById("choose-file-label");
-      saveGroup = document.getElementById("save-group");
-      saveChangesBtn = document.getElementById("save-changes");
-      saveAsCopyBtn = document.getElementById("save-as-copy");
-      saveDropdownToggle = document.getElementById("save-dropdown-toggle");
-      saveDropdownMenu = document.getElementById("save-dropdown-menu");
-      languageSelect = document.getElementById("language-select");
-      settingsToggle = document.getElementById("settings-toggle");
-      settingsPanel = document.getElementById("settings-panel");
-      editModal = document.getElementById("edit-modal");
-      editModalTitle = document.getElementById("edit-modal-title");
-      editModalClose = document.getElementById("edit-modal-close");
-      editModalCancel = document.getElementById("edit-modal-cancel");
-      editModalForm = document.getElementById("edit-modal-form");
-      editModalFields = document.getElementById("edit-modal-fields");
-      editModalError = document.getElementById("edit-modal-error");
-      addDriverBtn = document.getElementById("add-driver");
-      addDistributorBtn = document.getElementById("add-distributor");
-      addAddressBtn = document.getElementById("add-address");
-      addRouteBtn = document.getElementById("add-route");
-      loadResultModal = document.getElementById("load-result-modal");
-      loadResultTitle = document.getElementById("load-result-title");
-      loadResultMessage = document.getElementById("load-result-message");
-      openUserGuideBtn = document.getElementById("open-user-guide");
-      floatingGuideBtn = document.getElementById("floating-guide-btn");
-      userGuideModal = document.getElementById("user-guide-modal");
-      userGuideTitle = document.getElementById("user-guide-title");
-      userGuideContent = document.getElementById("user-guide-content");
-      closeGuardModal = document.getElementById("close-guard-modal");
-      closeGuardTitle = document.getElementById("close-guard-title");
-      closeGuardMessage = document.getElementById("close-guard-message");
-      closeGuardSaveBtn = document.getElementById("close-guard-save");
-      closeGuardContinueBtn = document.getElementById("close-guard-continue");
-      closeGuardCloseBtn = document.getElementById("close-guard-close");
-      sourceMissingModal = document.getElementById("source-missing-modal");
-      sourceMissingTitle = document.getElementById("source-missing-title");
-      sourceMissingMessage = document.getElementById("source-missing-message");
-      openDataFolderBtn = document.getElementById("open-data-folder");
-      reportModal = document.getElementById("report-modal");
-      reportModalClose = document.getElementById("report-modal-close");
-      reportModalPrint = document.getElementById("report-modal-print");
-      reportModalContent = document.getElementById("report-modal-content");
-      routeReportModal = document.getElementById("route-report-modal");
-      routeReportModalClose = document.getElementById("route-report-modal-close");
-      routeReportModalPrint = document.getElementById("route-report-modal-print");
-      routeReportModalContent = document.getElementById("route-report-modal-content");
-      routeReportIncludeMap = document.getElementById("route-report-include-map");
-      routeReportIncludeMapLabel = document.getElementById("route-report-include-map-label");
-    }
-  });
-
   // web/src/utils.js
-  function toInt2(value) {
+  function toInt(value) {
     var v = parseInt(value, 10);
     return Number.isFinite(v) ? v : 0;
   }
@@ -160,20 +35,27 @@
     if (!text) return "";
     let html = text;
     html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    html = html.replace(/\$\$([\s\S]*?)\$\$/g, function(match, formula) {
+      return '<div class="formula-block">' + formula.trim().replace(/\\text\{([^}]+)\}/g, "$1") + "</div>";
+    });
     html = html.replace(/^### ([^\n\r]+)/gim, "<h3>$1</h3>");
     html = html.replace(/^## ([^\n\r]+)/gim, "<h2>$1</h2>");
     html = html.replace(/^# ([^\n\r]+)/gim, "<h1>$1</h1>");
     html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
     html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
     html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    html = html.replace(/`(.*?)`/gim, "<code>$1</code>");
+    html = html.replace(/`([^`]+)`/gim, "<code>$1</code>");
     html = html.replace(/^---$/gim, "<hr>");
-    html = html.replace(/^- ([^\n\r]+)/gim, "<li>$1</li>");
+    html = html.replace(/^- ([^\n\r]+)/gim, '<li class="bullet">$1</li>');
+    html = html.replace(/^\d+\.\s+([^\n\r]+)/gim, '<li class="ordered">$1</li>');
     let paragraphs = html.split(/\n\n+/);
     html = paragraphs.map((p) => {
-      if (p.startsWith("<h") || p.startsWith("<hr>")) return p;
-      if (p.includes("<li>")) {
-        return `<ul>${p}</ul>`;
+      if (p.startsWith("<h") || p.startsWith("<hr>") || p.startsWith('<div class="formula-block"')) return p;
+      if (p.includes('<li class="ordered">')) {
+        return `<ol>${p.replace(/ class="ordered"/g, "")}</ol>`;
+      }
+      if (p.includes('<li class="bullet">')) {
+        return `<ul>${p.replace(/ class="bullet"/g, "")}</ul>`;
       }
       return `<p>${p.replace(/\n/g, "<br>")}</p>`;
     }).join("\n");
@@ -447,7 +329,8 @@
       distColName: "Name",
       distColStatus: "Status",
       distColRoute: "Route",
-      distColDriverNo: "Driver",
+      distColDriverNo: "Driver no.",
+      distColDriverName: "Driver",
       distColPhone: "Phone",
       distColEmail: "Email",
       distColAddress: "Address",
@@ -547,6 +430,7 @@
       batchRouteNoValue: "Please select a route.",
       exportCsvAction: "Export CSV",
       statusCsvExported: "Exported {label} to CSV ({count} rows).",
+      statusXlsxExported: "Exported {label} to XLSX ({count} rows).",
       exportDriverDistributorsCsvAction: "Export this driver's assigned distributors (CSV)",
       exportDriverDistributorsXlsxAction: "Export this driver's assigned distributors (XLSX)",
       statusDriverDistributorsExported: "Exported this driver's assigned distributors for {label} ({count} rows).",
@@ -836,6 +720,7 @@
       distColStatus: "Status",
       distColRoute: "Rute",
       distColDriverNo: "Kj\xF8rer nr.",
+      distColDriverName: "Kj\xF8rer",
       distColPhone: "Telefon",
       distColEmail: "E-post",
       distColAddress: "Adresse",
@@ -929,6 +814,7 @@
       batchStatusNoValue: "Velg en status.",
       exportCsvAction: "Eksporter CSV",
       statusCsvExported: "Eksporterte {label} til CSV ({count} rader).",
+      statusXlsxExported: "Eksporterte {label} til XLSX ({count} rader).",
       exportDriverDistributorsCsvAction: "Eksporter denne kj\xF8rerens tilordna bladb\xE6rere (CSV)",
       exportDriverDistributorsXlsxAction: "Eksporter denne kj\xF8rerens tilordna bladb\xE6rere (XLSX)",
       statusDriverDistributorsExported: "Eksporterte denne kj\xF8rerens tilordna bladb\xE6rere for {label} ({count} rader).",
@@ -1218,6 +1104,7 @@
       distColStatus: "Status",
       distColRoute: "Rute",
       distColDriverNo: "Kj\xF8rer nr.",
+      distColDriverName: "Kj\xF8rer",
       distColPhone: "Telefon",
       distColEmail: "E-post",
       distColAddress: "Adresse",
@@ -1311,6 +1198,7 @@
       batchStatusNoValue: "Vel ein status.",
       exportCsvAction: "Eksporter CSV",
       statusCsvExported: "Eksporterte {label} til CSV ({count} rader).",
+      statusXlsxExported: "Eksporterte {label} til XLSX ({count} rader).",
       exportDriverDistributorsCsvAction: "Eksporter denne k\xF8yrarens tilordna bladb\xE6rarar (CSV)",
       exportDriverDistributorsXlsxAction: "Eksporter denne k\xF8yrarens tilordna bladb\xE6rarar (XLSX)",
       statusDriverDistributorsExported: "Eksporterte denne k\xF8yrarens tilordna bladb\xE6rarar for {label} ({count} rader).",
@@ -1598,7 +1486,8 @@
       distColName: "Namn",
       distColStatus: "Status",
       distColRoute: "Rutt",
-      distColDriverNo: "Forare",
+      distColDriverNo: "F\xF6rare nr.",
+      distColDriverName: "F\xF6rare",
       distColPhone: "Telefon",
       distColEmail: "E-post",
       distColAddress: "Adress",
@@ -1693,6 +1582,7 @@
       batchStatusNoValue: "V\xE4lj en status.",
       exportCsvAction: "Exportera CSV",
       statusCsvExported: "Exporterade {label} till CSV ({count} rader).",
+      statusXlsxExported: "Exporterade {label} till XLSX ({count} rader).",
       exportDriverDistributorsCsvAction: "Exportera denna f\xF6rarens tilldelade distribut\xF6rer (CSV)",
       exportDriverDistributorsXlsxAction: "Exportera denna f\xF6rarens tilldelade distribut\xF6rer (XLSX)",
       statusDriverDistributorsExported: "Exporterade denna f\xF6rarens tilldelade distribut\xF6rer f\xF6r {label} ({count} rader).",
@@ -1780,6 +1670,11 @@
     addresses: {},
     routes: {}
   };
+  var closeGuardState = {
+    bypass: false,
+    pending: false
+  };
+  var COL_WIDTHS_KEY = "table-column-widths";
   var editState = {
     mode: "edit",
     tableName: null,
@@ -1877,7 +1772,7 @@
       status: "distColStatus",
       routes: "distColRoute",
       driverNr: "distColDriverNo",
-      driverName: "distColDriverNo",
+      driverName: "distColDriverName",
       phone: "distColPhone",
       email: "distColEmail",
       address: "distColAddress",
@@ -1950,8 +1845,57 @@
     }
   };
 
-  // web/src/main.js
-  init_dom();
+  // web/src/dom.js
+  var statusEl = document.getElementById("status");
+  var fileInput = document.getElementById("xml-file");
+  var chooseFileLabel = document.getElementById("choose-file-label");
+  var saveGroup = document.getElementById("save-group");
+  var saveChangesBtn = document.getElementById("save-changes");
+  var saveAsCopyBtn = document.getElementById("save-as-copy");
+  var saveDropdownToggle = document.getElementById("save-dropdown-toggle");
+  var saveDropdownMenu = document.getElementById("save-dropdown-menu");
+  var languageSelect = document.getElementById("language-select");
+  var settingsToggle = document.getElementById("settings-toggle");
+  var settingsPanel = document.getElementById("settings-panel");
+  var editModal = document.getElementById("edit-modal");
+  var editModalTitle = document.getElementById("edit-modal-title");
+  var editModalClose = document.getElementById("edit-modal-close");
+  var editModalCancel = document.getElementById("edit-modal-cancel");
+  var editModalForm = document.getElementById("edit-modal-form");
+  var editModalFields = document.getElementById("edit-modal-fields");
+  var editModalError = document.getElementById("edit-modal-error");
+  var addDriverBtn = document.getElementById("add-driver");
+  var addDistributorBtn = document.getElementById("add-distributor");
+  var addAddressBtn = document.getElementById("add-address");
+  var addRouteBtn = document.getElementById("add-route");
+  var loadResultModal = document.getElementById("load-result-modal");
+  var loadResultTitle = document.getElementById("load-result-title");
+  var loadResultMessage = document.getElementById("load-result-message");
+  var openUserGuideBtn = document.getElementById("open-user-guide");
+  var floatingGuideBtn = document.getElementById("floating-guide-btn");
+  var userGuideModal = document.getElementById("user-guide-modal");
+  var userGuideTitle = document.getElementById("user-guide-title");
+  var userGuideContent = document.getElementById("user-guide-content");
+  var closeGuardModal = document.getElementById("close-guard-modal");
+  var closeGuardTitle = document.getElementById("close-guard-title");
+  var closeGuardMessage = document.getElementById("close-guard-message");
+  var closeGuardSaveBtn = document.getElementById("close-guard-save");
+  var closeGuardContinueBtn = document.getElementById("close-guard-continue");
+  var closeGuardCloseBtn = document.getElementById("close-guard-close");
+  var sourceMissingModal = document.getElementById("source-missing-modal");
+  var sourceMissingTitle = document.getElementById("source-missing-title");
+  var sourceMissingMessage = document.getElementById("source-missing-message");
+  var openDataFolderBtn = document.getElementById("open-data-folder");
+  var reportModal = document.getElementById("report-modal");
+  var reportModalClose = document.getElementById("report-modal-close");
+  var reportModalPrint = document.getElementById("report-modal-print");
+  var reportModalContent = document.getElementById("report-modal-content");
+  var routeReportModal = document.getElementById("route-report-modal");
+  var routeReportModalClose = document.getElementById("route-report-modal-close");
+  var routeReportModalPrint = document.getElementById("route-report-modal-print");
+  var routeReportModalContent = document.getElementById("route-report-modal-content");
+  var routeReportIncludeMap = document.getElementById("route-report-include-map");
+  var routeReportIncludeMapLabel = document.getElementById("route-report-include-map-label");
 
   // web/src/calculations.js
   function normalizeRouteIdentifier(raw) {
@@ -1996,7 +1940,7 @@
     var routeActiveMap = {};
     (currentData.routes || []).forEach(function(row) {
       var rId = normalizeRouteIdentifier(row.routeId || "");
-      if (row.active === false) {
+      if (row.status === "inactive" || row.active === false) {
         routesInactive += 1;
         return;
       }
@@ -2031,11 +1975,11 @@
       if (isUnassigned) {
         addrUnassigned += 1;
       }
-      var households = toInt2(row.numberOfHouseholds);
+      var households = toInt(row.numberOfHouseholds);
       if (households < 1) {
         households = 1;
       }
-      var excludedHouseholds = toInt2(row.numberOfExcludedHouseholds);
+      var excludedHouseholds = toInt(row.numberOfExcludedHouseholds);
       if (excludedHouseholds < 0) {
         excludedHouseholds = 0;
       }
@@ -2080,16 +2024,18 @@
       }
     });
     (currentData.drivers || []).forEach(function(row) {
-      var e = toInt2(row.extraPapers);
+      if ((row.status || "").toLowerCase() === "inactive") return;
+      var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.distributors || []).forEach(function(row) {
-      var e = toInt2(row.extraPapers);
+      if ((row.status || "").toLowerCase() === "inactive") return;
+      var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     (currentData.routes || []).forEach(function(row) {
-      if (row.active === false) return;
-      var e = toInt2(row.extraPapers);
+      if (row.status === "inactive" || row.active === false) return;
+      var e = toInt(row.extraPapers);
       extraPapersTotal += e;
     });
     var papersToOrder = Math.max(0, householdsIncluded + extraPapersTotal);
@@ -2146,11 +2092,11 @@
     row.address = row.address || "";
     row.postnr = row.postnr || "";
     row.note = row.note || "";
-    row.numberOfHouseholds = toInt2(row.numberOfHouseholds);
+    row.numberOfHouseholds = toInt(row.numberOfHouseholds);
     if (row.numberOfHouseholds < 1) {
       row.numberOfHouseholds = 1;
     }
-    row.numberOfExcludedHouseholds = toInt2(row.numberOfExcludedHouseholds);
+    row.numberOfExcludedHouseholds = toInt(row.numberOfExcludedHouseholds);
     if (row.numberOfExcludedHouseholds < 0) {
       row.numberOfExcludedHouseholds = 0;
     }
@@ -2191,11 +2137,11 @@
     return row;
   }
   function getAddressPaperCount(row) {
-    var households = toInt2(row.numberOfHouseholds);
+    var households = toInt(row.numberOfHouseholds);
     if (households < 1) {
       households = 1;
     }
-    var excluded = toInt2(row.numberOfExcludedHouseholds);
+    var excluded = toInt(row.numberOfExcludedHouseholds);
     if (excluded < 0) {
       excluded = 0;
     }
@@ -2247,17 +2193,47 @@
   function normalizeDistributorRow(row) {
     row.status = row.status || "active";
     row.name = row.name || "";
-    row.driverNr = row.driverNr || "";
     row.routes = getDistributorRoutes(row);
     delete row.route;
-    if (row.driverNr) {
-      var i;
-      for (i = 0; i < currentData.drivers.length; i += 1) {
-        if ((currentData.drivers[i].driverNr || "") === row.driverNr) {
-          row.driverName = currentData.drivers[i].name || "";
-          break;
+    var drivers = currentData && currentData.drivers || [];
+    var driverName = String(row.driverName || "").trim();
+    var driverNr = String(row.driverNr || "").trim();
+    if (driverName) {
+      var matchedByName = drivers.find(function(d) {
+        return String(d.name || d.driverName || "").trim() === driverName;
+      });
+      if (matchedByName) {
+        row.driverName = matchedByName.name || matchedByName.driverName || driverName;
+        row.driverNr = matchedByName.driverNr || "";
+      } else if (driverNr) {
+        var matchedByNr = drivers.find(function(d) {
+          return String(d.driverNr || "").trim() === driverNr;
+        });
+        if (matchedByNr) {
+          row.driverName = matchedByNr.name || matchedByNr.driverName || "";
+          row.driverNr = matchedByNr.driverNr || driverNr;
+        } else {
+          row.driverName = driverName;
+          row.driverNr = driverNr;
         }
+      } else {
+        row.driverName = driverName;
+        row.driverNr = "";
       }
+    } else if (driverNr) {
+      var matchedByNr = drivers.find(function(d) {
+        return String(d.driverNr || "").trim() === driverNr;
+      });
+      if (matchedByNr) {
+        row.driverName = matchedByNr.name || matchedByNr.driverName || "";
+        row.driverNr = matchedByNr.driverNr || driverNr;
+      } else {
+        row.driverName = "";
+        row.driverNr = driverNr;
+      }
+    } else {
+      row.driverName = "";
+      row.driverNr = "";
     }
     return row;
   }
@@ -2333,8 +2309,9 @@
       }
       var distName = routeRow.distributor || "";
       var distObj = distributorByName[distName] || {};
-      var driverName = distObj.driverName || routeRow.driver || routeRow.driverName || "";
-      var driverNr = distObj.driverNr || routeRow.driverNr || "";
+      var reqDist = routeRow.requiresDistributor !== false;
+      var driverName = reqDist ? distObj.driverName || "" : routeRow.driver || routeRow.driverName || "";
+      var driverNr = reqDist ? distObj.driverNr || "" : routeRow.driverNr || "";
       if (!driverNr && driverName && driverByName[driverName]) {
         driverNr = driverByName[driverName].driverNr || "";
       }
@@ -2352,7 +2329,7 @@
         distributorCount: 0,
         distributorNames: "",
         includedAddresses: 0,
-        extraPapers: toInt2(routeRow.extraPapers) || 0,
+        extraPapers: toInt(routeRow.extraPapers) || 0,
         paperCount: 0,
         postnrs: "",
         addressRanges: routeRow.addressRanges || "",
@@ -2383,11 +2360,8 @@
             postnrs: "",
             notes: ""
           };
-        }
-        if (!routeMap[routeId].driverNr) {
+        } else if (routeMap[routeId].requiresDistributor !== false) {
           routeMap[routeId].driverNr = dist.driverNr || "";
-        }
-        if (!routeMap[routeId].driver) {
           routeMap[routeId].driver = dist.driverName || "";
         }
       });
@@ -2423,15 +2397,15 @@
       if (!routeId || !routeMap[routeId]) {
         return;
       }
-      var parsed = parseAddressForRange(addr.address);
-      if (!routeAddresses[routeId][parsed.street]) {
-        routeAddresses[routeId][parsed.street] = {};
-      }
-      if (parsed.num) {
-        routeAddresses[routeId][parsed.street][parsed.num] = true;
-      }
       if (getAddressPaperCount(addr) > 0) {
         routeMap[routeId].includedAddresses += 1;
+        var parsed = parseAddressForRange(addr.address);
+        if (!routeAddresses[routeId][parsed.street]) {
+          routeAddresses[routeId][parsed.street] = {};
+        }
+        if (parsed.num) {
+          routeAddresses[routeId][parsed.street][parsed.num] = true;
+        }
       }
       if (addr.postnr) {
         routePostnrSets[routeId][addr.postnr] = true;
@@ -2472,7 +2446,7 @@
       routeRow.active = routeRow.status !== "inactive";
       routeRow.distributorNames = Object.keys(routeDistributorSets[routeId] || {}).sort().join(", ");
       routeRow.postnrs = Object.keys(routePostnrSets[routeId] || {}).sort().join(", ");
-      routeRow.paperCount = routeRow.status !== "inactive" ? Math.max(0, routeRow.includedAddresses + (routeRow.extraPapers || 0)) : 0;
+      routeRow.paperCount = routeRow.paperCount || 0;
       routeRow.notes = routeRow.notes || "";
       routeRow.addressRanges = generatedRanges[routeId] || "";
       return routeRow;
@@ -2603,7 +2577,7 @@
     var finalRoutePaperCounts = {};
     routes.forEach(function(route) {
       var routeId = normalizeRouteIdentifier(route.routeId || "");
-      var count = route.status !== "inactive" ? Math.max(0, (routePaperCounts[routeId] || 0) + toInt2(route.extraPapers)) : 0;
+      var count = route.status !== "inactive" ? Math.max(0, (routePaperCounts[routeId] || 0) + toInt(route.extraPapers)) : 0;
       finalRoutePaperCounts[routeId] = count;
       route.paperCount = String(count);
     });
@@ -2618,7 +2592,9 @@
       Object.keys(routeSet).forEach(function(routeId) {
         paper += finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0;
       });
-      paper += toInt2(driver.extraPapers);
+      if ((driver.status || "").toLowerCase() !== "inactive") {
+        paper += toInt(driver.extraPapers);
+      }
       var distributorSet = nr ? driverDistributorSetsByNr[nr] || {} : driverDistributorSetsByName[name] || {};
       if ((!distributorSet || !Object.keys(distributorSet).length) && name) {
         distributorSet = driverDistributorSetsByName[name] || {};
@@ -2636,7 +2612,9 @@
       routeIds.forEach(function(routeId) {
         base += finalRoutePaperCounts[normalizeRouteIdentifier(routeId)] || 0;
       });
-      base += toInt2(dist.extraPapers);
+      if ((dist.status || "").toLowerCase() !== "inactive") {
+        base += toInt(dist.extraPapers);
+      }
       dist.paperCount = String(base);
     });
     _cachedPaperCountsVersion = currentDataVersion;
@@ -2646,7 +2624,7 @@
   var IDB_DB_NAME = "menighetsbladet-local";
   var IDB_STORE_NAME = "kv";
   var IDB_JSON_CACHE_KEY = "source-json-cache";
-  var IDB_RECORD_STORES2 = ["drivers", "distributors", "addresses", "routes"];
+  var IDB_RECORD_STORES = ["drivers", "distributors", "addresses", "routes"];
   var idbDbPromise = null;
   function getIndexedDb() {
     if (!window.indexedDB) {
@@ -2663,7 +2641,7 @@
           if (!db.objectStoreNames.contains(IDB_STORE_NAME)) {
             db.createObjectStore(IDB_STORE_NAME);
           }
-          IDB_RECORD_STORES2.forEach(function(storeName) {
+          IDB_RECORD_STORES.forEach(function(storeName) {
             if (!db.objectStoreNames.contains(storeName)) {
               db.createObjectStore(storeName, { keyPath: "_id", autoIncrement: true });
             }
@@ -2767,9 +2745,6 @@
     }
     return out;
   }
-
-  // web/src/modals.js
-  init_dom();
 
   // web/src/map.js
   var mapInstance = null;
@@ -3379,16 +3354,11 @@
           const normalizedAddress = normalizeAddressRow(Object.assign({}, addr));
           currentData.addresses.push(normalizedAddress);
         });
-        const addressesToSave = currentData.addresses.map((a) => {
-          const copy = Object.assign({}, a);
-          delete copy.distributor;
-          delete copy.driverName;
-          return copy;
-        });
-        await idbSetValue("addresses", addressesToSave);
         recalculateRoutesFromCurrentData();
         recalculatePaperCounts();
-        initTableFilters();
+        syncCurrentDataFromJson();
+        render(recomputeMetricsFromCurrentData());
+        refreshFilterComponents("addresses");
         renderAllTables();
         setHasUserCommittedEdits(true);
         setShowSaveChanges(true);
@@ -3432,16 +3402,11 @@
         }
       });
       if (changed) {
-        const addressesToSave = currentData.addresses.map((a) => {
-          const copy = Object.assign({}, a);
-          delete copy.distributor;
-          delete copy.driverName;
-          return copy;
-        });
-        await idbSetValue("addresses", addressesToSave);
         recalculateRoutesFromCurrentData();
         recalculatePaperCounts();
-        initTableFilters();
+        syncCurrentDataFromJson();
+        render(recomputeMetricsFromCurrentData());
+        refreshFilterComponents("addresses");
         renderAllTables();
         setHasUserCommittedEdits(true);
         setShowSaveChanges(true);
@@ -3489,16 +3454,11 @@
         const idx = currentData.addresses.findIndex((a) => a.address === deleteAddressMapTarget.address);
         if (idx !== -1) {
           currentData.addresses.splice(idx, 1);
-          const addressesToSave = currentData.addresses.map((a) => {
-            const copy = Object.assign({}, a);
-            delete copy.distributor;
-            delete copy.driverName;
-            return copy;
-          });
-          await idbSetValue("addresses", addressesToSave);
           recalculateRoutesFromCurrentData();
           recalculatePaperCounts();
-          initTableFilters();
+          syncCurrentDataFromJson();
+          render(recomputeMetricsFromCurrentData());
+          refreshFilterComponents("addresses");
           renderAllTables();
           setHasUserCommittedEdits(true);
           setShowSaveChanges(true);
@@ -3555,10 +3515,10 @@
     }).join("");
     setBodyRows("drivers-body", html);
     var routeTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.routeCount);
+      return acc + toInt(r.routeCount);
     }, 0);
     var paperTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.paperCount);
+      return acc + toInt(r.paperCount);
     }, 0);
     setTotals("drivers", t("totalsLabel") + ": " + t("totalsRecords") + "=" + filteredRows.length + " | " + t("totalsRoutes") + "=" + routeTotal + " | " + t("totalsPapers") + "=" + paperTotal);
     setPagerState("drivers", pageData.page, pageData.totalPages);
@@ -3585,7 +3545,7 @@
     }).join("");
     setBodyRows("distributors-body", html);
     var paperTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.paperCount);
+      return acc + toInt(r.paperCount);
     }, 0);
     var activeNoDriverCount = filteredRows.filter(function(r) {
       var isActive = (r.status || "active").toLowerCase() === "active";
@@ -3613,13 +3573,13 @@
     setBodyRows("routes-body", html);
     updateBatchControls("routes");
     var distTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.distributorCount);
+      return acc + toInt(r.distributorCount);
     }, 0);
     var addrTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.includedAddresses);
+      return acc + toInt(r.includedAddresses);
     }, 0);
     var paperTotal = filteredRows.reduce(function(acc, r) {
-      return acc + toInt2(r.paperCount);
+      return acc + toInt(r.paperCount);
     }, 0);
     setTotals("routes", t("totalsLabel") + ": " + t("totalsRecords") + "=" + filteredRows.length + " | " + t("totalsDistributors") + "=" + distTotal + " | " + t("totalsAddresses") + "=" + addrTotal + " | " + t("totalsPapers") + "=" + paperTotal);
     setPagerState("routes", pageData.page, pageData.totalPages);
@@ -3639,8 +3599,8 @@
     var includedHouseholds = 0;
     var excludedHouseholds = 0;
     filteredRows.forEach(function(r) {
-      var hh = Math.max(1, toInt2(r.numberOfHouseholds));
-      var ex = Math.max(0, toInt2(r.numberOfExcludedHouseholds));
+      var hh = Math.max(1, toInt(r.numberOfHouseholds));
+      var ex = Math.max(0, toInt(r.numberOfExcludedHouseholds));
       ex = Math.min(ex, hh);
       includedHouseholds += hh - ex;
       excludedHouseholds += ex;
@@ -4524,8 +4484,8 @@
       var includedHouseholds = 0;
       var excludedHouseholds = 0;
       rows.forEach(function(r) {
-        var hh = Math.max(1, toInt2(r.numberOfHouseholds));
-        var ex = Math.max(0, toInt2(r.numberOfExcludedHouseholds));
+        var hh = Math.max(1, toInt(r.numberOfHouseholds));
+        var ex = Math.max(0, toInt(r.numberOfExcludedHouseholds));
         ex = Math.min(ex, hh);
         includedHouseholds += hh - ex;
         excludedHouseholds += ex;
@@ -5078,8 +5038,11 @@
       var hasErrors = false;
       var topErrors = [];
       if (missing.length) {
-        missing.forEach(function(f) {
-          setFieldError(f, t("modalRequiredError", { fields: f }));
+        missing.forEach(function(item) {
+          var fieldName = typeof item === "object" ? item.field : item;
+          var fieldLabel = typeof item === "object" ? item.label : item;
+          setFieldError(fieldName, t("modalRequiredError", { fields: fieldLabel }));
+          topErrors.push(t("modalRequiredError", { fields: fieldLabel }));
           hasErrors = true;
         });
       }
@@ -5154,53 +5117,57 @@
           });
         }
       } else if (editState.tableName === "distributors") {
-        normalizeDistributorRow(row);
         if (row.driverName) {
           var matchedDriver = currentData.drivers.find(function(d) {
-            return d.name === row.driverName;
+            return String(d.name || d.driverName || "").trim() === String(row.driverName).trim();
           });
-          if (matchedDriver) row.driverNr = matchedDriver.driverNr;
+          row.driverNr = matchedDriver ? matchedDriver.driverNr || "" : "";
+        } else {
+          row.driverNr = "";
         }
+        normalizeDistributorRow(row);
         var oldDistName = editState.originalName;
         var newDistName = row.name;
-        if (editState.mode === "edit" && oldDistName && oldDistName !== newDistName) {
-          currentData.routes.forEach(function(rt) {
-            if (rt.distributor === oldDistName) {
-              rt.distributor = newDistName;
-            }
-          });
-        }
+        currentData.routes.forEach(function(rt) {
+          if (rt.distributor === row.name || oldDistName && rt.distributor === oldDistName) {
+            rt.distributor = newDistName;
+            rt.driver = row.driverName || "";
+            rt.driverNr = row.driverNr || "";
+          }
+        });
         var newRoutes = row.routes || [];
         newRoutes.forEach(function(rId) {
-          if (oldRoutes.indexOf(rId) === -1) {
+          var normRId = normalizeRouteIdentifier(rId);
+          if (oldRoutes.map(normalizeRouteIdentifier).indexOf(normRId) === -1) {
             currentData.distributors.forEach(function(otherDist) {
               if (otherDist !== targetRow) {
-                var idx = (otherDist.routes || []).indexOf(rId);
+                var otherRoutes = otherDist.routes || [];
+                var idx = otherRoutes.map(normalizeRouteIdentifier).indexOf(normRId);
                 if (idx !== -1) {
                   otherDist.routes.splice(idx, 1);
                 }
               }
             });
-            var matchedRoute = currentData.routes.find(function(rt) {
-              return rt.routeId === rId;
-            });
-            if (matchedRoute) {
-              matchedRoute.distributor = row.name;
-              var driverObj = currentData.drivers.find(function(d) {
-                return d.name === row.driverName;
-              });
-              matchedRoute.driver = row.driverName || (driverObj ? driverObj.name : "");
-            }
+          }
+          var matchedRoute = currentData.routes.find(function(rt) {
+            return normalizeRouteIdentifier(rt.routeId) === normRId;
+          });
+          if (matchedRoute) {
+            matchedRoute.distributor = row.name;
+            matchedRoute.driver = row.driverName || "";
+            matchedRoute.driverNr = row.driverNr || "";
           }
         });
         oldRoutes.forEach(function(rId) {
-          if (newRoutes.indexOf(rId) === -1) {
+          var normRId = normalizeRouteIdentifier(rId);
+          if (newRoutes.map(normalizeRouteIdentifier).indexOf(normRId) === -1) {
             var matchedRoute = currentData.routes.find(function(rt) {
-              return rt.routeId === rId;
+              return normalizeRouteIdentifier(rt.routeId) === normRId;
             });
-            if (matchedRoute && matchedRoute.distributor === row.name) {
+            if (matchedRoute && (matchedRoute.distributor === row.name || oldDistName && matchedRoute.distributor === oldDistName)) {
               matchedRoute.distributor = "";
               matchedRoute.driver = "";
+              matchedRoute.driverNr = "";
             }
           }
         });
@@ -5865,13 +5832,7 @@
   }
   function stripSetupInfo(text) {
     if (!text) return "";
-    var cleaned = String(text).trim();
-    if (/##\s*[1-4]\.\s*(Start|Lasting|Settings|Data source|Oppstart)/i.test(cleaned)) {
-      cleaned = cleaned.replace(/##\s*[1-4]\.[^#]+(?=##\s*[5-9]|$)/gi, "");
-      cleaned = cleaned.replace(/##\s*11\.[^#]+/gi, "");
-      cleaned = cleaned.replace(/```[\s\S]*?```/gi, "");
-    }
-    return cleaned.trim();
+    return String(text).trim();
   }
   function openUserGuideModal() {
     if (!userGuideModal || !userGuideContent) {
@@ -5926,7 +5887,7 @@
     if (!closeGuardModal) {
       return;
     }
-    closeGuardPending = false;
+    closeGuardState.pending = false;
     closeGuardModal.removeAttribute("hidden");
     if (closeGuardSaveBtn) {
       closeGuardSaveBtn.focus();
@@ -5936,7 +5897,7 @@
     if (!closeGuardModal) {
       return;
     }
-    closeGuardPending = false;
+    closeGuardState.pending = false;
     closeGuardModal.setAttribute("hidden", "");
   }
   function initCloseGuardModal() {
@@ -5952,7 +5913,7 @@
     }
     if (closeGuardContinueBtn) {
       closeGuardContinueBtn.addEventListener("click", function() {
-        closeGuardBypass = false;
+        closeGuardState.bypass = false;
         closeCloseGuardModal();
       });
     }
@@ -5964,13 +5925,13 @@
     }
     document.addEventListener("keydown", function(event) {
       if (event.key === "Escape" && !closeGuardModal.hasAttribute("hidden")) {
-        closeGuardBypass = false;
+        closeGuardState.bypass = false;
         closeCloseGuardModal();
       }
     });
   }
   function attemptClosePage() {
-    closeGuardBypass = true;
+    closeGuardState.bypass = true;
     try {
       window.close();
     } catch (e) {
@@ -6360,7 +6321,7 @@
         html += '  <td colspan="4"><div class="report-note-editable" contenteditable="true" spellcheck="false" data-placeholder="' + escapeHtml(t("clickToAddNote") || "Click to add note") + '">' + escapeHtml(notes) + "</div></td>";
         html += "</tr>";
       });
-      var driverExtra = toInt2(driver.extraPapers) || 0;
+      var driverExtra = toInt(driver.extraPapers) || 0;
       if (driverExtra > 0) {
         totalDriverPapers += driverExtra;
         html += '<tr class="route-row">';
@@ -6428,8 +6389,8 @@
         distName = distName.split(",")[0].trim();
       }
       var dist = distByName[distName] || {};
-      var driverName = routeRow.driver || dist.driverName || "";
-      var driverNr = dist.driverNr || "";
+      var driverName = routeRow.requiresDistributor !== false && distName ? dist.driverName || "" : routeRow.driver || dist.driverName || "";
+      var driverNr = routeRow.requiresDistributor !== false && distName ? dist.driverNr || "" : routeRow.driverNr || dist.driverNr || "";
       if (!driverNr && driverName && drvByName[driverName]) {
         driverNr = drvByName[driverName].driverNr || "";
       }
@@ -6459,8 +6420,8 @@
             excluded: []
           };
         }
-        var hh = Math.max(1, toInt2(addr.numberOfHouseholds));
-        var ex = Math.max(0, toInt2(addr.numberOfExcludedHouseholds));
+        var hh = Math.max(1, toInt(addr.numberOfHouseholds));
+        var ex = Math.max(0, toInt(addr.numberOfExcludedHouseholds));
         if (ex > hh) ex = hh;
         var inc = hh - ex;
         includedHouseholds += inc;
@@ -6498,7 +6459,7 @@
           });
         }
       });
-      var extraPapers = toInt2(routeRow.extraPapers) || 0;
+      var extraPapers = toInt(routeRow.extraPapers) || 0;
       var totalPapers = Math.max(0, includedHouseholds + extraPapers);
       html += '<div class="print-page route-report-page">';
       html += '<div class="route-report-header">';
@@ -6659,8 +6620,8 @@
         setupResilientTileLayer(map, el);
         var bounds = L.latLngBounds();
         coordsAddrs.forEach(function(a) {
-          var hh = Math.max(1, toInt2(a.numberOfHouseholds));
-          var ex = Math.max(0, toInt2(a.numberOfExcludedHouseholds));
+          var hh = Math.max(1, toInt(a.numberOfHouseholds));
+          var ex = Math.max(0, toInt(a.numberOfExcludedHouseholds));
           if (ex > hh) ex = hh;
           var inc = hh - ex;
           var isExcluded = inc === 0;
@@ -6714,8 +6675,6 @@
   var currentDataFormat = "none";
   var hasUnsavedChanges = false;
   var currentDataSource = { source: "none", label: "" };
-  var closeGuardBypass2 = false;
-  var closeGuardPending2 = false;
   var lastCommittedDataText = "";
   var hasLoadedEditableSource = false;
   var hasUserCommittedEdits = false;
@@ -6809,12 +6768,8 @@
     setText("delete-address-map-title", t("mapDeleteTitle"));
     setText("delete-address-map-btn-cancel", t("mapBtnCancel"));
     setText("delete-address-map-btn-confirm", t("mapBtnDelete"));
-    setText("map-title-text", t("tabMap"));
     setText("delete-address-map-confirm-prompt", t("mapDeleteConfirmPrompt"));
     setText("delete-address-map-confirm-suffix", t("mapDeleteConfirmSuffix"));
-    setText("source-missing-title", t("sourceMissingTitle"));
-    setText("source-missing-message", t("sourceMissingMessage"));
-    setText("open-data-folder", t("openDataFolder"));
     setAttr("routes-table", "aria-label", t("ariaRoutesTable"));
     setAttr("edit-modal-close", "aria-label", t("ariaClose"));
     setAttr("batch-status-close", "aria-label", t("ariaClose"));
@@ -6829,8 +6784,6 @@
     setText("tab-map", t("tabMap"));
     setText("map-title-text", t("tabMap"));
     setText("map-route-filter-label", t("mapRouteFilterLabel"));
-    setText("map-info-add-multiple", t("mapGuideAddMultiple"));
-    setText("map-info-filter", t("mapGuideFilterHelp"));
     setText("dashboard-title", t("dashboardTitle"));
     setText("drivers-title", t("driversTitle"));
     setText("distributors-title", t("distributorsTitle"));
@@ -6891,7 +6844,7 @@
     setText("dist-col-name", t("distColName"));
     setText("dist-col-status", t("distColStatus"));
     setText("dist-col-route", t("distColRoute"));
-    setText("dist-col-drivernr", t("routeColDriverName"));
+    setText("dist-col-drivernr", t("distColDriverName"));
     setText("dist-col-phone", t("distColPhone"));
     setText("dist-col-email", t("distColEmail"));
     setText("dist-col-address", t("distColAddress"));
@@ -7187,12 +7140,19 @@
     var missing = [];
     requiredFields.forEach(function(fieldName) {
       var value = row[fieldName];
+      var isBlank = false;
       if (Array.isArray(value)) {
         if (!value.length) {
-          missing.push(getFieldLabel(tableName, fieldName));
+          isBlank = true;
         }
       } else if (String(value == null ? "" : value).trim() === "") {
-        missing.push(getFieldLabel(tableName, fieldName));
+        isBlank = true;
+      }
+      if (isBlank) {
+        missing.push({
+          field: fieldName,
+          label: getFieldLabel(tableName, fieldName)
+        });
       }
     });
     return missing;
@@ -7410,16 +7370,32 @@
     }
     var jsonText = JSON.stringify(serializeCurrentJsonData(), null, 2);
     saveJsonCache(jsonText, "source.json (edited)");
+    var savedViaApiOrHandle = false;
     if (currentFileHandle && currentFileHandle.createWritable) {
       try {
         const writable = await currentFileHandle.createWritable();
         await writable.write(jsonText);
         await writable.close();
+        savedViaApiOrHandle = true;
       } catch (e) {
         console.error("Failed to quick save via file handle", e);
-        saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
       }
-    } else {
+    } else if (window.location && window.location.protocol.startsWith("http")) {
+      try {
+        const response = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: jsonText
+        });
+        if (response.ok) {
+          savedViaApiOrHandle = true;
+          debugSaveChangesLog("saveChangesToSource:api-save-success");
+        }
+      } catch (e) {
+        debugSaveChangesLog("saveChangesToSource:api-save-skipped-or-failed", e);
+      }
+    }
+    if (!savedViaApiOrHandle) {
       saveTextDownload("source.json", jsonText, "application/json;charset=utf-8");
     }
     lastCommittedDataText = getComparableDataText();
@@ -7626,8 +7602,7 @@
     statusEl.dataset.loaded = "1";
     statusEl.textContent = t("statusCsvExported", { label: t("dashboardTitle"), count: data.rowObjects.length });
   }
-  function exportTableCsv(tableName) {
-    recalculateAndRenderDashboard();
+  function getTableExportDataset(tableName) {
     var rows = getFilteredSortedRows(tableName);
     var headers = [];
     var mappedRows = [];
@@ -7663,25 +7638,25 @@
       var dsName = t("distColName");
       var dsStatus = t("distColStatus");
       var dsRoute = t("distColRoute");
-      var dsDriverNo = t("driversColDriverNo");
       var dsDriver = t("routeColDriverName");
       var dsPhone = t("distColPhone");
       var dsEmail = t("distColEmail");
       var dsAddress = t("distColAddress");
       var dsPostnr = t("distColPostnr");
+      var dsExtraPapers = t("rowExtraPapers");
       var dsPaperCount = t("distColPaperCount");
-      headers = [dsName, dsStatus, dsRoute, dsDriverNo, dsDriver, dsPhone, dsEmail, dsAddress, dsPostnr, dsPaperCount];
+      headers = [dsName, dsStatus, dsRoute, dsDriver, dsPhone, dsEmail, dsAddress, dsPostnr, dsExtraPapers, dsPaperCount];
       mappedRows = rows.map(function(r) {
         return {
           [dsName]: r.name || "",
           [dsStatus]: r.status || "",
           [dsRoute]: getDistributorRoutes(r).join(", "),
-          [dsDriverNo]: r.driverNr || "",
           [dsDriver]: r.driverName || "",
           [dsPhone]: r.phone || "",
           [dsEmail]: r.email || "",
           [dsAddress]: r.address || "",
           [dsPostnr]: r.postnr || "",
+          [dsExtraPapers]: r.extraPapers || 0,
           [dsPaperCount]: r.paperCount || ""
         };
       });
@@ -7692,9 +7667,8 @@
       var aHouseholds = t("addrColHouseholds");
       var aExcludedHouseholds = t("addrColExcludedHouseholds");
       var aPostnr = t("addrColPostnr");
-      var aDriver = t("routeColDriverName");
       var aNote = t("addrColNote");
-      headers = [aAddress, aRoute, aDistributor, aHouseholds, aExcludedHouseholds, aPostnr, aDriver, aNote];
+      headers = [aAddress, aRoute, aDistributor, aHouseholds, aExcludedHouseholds, aPostnr, aNote];
       mappedRows = rows.map(function(r) {
         return {
           [aAddress]: r.address || "",
@@ -7703,42 +7677,45 @@
           [aHouseholds]: r.numberOfHouseholds || "",
           [aExcludedHouseholds]: r.numberOfExcludedHouseholds || "",
           [aPostnr]: r.postnr || "",
-          [aDriver]: r.driverName || "",
           [aNote]: r.note || ""
         };
       });
     } else if (tableName === "routes") {
       var rRouteId = t("routeColId");
-      var rGroup = t("routeColLetterGroup");
       var rStatus = t("distColStatus");
-      var rDriverNo = t("driversColDriverNo");
-      var rDriver = t("routeColDriverName");
       var rDistributors = t("routeColDistributors");
-      var rDistributorNames = t("filterDistributorsPlaceholder");
+      var rDriver = t("routeColDriverName");
       var rIncludedAddresses = t("routeColAddresses");
+      var rExtraPapers = t("rowExtraPapers");
       var rPapers = t("routeColPapers");
-      var rPostnrs = t("filterPostnrLabel");
-      headers = [rRouteId, rGroup, rStatus, rDriverNo, rDriver, rDistributors, rDistributorNames, rIncludedAddresses, rPapers, rPostnrs];
+      var rAddressRanges = t("routesColDescription");
+      var rNotes = t("routesColNotes");
+      headers = [rRouteId, rStatus, rDistributors, rDriver, rIncludedAddresses, rExtraPapers, rPapers, rAddressRanges, rNotes];
       mappedRows = rows.map(function(r) {
         return {
           [rRouteId]: r.routeId || "",
-          [rGroup]: r.letterGroup || "",
           [rStatus]: r.status || "",
-          [rDriverNo]: r.driverNr || "",
+          [rDistributors]: r.distributorNames || "",
           [rDriver]: r.driver || r.driverName || "",
-          [rDistributors]: r.distributorCount || "",
-          [rDistributorNames]: r.distributorNames || "",
           [rIncludedAddresses]: r.includedAddresses || "",
+          [rExtraPapers]: r.extraPapers || 0,
           [rPapers]: r.paperCount || "",
-          [rPostnrs]: r.postnrs || ""
+          [rAddressRanges]: r.addressRanges || "",
+          [rNotes]: r.notes || ""
         };
       });
     } else {
-      return;
+      return null;
     }
-    saveTextDownload(tableName + ".csv", "\uFEFF" + toCsvText(headers, mappedRows), "text/csv;charset=utf-8");
+    return { headers, mappedRows };
+  }
+  function exportTableCsv(tableName) {
+    recalculateAndRenderDashboard();
+    var dataset = getTableExportDataset(tableName);
+    if (!dataset) return;
+    saveTextDownload(tableName + ".csv", "\uFEFF" + toCsvText(dataset.headers, dataset.mappedRows), "text/csv;charset=utf-8");
     statusEl.dataset.loaded = "1";
-    statusEl.textContent = t("statusCsvExported", { label: t(tableTitleKeys[tableName]), count: mappedRows.length });
+    statusEl.textContent = t("statusCsvExported", { label: t(tableTitleKeys[tableName]), count: dataset.mappedRows.length });
   }
   function exportTableXlsx(tableName) {
     if (typeof XLSX === "undefined") {
@@ -7746,117 +7723,11 @@
       return;
     }
     recalculateAndRenderDashboard();
-    var rows = getFilteredSortedRows(tableName);
-    var headers = [];
-    var mappedRows = [];
-    if (tableName === "drivers") {
-      var dName = t("driversColName");
-      var dStatus = t("driversColStatus");
-      var dDriverNo = t("driversColDriverNo");
-      var dPhone = t("driversColPhone");
-      var dEmail = t("driversColEmail");
-      var dAddress = t("driversColAddress");
-      var dPostnr = t("driversColPostnr");
-      var dRouteCount = t("driversColRouteCount");
-      var dPaperCount = t("driversColPaperCount");
-      var dRoutes = t("totalsRoutes");
-      var dDistributors = t("totalsDistributors");
-      headers = [dName, dStatus, dDriverNo, dPhone, dEmail, dAddress, dPostnr, dRouteCount, dPaperCount, dRoutes, dDistributors];
-      mappedRows = rows.map(function(r) {
-        return {
-          [dName]: r.name || "",
-          [dStatus]: r.status || "",
-          [dDriverNo]: r.driverNr || "",
-          [dPhone]: r.phone || "",
-          [dEmail]: r.email || "",
-          [dAddress]: r.address || "",
-          [dPostnr]: r.postnr || "",
-          [dRouteCount]: r.routeCount || "",
-          [dPaperCount]: r.paperCount || "",
-          [dRoutes]: r.routes || "",
-          [dDistributors]: r.distributorName || ""
-        };
-      });
-    } else if (tableName === "distributors") {
-      var dsName = t("distColName");
-      var dsStatus = t("distColStatus");
-      var dsRoute = t("distColRoute");
-      var dsDriverNo = t("driversColDriverNo");
-      var dsDriver = t("routeColDriverName");
-      var dsPhone = t("distColPhone");
-      var dsEmail = t("distColEmail");
-      var dsAddress = t("distColAddress");
-      var dsPostnr = t("distColPostnr");
-      var dsPaperCount = t("distColPaperCount");
-      headers = [dsName, dsStatus, dsRoute, dsDriverNo, dsDriver, dsPhone, dsEmail, dsAddress, dsPostnr, dsPaperCount];
-      mappedRows = rows.map(function(r) {
-        return {
-          [dsName]: r.name || "",
-          [dsStatus]: r.status || "",
-          [dsRoute]: getDistributorRoutes(r).join(", "),
-          [dsDriverNo]: r.driverNr || "",
-          [dsDriver]: r.driverName || "",
-          [dsPhone]: r.phone || "",
-          [dsEmail]: r.email || "",
-          [dsAddress]: r.address || "",
-          [dsPostnr]: r.postnr || "",
-          [dsPaperCount]: r.paperCount || ""
-        };
-      });
-    } else if (tableName === "addresses") {
-      var aAddress = t("addrColAddress");
-      var aRoute = t("addrColRoute");
-      var aDistributor = t("addrColDistributor");
-      var aHouseholds = t("addrColHouseholds");
-      var aExcludedHouseholds = t("addrColExcludedHouseholds");
-      var aPostnr = t("addrColPostnr");
-      var aDriver = t("routeColDriverName");
-      var aNote = t("addrColNote");
-      headers = [aAddress, aRoute, aDistributor, aHouseholds, aExcludedHouseholds, aPostnr, aDriver, aNote];
-      mappedRows = rows.map(function(r) {
-        return {
-          [aAddress]: r.address || "",
-          [aRoute]: r.route || "",
-          [aDistributor]: r.distributor || "",
-          [aHouseholds]: r.numberOfHouseholds || "",
-          [aExcludedHouseholds]: r.numberOfExcludedHouseholds || "",
-          [aPostnr]: r.postnr || "",
-          [aDriver]: r.driverName || "",
-          [aNote]: r.note || ""
-        };
-      });
-    } else if (tableName === "routes") {
-      var rRouteId = t("routeColId");
-      var rGroup = t("routeColLetterGroup");
-      var rStatus = t("distColStatus");
-      var rDriverNo = t("driversColDriverNo");
-      var rDriver = t("routeColDriverName");
-      var rDistributors = t("routeColDistributors");
-      var rDistributorNames = t("filterDistributorsPlaceholder");
-      var rIncludedAddresses = t("routeColAddresses");
-      var rPapers = t("routeColPapers");
-      var rPostnrs = t("filterPostnrLabel");
-      headers = [rRouteId, rGroup, rStatus, rDriverNo, rDriver, rDistributors, rDistributorNames, rIncludedAddresses, rPapers, rPostnrs];
-      mappedRows = rows.map(function(r) {
-        return {
-          [rRouteId]: r.routeId || "",
-          [rGroup]: r.letterGroup || "",
-          [rStatus]: r.status || "",
-          [rDriverNo]: r.driverNr || "",
-          [rDriver]: r.driver || r.driverName || "",
-          [rDistributors]: r.distributorCount || "",
-          [rDistributorNames]: r.distributorNames || "",
-          [rIncludedAddresses]: r.includedAddresses || "",
-          [rPapers]: r.paperCount || "",
-          [rPostnrs]: r.postnrs || ""
-        };
-      });
-    } else {
-      return;
-    }
-    var aoa = [headers];
-    mappedRows.forEach(function(row) {
-      aoa.push(headers.map(function(h) {
+    var dataset = getTableExportDataset(tableName);
+    if (!dataset) return;
+    var aoa = [dataset.headers];
+    dataset.mappedRows.forEach(function(row) {
+      aoa.push(dataset.headers.map(function(h) {
         return row[h] || "";
       }));
     });
@@ -7865,7 +7736,7 @@
     XLSX.utils.book_append_sheet(wb, ws, tableName);
     XLSX.writeFile(wb, tableName + ".xlsx");
     statusEl.dataset.loaded = "1";
-    statusEl.textContent = t("statusCsvExported", { label: t(tableTitleKeys[tableName]), count: mappedRows.length });
+    statusEl.textContent = t("statusXlsxExported", { label: t(tableTitleKeys[tableName]), count: dataset.mappedRows.length });
   }
   function exportDriverDistributorsCsv(driverRow) {
     if (!driverRow) return;
@@ -8028,33 +7899,31 @@
   }
   function openReportModal(driversToPrint) {
     if (!driversToPrint || driversToPrint.length === 0) return;
-    Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-      var html = renderDrivingListsHtml(driversToPrint);
-      dom.reportModalContent.innerHTML = html;
-      dom.reportModal.removeAttribute("hidden");
-    });
+    var html = renderDrivingListsHtml(driversToPrint);
+    reportModalContent.innerHTML = html;
+    reportModal.removeAttribute("hidden");
+    reportModal.scrollTop = 0;
+    if (reportModal.firstElementChild) reportModal.firstElementChild.scrollTop = 0;
   }
   var currentRouteReportsToPrint = [];
   function renderActiveRouteReports() {
     if (!currentRouteReportsToPrint || currentRouteReportsToPrint.length === 0) return;
-    Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-      var includeMap = dom.routeReportIncludeMap ? dom.routeReportIncludeMap.checked : true;
-      var html = renderRouteReportsHtml(currentRouteReportsToPrint, { includeMap });
-      dom.routeReportModalContent.innerHTML = html;
-      if (includeMap) {
-        initRouteReportMaps(dom.routeReportModalContent);
-      } else {
-        cleanupRouteReportMaps();
-      }
-    });
+    var includeMap = routeReportIncludeMap ? routeReportIncludeMap.checked : true;
+    var html = renderRouteReportsHtml(currentRouteReportsToPrint, { includeMap });
+    routeReportModalContent.innerHTML = html;
+    if (includeMap) {
+      initRouteReportMaps(routeReportModalContent);
+    } else {
+      cleanupRouteReportMaps();
+    }
   }
   function openRouteReportModal(routesToPrint) {
     if (!routesToPrint || routesToPrint.length === 0) return;
     currentRouteReportsToPrint = routesToPrint;
-    Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-      renderActiveRouteReports();
-      dom.routeReportModal.removeAttribute("hidden");
-    });
+    renderActiveRouteReports();
+    routeReportModal.removeAttribute("hidden");
+    routeReportModal.scrollTop = 0;
+    if (routeReportModal.firstElementChild) routeReportModal.firstElementChild.scrollTop = 0;
   }
   function tryLoadRecordSnapshot() {
     return Promise.all([
@@ -8187,6 +8056,7 @@
           });
         });
       } catch (e) {
+        console.warn("IndexedDB snapshot failed:", e);
       }
     });
   }
@@ -8517,16 +8387,16 @@
   });
   window.addEventListener("beforeunload", function(event) {
     debugSaveChangesLog("beforeunload:check");
-    if (closeGuardBypass2 || !hasLoadedEditableSource || !showSaveChanges) {
+    if (closeGuardState.bypass || !hasLoadedEditableSource || !showSaveChanges) {
       debugSaveChangesLog("beforeunload:allow");
       return;
     }
     event.preventDefault();
     event.returnValue = "";
     debugSaveChangesLog("beforeunload:block-open-guard");
-    closeGuardPending2 = true;
+    closeGuardState.pending = true;
     setTimeout(function() {
-      if (closeGuardPending2 && !document.hidden) {
+      if (closeGuardState.pending && !document.hidden) {
         openCloseGuardModal();
       }
     }, 0);
@@ -8552,48 +8422,46 @@
   initRowActionMenus();
   initBatchSelectionControls();
   initExportButtons();
-  Promise.resolve().then(() => (init_dom(), dom_exports)).then((dom) => {
-    if (dom.reportModalClose) {
-      dom.reportModalClose.addEventListener("click", function() {
-        dom.reportModal.setAttribute("hidden", "");
-      });
-    }
-    if (dom.reportModalPrint) {
-      dom.reportModalPrint.addEventListener("click", function() {
-        window.print();
-      });
-    }
-    if (dom.routeReportIncludeMap) {
-      dom.routeReportIncludeMap.addEventListener("change", function() {
-        renderActiveRouteReports();
-      });
-    }
-    if (dom.routeReportModalClose) {
-      dom.routeReportModalClose.addEventListener("click", function() {
-        cleanupRouteReportMaps();
-        dom.routeReportModal.setAttribute("hidden", "");
-      });
-    }
-    if (dom.routeReportModalPrint) {
-      dom.routeReportModalPrint.addEventListener("click", function() {
-        invalidateRouteReportMaps();
-        setTimeout(function() {
-          window.print();
-        }, 100);
-      });
-    }
-    window.addEventListener("beforeprint", function() {
+  if (reportModalClose) {
+    reportModalClose.addEventListener("click", function() {
+      reportModal.setAttribute("hidden", "");
+    });
+  }
+  if (reportModalPrint) {
+    reportModalPrint.addEventListener("click", function() {
+      window.print();
+    });
+  }
+  if (routeReportIncludeMap) {
+    routeReportIncludeMap.addEventListener("change", function() {
+      renderActiveRouteReports();
+    });
+  }
+  if (routeReportModalClose) {
+    routeReportModalClose.addEventListener("click", function() {
+      cleanupRouteReportMaps();
+      routeReportModal.setAttribute("hidden", "");
+    });
+  }
+  if (routeReportModalPrint) {
+    routeReportModalPrint.addEventListener("click", function() {
       invalidateRouteReportMaps();
+      setTimeout(function() {
+        window.print();
+      }, 100);
     });
-    document.addEventListener("click", function(e) {
-      if (e.target.matches('[data-report-modal-close="1"]')) {
-        dom.reportModal.setAttribute("hidden", "");
-      }
-      if (e.target.matches('[data-route-report-modal-close="1"]')) {
-        cleanupRouteReportMaps();
-        dom.routeReportModal.setAttribute("hidden", "");
-      }
-    });
+  }
+  window.addEventListener("beforeprint", function() {
+    invalidateRouteReportMaps();
+  });
+  document.addEventListener("click", function(e) {
+    if (e.target.matches('[data-report-modal-close="1"]')) {
+      reportModal.setAttribute("hidden", "");
+    }
+    if (e.target.matches('[data-route-report-modal-close="1"]')) {
+      cleanupRouteReportMaps();
+      routeReportModal.setAttribute("hidden", "");
+    }
   });
   initCellLinks();
   window.createAddressesResetBackup = createAddressesResetBackup;

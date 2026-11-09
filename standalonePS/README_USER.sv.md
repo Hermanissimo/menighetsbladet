@@ -215,3 +215,15 @@ Eftersom applikationen körs lokalt i webbläsaren via GitHub Pages och inga dat
    - **Spara tidsstämplad arkivkopia**: Använd valet "Spara som kopia" för att ladda ned en kopia med datum och klockslag (t.ex. `source_YYYYMMDD_HHmm.json`), vilket ger en tydlig historik över tidigare utdelningsrundor.
    - **Direkt filsparning**: I webbläsare med stöd för File System Access API där du öppnat en lokal fil via filladdaren kan uppdateringarna sparas direkt tillbaka till filen på disken.
 3. **Datasäkerhet**: Kom ihåg att webbplatsen på GitHub Pages inte sparar dina data på nätet. Ladda därför alltid ned en uppdaterad `source.json` när du är klar med en session.
+## 5. Ordlista / Begrepp
+
+- **Rutt (*Rute*)**: Ett specifikt geografiskt område eller en uppsättning gator där församlingsbladet delas ut.
+- **Utdelare (*Bladbærer*)**: Den frivilliga som går en rutt och delar ut blad i de enskilda brevlådorna.
+- **Förare (*Kjører*)**: Den frivilliga som ansvarar för att transportera buntar med blad från tryckeriet/kyrkan till de enskilda utdelarna.
+- **Hushåll (*Husstander*)**: Det totala antalet boendeenheter på en given adress.
+- **Exkluderade hushåll**: Hushåll som har avböjt oadresserad post ("Nej tack till reklam").
+- **Inkluderade hushåll**: Nettoantalet hushåll som ska få ett blad (Totalt antal hushåll minus Exkluderade hushåll).
+- **Extra blad**: Buffertkopior som tilldelats en rutt, utdelare eller förare för att täcka oförutsedda behov.
+- **Otilldelad rutt**: En definierad rutt som för närvarande saknar en tilldelad utdelare eller förare.
+- **Körlista (*Kjøreliste*)**: En lista för förare som visar vilka rutter och utdelare de ska leverera buntar till, samt det exakta antalet blad.
+- **Gatulista (*Gateliste*)**: En adresslista för utdelare som visar exakt vilka adresser och husnummer de ska dela ut till, inklusive anteckningar om exkluderade hushåll.
