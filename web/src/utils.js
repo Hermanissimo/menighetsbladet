@@ -52,6 +52,11 @@ export function parseMarkdown(text) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
+  // Display math blocks $$...$$
+  html = html.replace(/\$\$([\s\S]*?)\$\$/g, function (match, formula) {
+    return '<div class="formula-block">' + formula.trim().replace(/\\text\{([^}]+)\}/g, '$1') + '</div>';
+  });
+
   // Headers (e.g. ### Header)
   html = html.replace(/^### ([^\n\r]+)/gim, '<h3>$1</h3>');
   html = html.replace(/^## ([^\n\r]+)/gim, '<h2>$1</h2>');
@@ -67,22 +72,29 @@ export function parseMarkdown(text) {
   html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
   // Inline Code
-  html = html.replace(/`(.*?)`/gim, '<code>$1</code>');
+  html = html.replace(/`([^`]+)`/gim, '<code>$1</code>');
 
   // Horizontal Rule
   html = html.replace(/^---$/gim, '<hr>');
   
   // Lists (Bulleted)
-  html = html.replace(/^- ([^\n\r]+)/gim, '<li>$1</li>');
+  html = html.replace(/^- ([^\n\r]+)/gim, '<li class="bullet">$1</li>');
+
+  // Lists (Numbered / Ordered)
+  html = html.replace(/^\d+\.\s+([^\n\r]+)/gim, '<li class="ordered">$1</li>');
   
   // Newlines: split by double newline to form paragraphs
   let paragraphs = html.split(/\n\n+/);
   html = paragraphs.map(p => {
-    // If it's a heading or hr or already a block element, leave it
-    if (p.startsWith('<h') || p.startsWith('<hr>')) return p;
-    // If it contains list items, wrap in ul
-    if (p.includes('<li>')) {
-      return `<ul>${p}</ul>`;
+    // If it's a heading or hr or formula or already a block element, leave it
+    if (p.startsWith('<h') || p.startsWith('<hr>') || p.startsWith('<div class="formula-block"')) return p;
+    // If it contains ordered list items, wrap in ol
+    if (p.includes('<li class="ordered">')) {
+      return `<ol>${p.replace(/ class="ordered"/g, '')}</ol>`;
+    }
+    // If it contains bullet list items, wrap in ul
+    if (p.includes('<li class="bullet">')) {
+      return `<ul>${p.replace(/ class="bullet"/g, '')}</ul>`;
     }
     return `<p>${p.replace(/\n/g, '<br>')}</p>`;
   }).join('\n');

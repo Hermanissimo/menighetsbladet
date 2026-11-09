@@ -536,6 +536,9 @@ h2 {
 .dash-table td {
   border: 1px solid var(--line);
   padding: 0.65rem;
+  text-align: left;
+}
+
 .dash-table th,
 .data-table th {
   position: relative;
@@ -561,8 +564,6 @@ h2 {
   width: 1px;
   height: 64%;
   background: rgba(93, 109, 126, 0.45);
-}
-  text-align: left;
 }
 
 #drivers-table td:nth-child(4),

@@ -1299,13 +1299,7 @@ export function initSourceMissingModal() {
 
 function stripSetupInfo(text) {
   if (!text) return "";
-  var cleaned = String(text).trim();
-  if (/##\s*[1-4]\.\s*(Start|Lasting|Settings|Data source|Oppstart)/i.test(cleaned)) {
-    cleaned = cleaned.replace(/##\s*[1-4]\.[^#]+(?=##\s*[5-9]|$)/gi, "");
-    cleaned = cleaned.replace(/##\s*11\.[^#]+/gi, "");
-    cleaned = cleaned.replace(/```[\s\S]*?```/gi, "");
-  }
-  return cleaned.trim();
+  return String(text).trim();
 }
 
 

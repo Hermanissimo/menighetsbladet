@@ -154,9 +154,7 @@ def main() -> int:
             new_row = {
                 'address': address_text,
                 'route': route_name,
-                'distributor': distributor,
                 'postnr': postnr,
-                'driverName': driver_name,
                 'numberOfHouseholds': households,
                 'numberOfExcludedHouseholds': 0,
                 'note': '',

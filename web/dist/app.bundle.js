@@ -160,20 +160,27 @@
     if (!text) return "";
     let html = text;
     html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    html = html.replace(/\$\$([\s\S]*?)\$\$/g, function(match, formula) {
+      return '<div class="formula-block">' + formula.trim().replace(/\\text\{([^}]+)\}/g, "$1") + "</div>";
+    });
     html = html.replace(/^### ([^\n\r]+)/gim, "<h3>$1</h3>");
     html = html.replace(/^## ([^\n\r]+)/gim, "<h2>$1</h2>");
     html = html.replace(/^# ([^\n\r]+)/gim, "<h1>$1</h1>");
     html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
     html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
     html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    html = html.replace(/`(.*?)`/gim, "<code>$1</code>");
+    html = html.replace(/`([^`]+)`/gim, "<code>$1</code>");
     html = html.replace(/^---$/gim, "<hr>");
-    html = html.replace(/^- ([^\n\r]+)/gim, "<li>$1</li>");
+    html = html.replace(/^- ([^\n\r]+)/gim, '<li class="bullet">$1</li>');
+    html = html.replace(/^\d+\.\s+([^\n\r]+)/gim, '<li class="ordered">$1</li>');
     let paragraphs = html.split(/\n\n+/);
     html = paragraphs.map((p) => {
-      if (p.startsWith("<h") || p.startsWith("<hr>")) return p;
-      if (p.includes("<li>")) {
-        return `<ul>${p}</ul>`;
+      if (p.startsWith("<h") || p.startsWith("<hr>") || p.startsWith('<div class="formula-block"')) return p;
+      if (p.includes('<li class="ordered">')) {
+        return `<ol>${p.replace(/ class="ordered"/g, "")}</ol>`;
+      }
+      if (p.includes('<li class="bullet">')) {
+        return `<ul>${p.replace(/ class="bullet"/g, "")}</ul>`;
       }
       return `<p>${p.replace(/\n/g, "<br>")}</p>`;
     }).join("\n");
@@ -548,6 +555,7 @@
       batchRouteNoValue: "Please select a route.",
       exportCsvAction: "Export CSV",
       statusCsvExported: "Exported {label} to CSV ({count} rows).",
+      statusXlsxExported: "Exported {label} to XLSX ({count} rows).",
       exportDriverDistributorsCsvAction: "Export this driver's assigned distributors (CSV)",
       exportDriverDistributorsXlsxAction: "Export this driver's assigned distributors (XLSX)",
       statusDriverDistributorsExported: "Exported this driver's assigned distributors for {label} ({count} rows).",
@@ -931,6 +939,7 @@
       batchStatusNoValue: "Velg en status.",
       exportCsvAction: "Eksporter CSV",
       statusCsvExported: "Eksporterte {label} til CSV ({count} rader).",
+      statusXlsxExported: "Eksporterte {label} til XLSX ({count} rader).",
       exportDriverDistributorsCsvAction: "Eksporter denne kj\xF8rerens tilordna bladb\xE6rere (CSV)",
       exportDriverDistributorsXlsxAction: "Eksporter denne kj\xF8rerens tilordna bladb\xE6rere (XLSX)",
       statusDriverDistributorsExported: "Eksporterte denne kj\xF8rerens tilordna bladb\xE6rere for {label} ({count} rader).",
@@ -1314,6 +1323,7 @@
       batchStatusNoValue: "Vel ein status.",
       exportCsvAction: "Eksporter CSV",
       statusCsvExported: "Eksporterte {label} til CSV ({count} rader).",
+      statusXlsxExported: "Eksporterte {label} til XLSX ({count} rader).",
       exportDriverDistributorsCsvAction: "Eksporter denne k\xF8yrarens tilordna bladb\xE6rarar (CSV)",
       exportDriverDistributorsXlsxAction: "Eksporter denne k\xF8yrarens tilordna bladb\xE6rarar (XLSX)",
       statusDriverDistributorsExported: "Eksporterte denne k\xF8yrarens tilordna bladb\xE6rarar for {label} ({count} rader).",
@@ -1697,6 +1707,7 @@
       batchStatusNoValue: "V\xE4lj en status.",
       exportCsvAction: "Exportera CSV",
       statusCsvExported: "Exporterade {label} till CSV ({count} rader).",
+      statusXlsxExported: "Exporterade {label} till XLSX ({count} rader).",
       exportDriverDistributorsCsvAction: "Exportera denna f\xF6rarens tilldelade distribut\xF6rer (CSV)",
       exportDriverDistributorsXlsxAction: "Exportera denna f\xF6rarens tilldelade distribut\xF6rer (XLSX)",
       statusDriverDistributorsExported: "Exporterade denna f\xF6rarens tilldelade distribut\xF6rer f\xF6r {label} ({count} rader).",
@@ -5900,13 +5911,7 @@
   }
   function stripSetupInfo(text) {
     if (!text) return "";
-    var cleaned = String(text).trim();
-    if (/##\s*[1-4]\.\s*(Start|Lasting|Settings|Data source|Oppstart)/i.test(cleaned)) {
-      cleaned = cleaned.replace(/##\s*[1-4]\.[^#]+(?=##\s*[5-9]|$)/gi, "");
-      cleaned = cleaned.replace(/##\s*11\.[^#]+/gi, "");
-      cleaned = cleaned.replace(/```[\s\S]*?```/gi, "");
-    }
-    return cleaned.trim();
+    return String(text).trim();
   }
   function openUserGuideModal() {
     if (!userGuideModal || !userGuideContent) {
@@ -6842,12 +6847,8 @@
     setText("delete-address-map-title", t("mapDeleteTitle"));
     setText("delete-address-map-btn-cancel", t("mapBtnCancel"));
     setText("delete-address-map-btn-confirm", t("mapBtnDelete"));
-    setText("map-title-text", t("tabMap"));
     setText("delete-address-map-confirm-prompt", t("mapDeleteConfirmPrompt"));
     setText("delete-address-map-confirm-suffix", t("mapDeleteConfirmSuffix"));
-    setText("source-missing-title", t("sourceMissingTitle"));
-    setText("source-missing-message", t("sourceMissingMessage"));
-    setText("open-data-folder", t("openDataFolder"));
     setAttr("routes-table", "aria-label", t("ariaRoutesTable"));
     setAttr("edit-modal-close", "aria-label", t("ariaClose"));
     setAttr("batch-status-close", "aria-label", t("ariaClose"));
@@ -6862,8 +6863,6 @@
     setText("tab-map", t("tabMap"));
     setText("map-title-text", t("tabMap"));
     setText("map-route-filter-label", t("mapRouteFilterLabel"));
-    setText("map-info-add-multiple", t("mapGuideAddMultiple"));
-    setText("map-info-filter", t("mapGuideFilterHelp"));
     setText("dashboard-title", t("dashboardTitle"));
     setText("drivers-title", t("driversTitle"));
     setText("distributors-title", t("distributorsTitle"));
@@ -7682,8 +7681,7 @@
     statusEl.dataset.loaded = "1";
     statusEl.textContent = t("statusCsvExported", { label: t("dashboardTitle"), count: data.rowObjects.length });
   }
-  function exportTableCsv(tableName) {
-    recalculateAndRenderDashboard();
+  function getTableExportDataset(tableName) {
     var rows = getFilteredSortedRows(tableName);
     var headers = [];
     var mappedRows = [];
@@ -7719,25 +7717,25 @@
       var dsName = t("distColName");
       var dsStatus = t("distColStatus");
       var dsRoute = t("distColRoute");
-      var dsDriverNo = t("driversColDriverNo");
       var dsDriver = t("routeColDriverName");
       var dsPhone = t("distColPhone");
       var dsEmail = t("distColEmail");
       var dsAddress = t("distColAddress");
       var dsPostnr = t("distColPostnr");
+      var dsExtraPapers = t("rowExtraPapers");
       var dsPaperCount = t("distColPaperCount");
-      headers = [dsName, dsStatus, dsRoute, dsDriverNo, dsDriver, dsPhone, dsEmail, dsAddress, dsPostnr, dsPaperCount];
+      headers = [dsName, dsStatus, dsRoute, dsDriver, dsPhone, dsEmail, dsAddress, dsPostnr, dsExtraPapers, dsPaperCount];
       mappedRows = rows.map(function(r) {
         return {
           [dsName]: r.name || "",
           [dsStatus]: r.status || "",
           [dsRoute]: getDistributorRoutes(r).join(", "),
-          [dsDriverNo]: r.driverNr || "",
           [dsDriver]: r.driverName || "",
           [dsPhone]: r.phone || "",
           [dsEmail]: r.email || "",
           [dsAddress]: r.address || "",
           [dsPostnr]: r.postnr || "",
+          [dsExtraPapers]: r.extraPapers || 0,
           [dsPaperCount]: r.paperCount || ""
         };
       });
@@ -7748,9 +7746,8 @@
       var aHouseholds = t("addrColHouseholds");
       var aExcludedHouseholds = t("addrColExcludedHouseholds");
       var aPostnr = t("addrColPostnr");
-      var aDriver = t("routeColDriverName");
       var aNote = t("addrColNote");
-      headers = [aAddress, aRoute, aDistributor, aHouseholds, aExcludedHouseholds, aPostnr, aDriver, aNote];
+      headers = [aAddress, aRoute, aDistributor, aHouseholds, aExcludedHouseholds, aPostnr, aNote];
       mappedRows = rows.map(function(r) {
         return {
           [aAddress]: r.address || "",
@@ -7759,42 +7756,45 @@
           [aHouseholds]: r.numberOfHouseholds || "",
           [aExcludedHouseholds]: r.numberOfExcludedHouseholds || "",
           [aPostnr]: r.postnr || "",
-          [aDriver]: r.driverName || "",
           [aNote]: r.note || ""
         };
       });
     } else if (tableName === "routes") {
       var rRouteId = t("routeColId");
-      var rGroup = t("routeColLetterGroup");
       var rStatus = t("distColStatus");
-      var rDriverNo = t("driversColDriverNo");
-      var rDriver = t("routeColDriverName");
       var rDistributors = t("routeColDistributors");
-      var rDistributorNames = t("filterDistributorsPlaceholder");
+      var rDriver = t("routeColDriverName");
       var rIncludedAddresses = t("routeColAddresses");
+      var rExtraPapers = t("rowExtraPapers");
       var rPapers = t("routeColPapers");
-      var rPostnrs = t("filterPostnrLabel");
-      headers = [rRouteId, rGroup, rStatus, rDriverNo, rDriver, rDistributors, rDistributorNames, rIncludedAddresses, rPapers, rPostnrs];
+      var rAddressRanges = t("routesColDescription");
+      var rNotes = t("routesColNotes");
+      headers = [rRouteId, rStatus, rDistributors, rDriver, rIncludedAddresses, rExtraPapers, rPapers, rAddressRanges, rNotes];
       mappedRows = rows.map(function(r) {
         return {
           [rRouteId]: r.routeId || "",
-          [rGroup]: r.letterGroup || "",
           [rStatus]: r.status || "",
-          [rDriverNo]: r.driverNr || "",
+          [rDistributors]: r.distributorNames || "",
           [rDriver]: r.driver || r.driverName || "",
-          [rDistributors]: r.distributorCount || "",
-          [rDistributorNames]: r.distributorNames || "",
           [rIncludedAddresses]: r.includedAddresses || "",
+          [rExtraPapers]: r.extraPapers || 0,
           [rPapers]: r.paperCount || "",
-          [rPostnrs]: r.postnrs || ""
+          [rAddressRanges]: r.addressRanges || "",
+          [rNotes]: r.notes || ""
         };
       });
     } else {
-      return;
+      return null;
     }
-    saveTextDownload(tableName + ".csv", "\uFEFF" + toCsvText(headers, mappedRows), "text/csv;charset=utf-8");
+    return { headers, mappedRows };
+  }
+  function exportTableCsv(tableName) {
+    recalculateAndRenderDashboard();
+    var dataset = getTableExportDataset(tableName);
+    if (!dataset) return;
+    saveTextDownload(tableName + ".csv", "\uFEFF" + toCsvText(dataset.headers, dataset.mappedRows), "text/csv;charset=utf-8");
     statusEl.dataset.loaded = "1";
-    statusEl.textContent = t("statusCsvExported", { label: t(tableTitleKeys[tableName]), count: mappedRows.length });
+    statusEl.textContent = t("statusCsvExported", { label: t(tableTitleKeys[tableName]), count: dataset.mappedRows.length });
   }
   function exportTableXlsx(tableName) {
     if (typeof XLSX === "undefined") {
@@ -7802,117 +7802,11 @@
       return;
     }
     recalculateAndRenderDashboard();
-    var rows = getFilteredSortedRows(tableName);
-    var headers = [];
-    var mappedRows = [];
-    if (tableName === "drivers") {
-      var dName = t("driversColName");
-      var dStatus = t("driversColStatus");
-      var dDriverNo = t("driversColDriverNo");
-      var dPhone = t("driversColPhone");
-      var dEmail = t("driversColEmail");
-      var dAddress = t("driversColAddress");
-      var dPostnr = t("driversColPostnr");
-      var dRouteCount = t("driversColRouteCount");
-      var dPaperCount = t("driversColPaperCount");
-      var dRoutes = t("totalsRoutes");
-      var dDistributors = t("totalsDistributors");
-      headers = [dName, dStatus, dDriverNo, dPhone, dEmail, dAddress, dPostnr, dRouteCount, dPaperCount, dRoutes, dDistributors];
-      mappedRows = rows.map(function(r) {
-        return {
-          [dName]: r.name || "",
-          [dStatus]: r.status || "",
-          [dDriverNo]: r.driverNr || "",
-          [dPhone]: r.phone || "",
-          [dEmail]: r.email || "",
-          [dAddress]: r.address || "",
-          [dPostnr]: r.postnr || "",
-          [dRouteCount]: r.routeCount || "",
-          [dPaperCount]: r.paperCount || "",
-          [dRoutes]: r.routes || "",
-          [dDistributors]: r.distributorName || ""
-        };
-      });
-    } else if (tableName === "distributors") {
-      var dsName = t("distColName");
-      var dsStatus = t("distColStatus");
-      var dsRoute = t("distColRoute");
-      var dsDriverNo = t("driversColDriverNo");
-      var dsDriver = t("routeColDriverName");
-      var dsPhone = t("distColPhone");
-      var dsEmail = t("distColEmail");
-      var dsAddress = t("distColAddress");
-      var dsPostnr = t("distColPostnr");
-      var dsPaperCount = t("distColPaperCount");
-      headers = [dsName, dsStatus, dsRoute, dsDriverNo, dsDriver, dsPhone, dsEmail, dsAddress, dsPostnr, dsPaperCount];
-      mappedRows = rows.map(function(r) {
-        return {
-          [dsName]: r.name || "",
-          [dsStatus]: r.status || "",
-          [dsRoute]: getDistributorRoutes(r).join(", "),
-          [dsDriverNo]: r.driverNr || "",
-          [dsDriver]: r.driverName || "",
-          [dsPhone]: r.phone || "",
-          [dsEmail]: r.email || "",
-          [dsAddress]: r.address || "",
-          [dsPostnr]: r.postnr || "",
-          [dsPaperCount]: r.paperCount || ""
-        };
-      });
-    } else if (tableName === "addresses") {
-      var aAddress = t("addrColAddress");
-      var aRoute = t("addrColRoute");
-      var aDistributor = t("addrColDistributor");
-      var aHouseholds = t("addrColHouseholds");
-      var aExcludedHouseholds = t("addrColExcludedHouseholds");
-      var aPostnr = t("addrColPostnr");
-      var aDriver = t("routeColDriverName");
-      var aNote = t("addrColNote");
-      headers = [aAddress, aRoute, aDistributor, aHouseholds, aExcludedHouseholds, aPostnr, aDriver, aNote];
-      mappedRows = rows.map(function(r) {
-        return {
-          [aAddress]: r.address || "",
-          [aRoute]: r.route || "",
-          [aDistributor]: r.distributor || "",
-          [aHouseholds]: r.numberOfHouseholds || "",
-          [aExcludedHouseholds]: r.numberOfExcludedHouseholds || "",
-          [aPostnr]: r.postnr || "",
-          [aDriver]: r.driverName || "",
-          [aNote]: r.note || ""
-        };
-      });
-    } else if (tableName === "routes") {
-      var rRouteId = t("routeColId");
-      var rGroup = t("routeColLetterGroup");
-      var rStatus = t("distColStatus");
-      var rDriverNo = t("driversColDriverNo");
-      var rDriver = t("routeColDriverName");
-      var rDistributors = t("routeColDistributors");
-      var rDistributorNames = t("filterDistributorsPlaceholder");
-      var rIncludedAddresses = t("routeColAddresses");
-      var rPapers = t("routeColPapers");
-      var rPostnrs = t("filterPostnrLabel");
-      headers = [rRouteId, rGroup, rStatus, rDriverNo, rDriver, rDistributors, rDistributorNames, rIncludedAddresses, rPapers, rPostnrs];
-      mappedRows = rows.map(function(r) {
-        return {
-          [rRouteId]: r.routeId || "",
-          [rGroup]: r.letterGroup || "",
-          [rStatus]: r.status || "",
-          [rDriverNo]: r.driverNr || "",
-          [rDriver]: r.driver || r.driverName || "",
-          [rDistributors]: r.distributorCount || "",
-          [rDistributorNames]: r.distributorNames || "",
-          [rIncludedAddresses]: r.includedAddresses || "",
-          [rPapers]: r.paperCount || "",
-          [rPostnrs]: r.postnrs || ""
-        };
-      });
-    } else {
-      return;
-    }
-    var aoa = [headers];
-    mappedRows.forEach(function(row) {
-      aoa.push(headers.map(function(h) {
+    var dataset = getTableExportDataset(tableName);
+    if (!dataset) return;
+    var aoa = [dataset.headers];
+    dataset.mappedRows.forEach(function(row) {
+      aoa.push(dataset.headers.map(function(h) {
         return row[h] || "";
       }));
     });
@@ -7921,7 +7815,7 @@
     XLSX.utils.book_append_sheet(wb, ws, tableName);
     XLSX.writeFile(wb, tableName + ".xlsx");
     statusEl.dataset.loaded = "1";
-    statusEl.textContent = t("statusCsvExported", { label: t(tableTitleKeys[tableName]), count: mappedRows.length });
+    statusEl.textContent = t("statusXlsxExported", { label: t(tableTitleKeys[tableName]), count: dataset.mappedRows.length });
   }
   function exportDriverDistributorsCsv(driverRow) {
     if (!driverRow) return;
