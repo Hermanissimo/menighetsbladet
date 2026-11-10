@@ -7,7 +7,11 @@
     "build": "node scripts/build.js",
     "build:bundle": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap",
     "watch": "esbuild web/src/main.js --bundle --outfile=web/dist/app.bundle.js --sourcemap --watch",
-    "test": "node tests/audit_translations.js && node tests/test_user_guide.js && node tests/test_all_6_requirements.js"
+    "test:audit": "node tests/audits/audit_data_integrity.js && node tests/audits/audit_standalone_sync.js && node tests/audits/audit_translations.js",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:integration": "node --test tests/integration/*.test.mjs && node tests/integration/standalone_server.test.js",
+    "test:e2e": "node tests/run_all_e2e.js",
+    "test": "npm run test:audit && npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "keywords": [],
   "author": "",

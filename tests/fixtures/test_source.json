@@ -1,0 +1,179 @@
+{
+  "drivers": [
+    {
+      "name": "Knut Sjåfør",
+      "status": "active",
+      "driverNr": "1",
+      "phone": "99887766",
+      "email": "knut@example.com",
+      "address": "Kjøreveien 1",
+      "postnr": "1150",
+      "routes": ["A 1", "B 1"],
+      "extraPapers": 5
+    },
+    {
+      "name": "Inaktiv Kjører",
+      "status": "inactive",
+      "driverNr": "9",
+      "phone": "11223344",
+      "email": "inaktiv@example.com",
+      "address": "Gamleveien 2",
+      "postnr": "1150",
+      "routes": [],
+      "extraPapers": 10
+    }
+  ],
+  "distributors": [
+    {
+      "name": "Berit Bærer",
+      "status": "active",
+      "driverNr": "1",
+      "driverName": "Knut Sjåfør",
+      "phone": "98765432",
+      "email": "berit@example.com",
+      "address": "Bærestien 4",
+      "postnr": "1150",
+      "routes": ["A 1"],
+      "extraPapers": 2
+    },
+    {
+      "name": "Uten Sjåfør Bærer",
+      "status": "active",
+      "driverNr": "",
+      "driverName": "",
+      "phone": "44556677",
+      "email": "utensjafor@example.com",
+      "address": "Sjåførløsgata 5",
+      "postnr": "1151",
+      "routes": ["A 2"],
+      "extraPapers": 0
+    },
+    {
+      "name": "Inaktiv Bærer",
+      "status": "inactive",
+      "driverNr": "1",
+      "driverName": "Knut Sjåfør",
+      "phone": "33445566",
+      "email": "inaktiv.baerer@example.com",
+      "address": "Hvilestien 1",
+      "postnr": "1150",
+      "routes": [],
+      "extraPapers": 4
+    }
+  ],
+  "routes": [
+    {
+      "routeId": "A 1",
+      "status": "active",
+      "requiresDistributor": true,
+      "distributor": "Berit Bærer",
+      "driver": "",
+      "extraPapers": 1,
+      "notes": "Husk portkode 1234",
+      "addressRanges": "Testveien 1-10"
+    },
+    {
+      "routeId": "A 2",
+      "status": "active",
+      "requiresDistributor": true,
+      "distributor": "Uten Sjåfør Bærer",
+      "driver": "",
+      "extraPapers": 0,
+      "notes": "",
+      "addressRanges": "Bakkestien 2-6"
+    },
+    {
+      "routeId": "B 1",
+      "status": "active",
+      "requiresDistributor": false,
+      "distributor": "",
+      "driver": "Knut Sjåfør",
+      "extraPapers": 2,
+      "notes": "Kjøres direkte av sjåfør",
+      "addressRanges": "Langgata 1-20"
+    },
+    {
+      "routeId": "C 1",
+      "status": "inactive",
+      "requiresDistributor": true,
+      "distributor": "",
+      "driver": "",
+      "extraPapers": 3,
+      "notes": "Nedlagt rute",
+      "addressRanges": ""
+    }
+  ],
+  "addresses": [
+    {
+      "address": "Testveien 1",
+      "route": "A 1",
+      "postnr": "1150",
+      "numberOfHouseholds": 1,
+      "numberOfExcludedHouseholds": 0,
+      "note": "",
+      "lat": 59.8624,
+      "lon": 10.7960
+    },
+    {
+      "address": "Testveien 3",
+      "route": "A 1",
+      "postnr": "1150",
+      "numberOfHouseholds": 4,
+      "numberOfExcludedHouseholds": 1,
+      "note": "Oppgang A og B",
+      "lat": 59.8625,
+      "lon": 10.7962
+    },
+    {
+      "address": "Testveien 5",
+      "route": "A 1",
+      "postnr": "1150",
+      "numberOfHouseholds": 2,
+      "numberOfExcludedHouseholds": 2,
+      "note": "Reservasjon mot uadressert post",
+      "lat": 59.8626,
+      "lon": 10.7964
+    },
+    {
+      "address": "Bakkestien 2",
+      "route": "A 2",
+      "postnr": "1151",
+      "numberOfHouseholds": 3,
+      "numberOfExcludedHouseholds": 0,
+      "note": "",
+      "lat": 59.8630,
+      "lon": 10.7970
+    },
+    {
+      "address": "Langgata 10",
+      "route": "B 1",
+      "postnr": "1150",
+      "numberOfHouseholds": 10,
+      "numberOfExcludedHouseholds": 2,
+      "note": "Blokk",
+      "lat": 59.8610,
+      "lon": 10.7950
+    },
+    {
+      "address": "Gamleveien 99",
+      "route": "C 1",
+      "postnr": "1150",
+      "numberOfHouseholds": 2,
+      "numberOfExcludedHouseholds": 0,
+      "note": "Tilhører inaktiv rute",
+      "lat": 59.8600,
+      "lon": 10.7940
+    },
+    {
+      "address": "Villaveien 7",
+      "route": "",
+      "postnr": "1150",
+      "numberOfHouseholds": 1,
+      "numberOfExcludedHouseholds": 0,
+      "note": "Ikke tildelt rute",
+      "lat": 59.8640,
+      "lon": 10.7980
+    }
+  ]
+}
+
